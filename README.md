@@ -2,7 +2,7 @@
 
 | Student's name | SCIPER |
 | -------------- | ------ |
-|LucasEckes|248753|
+|Lucas Eckes|248753|
 | | |
 | | |
 
