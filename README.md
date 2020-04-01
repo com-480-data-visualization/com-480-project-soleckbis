@@ -11,10 +11,10 @@
 ## Milestone 1 (Friday 3rd April, 5pm)
 
 **10% of the final grade**
-Dataset
-Problematic
-Exploratory data analysis
-Related Work
+### Dataset
+### Problematic
+### Exploratory data analysis
+### Related Work
 
 ## Milestone 2 (Friday 1st May, 5pm)
 
