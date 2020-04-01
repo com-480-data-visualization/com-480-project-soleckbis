@@ -12,6 +12,7 @@
 
 **10% of the final grade**
 ### 1. Dataset
+In this project we will work on a korean dataset about COVID-19, these data are published by KDCC (Korea Center for Disease Control & Prevention) and are still actualised every few days on kaggle (https://www.kaggle.com/kimjihoo/coronavirusdataset#PatientInfo.csv). This dataset is particularly exhaustive and contains much more precise information than the one published by European countries. Indeed, for all patient tested we have for example his age, his precise localisation, the number of contact persons he has and even a follow-up of its medical state. In top of that, some additional data are brought like weather information (Temperature, Wind, Rain, Humidity) for each city and also some details each city itself (distribution of the elderly population, presence of schools …). The completeness of this dataset should allow us to realize ….
 ### 2. Problematic
 ### 3. Exploratory data analysis
 ### 4. Related Work
