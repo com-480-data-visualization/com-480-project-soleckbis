@@ -39,8 +39,8 @@ The dataset (corona.csv) was cleaned and contain most of the useful datas from [
 - longitude : Longitude of the population.
 - sex : The sex (female or male).
 - age : Age group interval of ten years.
-- contaminated : 0 -> The group don't have coronavirus.
-1 -> The group have the coronavirus. The following cases are computed using 
+- contaminated : 0 -> The group don't have coronavirus (13904884215 points of data).
+1 -> The group have the coronavirus (5115 points of data).
 - group_number : The number of people in that group (sex, age, contaminated) walking in the city (city) during day (date) (using the floating population data).
 - total_number : Total number of people walking in the city (city) during day (date).
 - proportion_case : Total of contaminated people walking in the city (city) during day (date)/ total_number.
