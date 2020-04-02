@@ -27,10 +27,12 @@ For example, in order to observe the impact of the circulation of the population
 
 ### 2. Problematic
 
-Since the beginning of the spread of the virus in China in December, a countless number of visualizations have been realized to observe the number of persons infected all around the world, the number of deaths, or for predicting future cases. By exploiting the diversity of the Korean dataset, we want to provide some more original representations based on the displacement of the population or weather data. We would like to provide some visualization in order to see easily if the displacement of persons increases the propagation of the virus in incomings days or even if some meteorological parameters (wind or humidity) are favourable to the spread.
+By exploiting the diversity of the Korean dataset, we want to provide some more original representations based on the displacement of the population or weather data. We would like to provide some visualization in order to see easily if the displacement of persons increases the propagation of the virus in incomings days or even if some meteorological parameters (wind or humidity) are favourable to the spread.
 
 ### 3. Exploratory data analysis
 ### 4. Related Work
+Since the beginning of the spread of the virus in China in December, a countless number of visualizations have been done on this and similar datasets to observe the number of persons infected all around the world, the number of deaths, or for predicting future cases and the impact of different measures taken by governments. What new do we want to offer? We are going to analyze population localisation and movement, as well as weather conditions which seems to be a new and interesting way to go. Our visualisations will be inspired by the John Hopkins University Coronavirus Research Center data (https://coronavirus.jhu.edu/map.html), an article by Gevorg Yeghikyan (https://towardsdatascience.com/modelling-the-coronavirus-epidemic-spreading-in-a-city-with-python-babd14d82fa2) and different plots from https://informationisbeautiful.net/visualizations/covid-19-coronavirus-infographic-datapack/
+
 
 ## Milestone 2 (Friday 1st May, 5pm)
 
