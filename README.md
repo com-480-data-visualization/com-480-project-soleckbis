@@ -27,7 +27,14 @@ For example, in order to observe the impact of the circulation of the population
 
 ### 2. Problematic
 
-By exploiting the diversity of the Korean dataset, we want to provide some more original representations based on the displacement of the population or weather data. We would like to provide some visualization in order to see easily if the displacement of persons increases the propagation of the virus in incomings days or even if some meteorological parameters (wind or humidity) are favourable to the spread.
+Coronavirus is the hot topic of the moment and mobilizes the skills of data-scientists like never before, and thus not only for describing the spread of the virus, but also for modelling future and even for helping researchers to develop drugs.
+
+On our scale, by exploiting the diversity of the Korean dataset, we want to provide some visualizations allowing to observe the impact of parameters that have been less analysed so far. Indeed, we would like to provide some representations that shows to what extend the displacement of the population has an impact on the disease propagation, does it propagate faster if an important number of people are circulating? If these persons have an important number of contacts? 
+
+In the same fashion, some important characteristics of a city may also play an important role in the propagation, like the proportion of persons in the elderly or the number of schools? How do these parameters increase or not the spread?
+
+The hypothesis that the weather may have an impact and in particularly the wind is sometimes mentioned. We would like to take benefit of this project, to see if according to the Korean datasetn temperature, humidity or wind may favour contaminations. 
+
 
 ### 3. Exploratory data analysis
 
