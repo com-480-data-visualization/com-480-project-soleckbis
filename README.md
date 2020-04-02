@@ -38,35 +38,29 @@ The hypothesis that the weather may have an impact and in particularly the wind 
 
 ### 3. Exploratory data analysis
 
-The dataset (corona.csv) was cleaned and contain most of the useful datas from [the Kaggle's korean dataset](https://www.kaggle.com/kimjihoo/coronavirusdataset#TimeProvince.csv). It contains several features : 
-- date : The date at which a person may have contracted the virus (2 to 12 days prior to hospitalisation) ranging from the 8th January to the 30th March 2020.
-- city : 24 different localisations in Korea.
-- province : 6 different provinces where the cities are.
-- latitude : Latitude of the population.
-- longitude : Longitude of the population.
-- sex : The sex (female or male).
-- age : Age group interval of ten years.
-- contaminated : 0 -> The group don't have coronavirus (13904884215 points of data).<br/>
-1 -> The group have the coronavirus (5115 points of data).
-- group_number : The number of people in that group (sex, age, contaminated) walking in the city (city) during day (date) (using the floating population data).
-- total_number : Total number of people walking in the city (city) during day (date).
-- proportion_case : Total of contaminated people walking in the city (city) during day (date)/ total_number.
-- elementary_school_count : The count of elementary school in the city.
-- kindergarten_count : The count of Kindergarten.
-- university_count : The count of University.
-- nursing_home_count : The count of Nursing.
-- code : The postal code.
-- avg_temp : The average temperature in the city during the day.
-- min_temp : The minimum temperature.
-- max_temp : The maximum temperature.
-- precipitation : The precipitation.
-- max_wind_speed : The maximum speed.
-- most_wind_direction : The direction of the wind.
-- avg_relative_humidity : The average relative humidity.
+The dataset (corona.csv) was cleaned and contain most of the useful datas from [the Kaggle's korean dataset](https://www.kaggle.com/kimjihoo/coronavirusdataset#TimeProvince.csv). It contains several features. The localisation can play a big part on the risk somebody have contracting the virus or not. Since it is a contagious disease, living in a area with an high concentration of people contaminated will cause higher risk of having the disease. There are 24 differents cities in the dataset having different concentration of people contaminated.
 
-Some features may be important when dealing with coronavirus. Eplaining the importance of these features inside the website may be useful for the population and the comprehension of the disease. Here is a plot that maybe indicate a positive trend of contamination for strong winds. Notice that no conclusion regarding the wind speed was made since no statistical tests were done.
+![cities](graph/cities.png)
+
+The city of Jongno-gu has clearly an higher concentration of contaminated people. It is not so surprising beause Jongno-gu is very touristic and animated city in the center of Seoul.<br/>
+
+Another important parameter is the floating population, it corresponds to the number of people walking in the city during the day collected from users smartphones. A city with a high traffic may propagate the disease faster than in cities with less traffic.
+
+![float](graph/float_cities.png)
+
+Gangnam-gu is the city with the higher trafic. Again without surprise, Gangnam-gu is the trendy city at the heart of Seoul where it is popular to go out.<br/>
+
+But among cities, there is difference in population's age or sex. And these parameters are of particular interest too. Indeed, coronavirus seem to be more fatal for eldery population. Here, we display the frequency of population groups for two different cities.
+
+![age](graph/age_city.png)
+
+The city of Gwanak-gu have an higher proportion of young people comparing to the city of Dobong-gu. Gwanak-gu includes the Seoul National University which made the city particularly young. On the other hand, Dobong-gu is more of a residential and montainous city kind. Another interesting fact is that women are in average older than men in Korea. Are the gender important when dealing with coronavirus ? The count of shools or the proportion of eldery people are included as well in the dataset for the same reasons.<br/>
+
+Others types of features are considered, notably about the weather of the cities. The temperature or wind have perhaps a link for the propagation of the disease. 
 
 ![wind_speed](graph/wind_speed.png)
+
+Here it seems that there is a positive trend concerning the speed of the wind and the propagation of the coronavirus. But it need some further analysis to conclude any type of correlation.
 
 
 ### 4. Related Work
