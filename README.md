@@ -13,8 +13,11 @@
 **10% of the final grade**
 ### 1. Dataset
 In this project we will work on a korean dataset about COVID-19, these data are published by the KDCC (Korea Center for Disease Control & Prevention) and are actualised every few days on kaggle (https://www.kaggle.com/kimjihoo/coronavirusdataset#PatientInfo.csv). This dataset is particularly exhaustive and contains much more precise information than equivalent dataset published by European countries. For each person infected we have for example his age, his precise localisation, the number of contact persons he has and even a follow-up of his medical state. 
+
 The dataset contains not only the list of persons infected but also the number of persons supposed to be healthy who circulated a given day in each city. As we know that a person can be contaminant before developing any symptom, these data are important in order to see if the spread of the virus is linked to the floating population.
+
 In top of that, some additional data are brought like weather information (temperature, wind, rain, humidity) for each city and some details about the cities themselves (distribution of the elderly population, presence of schools …). 
+
 The data are already clean, so the pre-processing part consists in joining the five main tables together according the representation we want to obtain:
 - “Patient_info.csv” for sick people and “Patient_route.csv” for the medical follow up
 - “Floating.csv” for floating population,
