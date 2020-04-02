@@ -27,12 +27,38 @@ For example, in order to observe the impact of the circulation of the population
 
 ### 2. Problematic
 
-By exploiting the diversity of the Korean dataset, we want to provide some more original representations based on the displacement of the population or weather data. We would like to provide some visualization in order to see easily if the displacement of persons increases the propagation of the virus in incomings days or even if some meteorological parameters (wind or humidity) are favourable to the spread.
+Since the beginning of the spread of the virus in China in December, a countless number of visualizations have been realized to observe the number of persons infected all around the world, the number of deaths, or for predicting future cases. By exploiting the diversity of the Korean dataset, we want to provide some more original representations based on the displacement of the population or weather data. We would like to provide some visualization in order to see easily if the displacement of persons increases the propagation of the virus in incomings days or even if some meteorological parameters (wind or humidity) are favourable to the spread.
 
 ### 3. Exploratory data analysis
-### 4. Related Work
-Since the beginning of the spread of the virus in China in December, a countless number of visualizations have been done on this and similar datasets to observe the number of persons infected all around the world, the number of deaths, or for predicting future cases and the impact of different measures taken by governments. What new do we want to offer? We are going to analyze population localisation and movement, as well as weather conditions which seems to be a new and interesting way to go. Our visualisations will be inspired by the John Hopkins University Coronavirus Research Center data (https://coronavirus.jhu.edu/map.html), an article by Gevorg Yeghikyan in Towards Data Science (https://towardsdatascience.com/modelling-the-coronavirus-epidemic-spreading-in-a-city-with-python-babd14d82fa2) and different plots from https://informationisbeautiful.net/visualizations/covid-19-coronavirus-infographic-datapack/.
 
+The dataset (corona.csv) was cleaned and contain most of the useful datas from [the korean dataset from kaggle] https://www.kaggle.com/kimjihoo/coronavirusdataset#TimeProvince.csv. It contains several features : 
+- date : The date at which a person may have contracted the virus (2 to 12 days prior to hospitalisation) ranging from the 8th January to the 30th March 2020.
+- city : 24 different localisations in Korea.
+- province : 6 different provinces where the cities are.
+- latitude : Latitude of the population.
+- longitude : Longitude of the population.
+- sex : The sex (female or male).
+- age : Age group interval of ten years.
+- contaminated : 0 -> The group don't have coronavirus.
+1 -> The group have the coronavirus. The following cases are computed using 
+- group_number : The number of people in that group (sex, age, contaminated) walking in the city (city) during day (date) (using the floating population data).
+- total_number : Total number of people walking in the city (city) during day (date).
+- proportion_case : Total of contaminated people walking in the city (city) during day (date)/ total_number.
+- elementary_school_count : The count of elementary school in the city.
+- kindergarten_count : The count of Kindergarten.
+- university_count : The count of University.
+- nursing_home_count : The count of Nursing.
+- code : The postal code.
+- avg_temp : The average temperature in the city during the day.
+- min_temp : The minimum temperature.
+- max_temp : The maximum temperature.
+- precipitation : The precipitation.
+- max_wind_speed : The maximum speed.
+- most_wind_direction : The direction of the wind.
+- avg_relative_humidity : The average relative humidity.
+
+
+### 4. Related Work
 
 ## Milestone 2 (Friday 1st May, 5pm)
 
