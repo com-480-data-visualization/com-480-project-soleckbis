@@ -19,6 +19,7 @@ The data are already clean, so the pre-processing part consists in joining the f
 - “Patient_info.csv” for sick people and “Patient_route.csv” for the medical follow up
 - “Floating.csv” for floating population,
 -“Weather.csv” and “Region.csv” for the descriptive facts about the cities.
+
 For example, in order to observe the impact of the circulation of the population on the spread of the disease, we need to join the table of sick persons with the one of floating population. Or for visualizing a potential impact of meteorological parameters on the propagation, we have to join the count of sick people per day with weather data. 
 
 ### 2. Problematic
