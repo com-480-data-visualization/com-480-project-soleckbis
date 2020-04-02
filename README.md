@@ -39,7 +39,7 @@ The dataset (corona.csv) was cleaned and contain most of the useful datas from [
 - longitude : Longitude of the population.
 - sex : The sex (female or male).
 - age : Age group interval of ten years.
-- contaminated : 0 -> The group don't have coronavirus (13904884215 points of data).
+- contaminated : 0 -> The group don't have coronavirus (13904884215 points of data).<br/>
 1 -> The group have the coronavirus (5115 points of data).
 - group_number : The number of people in that group (sex, age, contaminated) walking in the city (city) during day (date) (using the floating population data).
 - total_number : Total number of people walking in the city (city) during day (date).
@@ -56,6 +56,10 @@ The dataset (corona.csv) was cleaned and contain most of the useful datas from [
 - max_wind_speed : The maximum speed.
 - most_wind_direction : The direction of the wind.
 - avg_relative_humidity : The average relative humidity.
+
+Some features may be important when dealing with coronavirus. Eplaining the importance of these features inside the website may be useful for the population and the comprehension of the disease. Here is a plot that maybe indicate a positive trend of contamination for strong winds. Notice that no conclusion regarding the wind speed was made since no statistical tests were done.
+
+![wind_speed](graph/wind_speed.png)
 
 
 ### 4. Related Work
