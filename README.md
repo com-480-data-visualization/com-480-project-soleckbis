@@ -31,7 +31,7 @@ Since the beginning of the spread of the virus in China in December, a countless
 
 ### 3. Exploratory data analysis
 
-The dataset (corona.csv) was cleaned and contain most of the useful datas from [the korean dataset from kaggle](https://www.kaggle.com/kimjihoo/coronavirusdataset#TimeProvince.csv). It contains several features : 
+The dataset (corona.csv) was cleaned and contain most of the useful datas from [the Kaggle's korean dataset](https://www.kaggle.com/kimjihoo/coronavirusdataset#TimeProvince.csv). It contains several features : 
 - date : The date at which a person may have contracted the virus (2 to 12 days prior to hospitalisation) ranging from the 8th January to the 30th March 2020.
 - city : 24 different localisations in Korea.
 - province : 6 different provinces where the cities are.
