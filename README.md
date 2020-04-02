@@ -26,6 +26,9 @@ The data are already clean, so the pre-processing part consists in joining the f
 For example, in order to observe the impact of the circulation of the population on the spread of the disease, we need to join the table of sick persons with the one of floating population. Or for visualizing a potential impact of meteorological parameters on the propagation, we have to join the count of sick people per day with weather data. 
 
 ### 2. Problematic
+
+Since the beginning of the spread of the virus in China in December, a countless number of visualizations have been realized to observe the number of persons infected all around the world, the number of deaths, or for predicting future cases. By exploiting the diversity of the Korean dataset, we want to provide some more original representations based on the displacement of the population or weather data. We would like to provide some visualization in order to see easily if the displacement of persons increases the propagation of the virus in incomings days or even if some meteorological parameters (wind or humidity) are favourable to the spread.
+
 ### 3. Exploratory data analysis
 ### 4. Related Work
 
