@@ -38,29 +38,33 @@ The hypothesis that the weather may have an impact and in particularly the wind 
 
 ### 3. Exploratory data analysis
 
-The dataset (corona.csv) was cleaned and contain most of the useful datas from [the Kaggle's korean dataset](https://www.kaggle.com/kimjihoo/coronavirusdataset#TimeProvince.csv). It contains several features. The localisation can play a big part on the risk somebody have contracting the virus or not. Since it is a contagious disease, living in a area with an high concentration of people contaminated will cause higher risk of having the disease. There are 24 differents cities in the dataset having different concentration of people contaminated.
+The dataset (corona.csv) was cleaned. It contains most of the useful data from [the Kaggle's korean dataset](https://www.kaggle.com/kimjihoo/coronavirusdataset#TimeProvince.csv). It includes several features. The localisation can play a big part on the risk somebody has in contracting the virus or not. Since it is a contagious disease, living in an area with a high concentration of contaminated people will induce a higher risk of having the disease. There are 24 different cities in the dataset having different concentration of contaminated people.
 
 ![cities](graph/cities.png)
+*Figure 1 : Coronavirus contamination across different cities in Korea*
 
-The city of Jongno-gu has clearly an higher concentration of contaminated people. It is not so surprising beause Jongno-gu is very touristic and animated city in the center of Seoul.<br/>
+The city of Jongno-gu has clearly a higher concentration of contaminated people. It is not really surprising because Jongno-gu is a very touristic and animated city in the center of Seoul.<br/>
 
-Another important parameter is the floating population, it corresponds to the number of people walking in the city during the day collected from users smartphones. A city with a high traffic may propagate the disease faster than in cities with less traffic.
+Another important parameter is the floating population. This corresponds to the number of people walking in the city during the day which was collected from users' smartphones. A city with a high traffic may propagate the disease faster than a city with less traffic.
 
 ![float](graph/float_cities.png)
+*Figure 2 : Average daily floating population across different cities in Korea*
 
-Gangnam-gu is the city with the higher trafic. Again without surprise, Gangnam-gu is the trendy city at the heart of Seoul where it is popular to go out.<br/>
+Gangnam-gu is the city with the highest trafic. Again without surprise, Gangnam-gu is the trendy city at the heart of Seoul where it is popular to go out.<br/>
 
-But among cities, there is difference in population's age or sex. And these parameters are of particular interest too. Indeed, coronavirus seem to be more fatal for eldery population. Here, we display the frequency of population groups for two different cities.
+But among cities, there is difference in population's age or sex. And these parameters are of particular interest too. Indeed, coronavirus seems to be more fatal for eldery population. Here, we display the frequency of population groups for two different cities.
 
 ![age](graph/age_city.png)
+*Figure 3 : Average daily floating population for Gwanak-gu and Dobong-gu*
 
-The city of Gwanak-gu have an higher proportion of young people comparing to the city of Dobong-gu. Gwanak-gu includes the Seoul National University which made the city particularly young. On the other hand, Dobong-gu is more of a residential and montainous city kind. Another interesting fact is that women are in average older than men in Korea. Are the gender important when dealing with coronavirus ? The count of shools or the proportion of eldery people are included as well in the dataset for the same reasons.<br/>
+The city of Gwanak-gu has a higher proportion of young people compared to the city of Dobong-gu. Gwanak-gu includes the Seoul National University which makes the city particularly young. On the other hand, Dobong-gu is more of a residential and montainous city. Another interesting fact is that women are in average older than men in Korea. Is the gender important when dealing with coronavirus ? The count of shools or the proportion of eldery people are included as well in the dataset for the same reasons.<br/>
 
-Others types of features are considered, notably about the weather of the cities. The temperature or wind have perhaps a link for the propagation of the disease. 
+Other types of features are considered, notably the weather of the cities. The temperature or wind have perhaps a link for the propagation of the disease. 
 
 ![wind_speed](graph/wind_speed.png)
+*Figure 4 : Influence of the wind speed for coronavirus contamiantion in Korea*
 
-Here it seems that there is a positive trend concerning the speed of the wind and the propagation of the coronavirus. But it need some further analysis to conclude any type of correlation.
+Here it seems that there is a positive trend concerning the speed of the wind and the propagation of the coronavirus. But it needs some further analysis to conclude any type of correlation.
 
 
 ### 4. Related Work
