@@ -69,7 +69,6 @@ Since the beginning of the spread of the virus in China in December, a countless
 
 What new do we want to offer? We are going to analyze population localisation and movement, as well as weather conditions which seems to be a new and interesting way to go. Our visualisations will be inspired by the John Hopkins University Coronavirus Research Center data (https://coronavirus.jhu.edu/map.html) to give first a general overview of the pandemic. Then, for describing how the virus spreads in a city we will rely on an article by Gevorg Yeghikyan in Towards Data Science (https://towardsdatascience.com/modelling-the-coronavirus-epidemic-spreading-in-a-city-with-python-babd14d82fa2). Sources representing the effect of temperature are much rarer but this link https://www.accuweather.com/en/weather-blogs/weathermatrix/deep-dive-coronavirus-vs-population-and-temperatures/701036 offers a few plots that will help us defining our own graphs. Different small and nice plots about coronavirus are proposed on https://informationisbeautiful.net/visualizations/covid-19-coronavirus-infographic-datapack/, they are another potential source of ideas for realizing some nice and informative visualizations.
 
-https://www.accuweather.com/en/weather-blogs/weathermatrix/deep-dive-coronavirus-vs-population-and-temperatures/701036
 ## Milestone 2 (Friday 1st May, 5pm)
 
 **10% of the final grade**
