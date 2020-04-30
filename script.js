@@ -2,7 +2,7 @@
 
 
 
-d3.csv("essai.csv", function(data){
+d3.csv("data/essai.csv", function(data){
     console.log(data[0].date)});
 
 
@@ -10,21 +10,21 @@ var parseDate = d3.time.format("%Y-%m-%d").parse;
 
 console.log(parseDate('2014-10-10'));
 
-d3.csv("essai.csv", function(data){
+d3.csv("data/essai.csv", function(data){
     console.log(parseDate(data[0].date))});
 
 
 
-d3.csv('essai.csv', createChart);
+d3.csv('data/essai.csv', createChart);
 
 /*
-d3.csv("essai.csv", function(data){
+d3.csv("data/essai.csv", function(data){
     console.log(data.avg_temp)
 });
 
 
 
-d3.csv('essai.csv', function(data) {
+d3.csv('data/essai.csv', function(data) {
    var avg_temp = d3.nest()
   .key(function(d) { return d.date; })
   .rollup(function(v) { return {
