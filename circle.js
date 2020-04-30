@@ -1,5 +1,5 @@
 
-class MapPlot {
+class MapCircle {
 	
 	makeColorbar(svg, color_scale, top_left, colorbar_size, scaleClass=d3.scaleLog) {
 
@@ -70,16 +70,15 @@ class MapPlot {
 		const path_generator = d3.geoPath()
 			.projection(projection);
 			
-		const color_scale = d3.scaleLinear()
-			.range(["rgb(255,237,160)", "rgb(240,59,32)"])
-			.interpolate(d3.interpolateHcl);
+		const radius_scale = d3.scaleLinear()
+			.range([0, 50]);
 			
 		const disease_promise = d3.csv("data/test.csv").then((data)=>{
-			let province_concentration = {};
+			let province_daily = {};
 			data.forEach((row)=> {
-				province_concentration[row.province] = parseFloat(row.proportion_province);
+				province_daily[row.province] = parseFloat(row.province_cases);
 			});
-			return province_concentration;
+			return province_daily;
 		});
 			
 		const map_promise = d3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
@@ -92,15 +91,16 @@ class MapPlot {
 			let province_disease = results[1];
 			
 			map_data.forEach(province => {
-				province.properties.density = province_disease[province.properties.NAME_1]
+				province.properties.cases = province_disease[province.properties.NAME_1]
 			})
 			
-			const concentration = Object.values(province_disease);
+			const cases = Object.values(province_disease);
 			
-			color_scale.domain([d3.min(concentration), d3.max(concentration)]);
+			radius_scale.domain([0, 100]);
 			
 			this.map_container = this.svg.append('g');
-			this.label_container = this.svg.append('g')
+			this.label_container = this.svg.append('g');
+			this.circle_container = this.svg.append('g');
 			
 			this.map_container.selectAll(".province")
 				.data(map_data)
@@ -108,7 +108,7 @@ class MapPlot {
 				.append("path")
 				.classed("province", true)
 				.attr("d", path_generator)
-				.style("fill", (d)=> color_scale(d.properties.density));
+				.style("fill", 'white');
 				
 			this.label_container.selectAll(".province-label")
 				.data(map_data)
@@ -121,7 +121,17 @@ class MapPlot {
 				.attr("font-weight", 900)
 				.style("font-size", "10px");
 				
-			this.makeColorbar(this.svg, color_scale, [50, 30], [20, this.svg_height - 2*30]);
+				
+			this.circle_container.selectAll(".province-circles")
+				.data(map_data)
+				.enter()
+				.append("circle")
+				.classed("province-circles", true)
+				.attr("r", (d)=>radius_scale(d.properties.cases))
+				.attr("transform", (d)=> "translate("+path_generator.centroid(d)+")")
+				.style("fill", "red");
+				
+			this.makeColorbar(this.svg, radius_scale, [50, 30], [20, this.svg_height - 2*30]);
 		})
 	};
 }
@@ -136,7 +146,7 @@ function whenDocumentLoaded(action) {
 }
 
 whenDocumentLoaded(() => {
-	plot_object = new MapPlot('concentration');
+	plot_object = new MapCircle('circles');
 	// plot object is global, you can inspect it in the dev-console
 });
 

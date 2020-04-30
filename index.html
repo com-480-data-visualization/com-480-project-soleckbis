@@ -1,15 +1,37 @@
-<!DOCTYPE html>
-<meta charset='utf-8'>
-<html>
-  <head>
-    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Korea timeline</title>
+	<link rel="stylesheet", href="style.css">
+</head>
+<body>
+	<h3>
+		Concentration of cases by provinces
+	</h3>
+	<svg id ="concentration" viewBox="0 0 400 500" width="800" height="600">
+		<style>
+			.province {
+				stroke: rgb(25,25,25);
+				stroke-width: 0.4px;
+			}
+		</style>
+	</svg>
+	<h3>
+		Daily new cases by provinces
+	</h3>
+	<svg id ="circles" viewBox="0 0 400 500" width="800" height="600">
+		<style>
+			.province {
+				stroke: rgb(25,25,25);
+				stroke-width: 0.4px;
+			}
+		</style>
+	</svg>
+	<script src="lib/d3.min.js"></script>
+	<script src="lib/topojson.min.js"></script>
+	<script src="time.js"></script>
+	<script src="circle.js"></script>
     <script src="./lib/spearson.js"></script>
-    
-
-    <link rel='stylesheet' href='style.css'>
-  </head>
-  <body>
-  	
     <script type='text/javascript' src='script.js'></script>
-  </body>
+</body>
 </html>
