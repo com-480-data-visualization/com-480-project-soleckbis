@@ -1,7 +1,7 @@
 
 class MapPlot {
 	
-	makeColorbar(svg, color_scale, top_left, colorbar_size, scaleClass=d3.scaleLog) {
+	makeColorbar(svg, color_scale, top_left, colorbar_size, scaleClass=d3.scaleLinear) {
 
 		const value_to_svg = scaleClass()
 			.domain(color_scale.domain())
@@ -14,7 +14,7 @@ class MapPlot {
 
 		// Axis numbers
 		const colorbar_axis = d3.axisLeft(value_to_svg)
-			.tickFormat(d3.format(".0f"))
+			.tickFormat(d3.format(".0e"))
 
 		const colorbar_g = this.svg.append("g")
 			.attr("id", "colorbar")
@@ -117,6 +117,7 @@ class MapPlot {
 				.attr("transform", (d) => "translate(" + path_generator.centroid(d) + ")")
 				//.translate((d) => path_generator.centroid(d))
 				.attr("dy", ".35em")
+				.attr("dx", "-1em")
 				.text((d) => d.properties.NAME_1)
 				.attr("font-weight", 900)
 				.style("font-size", "10px");

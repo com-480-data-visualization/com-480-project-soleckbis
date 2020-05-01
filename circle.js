@@ -1,16 +1,15 @@
 
 class MapCircle {
 	
-	makeColorbar(svg, color_scale, top_left, colorbar_size, scaleClass=d3.scaleLog) {
+	makeCirclebar(svg, color_scale, top_left, colorbar_size, scaleClass=d3.scaleLinear) {
 
-		const value_to_svg = scaleClass()
-			.domain(color_scale.domain())
+		const value_to_svg = d3.scalePoint()
+			.domain([1, 10, 100])
 			.range([colorbar_size[1], 0]);
-
-		const range01_to_color = d3.scaleLinear()
-			.domain([0, 1])
-			.range(color_scale.range())
-			.interpolate(color_scale.interpolate());
+		
+		const range01_to_radius = d3.scaleLinear()
+			.domain([0, 100])
+			.range([0, 400]);
 
 		// Axis numbers
 		const colorbar_axis = d3.axisLeft(value_to_svg)
@@ -19,40 +18,17 @@ class MapCircle {
 		const colorbar_g = this.svg.append("g")
 			.attr("id", "colorbar")
 			.attr("transform", "translate(" + top_left[0] + ', ' + top_left[1] + ")")
-			.call(colorbar_axis);
+			.call(colorbar_axis)
+			.selectAll('.tick')
+				.append("circle")
+				.attr('r', (d)=>Math.sqrt(range01_to_radius(d)))
+				.attr("cx", 50)
+				.style("fill", "red");
 
-		// Create the gradient
-		function range01(steps) {
-			return Array.from(Array(steps), (elem, index) => index / (steps-1));
+
+			
+			
 		}
-
-		const svg_defs = this.svg.append("defs");
-
-		const gradient = svg_defs.append('linearGradient')
-			.attr('id', 'colorbar-gradient')
-			.attr('x1', '0%') // bottom
-			.attr('y1', '100%')
-			.attr('x2', '0%') // to top
-			.attr('y2', '0%')
-			.attr('spreadMethod', 'pad');
-
-		gradient.selectAll('stop')
-			.data(range01(10))
-			.enter()
-			.append('stop')
-				.attr('offset', d => Math.round(100*d) + '%')
-				.attr('stop-color', d => range01_to_color(d))
-				.attr('stop-opacity', 1);
-
-		// create the colorful rect
-		colorbar_g.append('rect')
-			.attr('id', 'colorbar-area')
-			.attr('width', colorbar_size[0])
-			.attr('height', colorbar_size[1])
-			.style('fill', 'url(#colorbar-gradient)')
-			.style('stroke', 'black')
-			.style('stroke-width', '1px')
-	}
 	
 	constructor(svg_element_id){
 		this.svg = d3.select('#' + svg_element_id);
@@ -71,7 +47,7 @@ class MapCircle {
 			.projection(projection);
 			
 		const radius_scale = d3.scaleLinear()
-			.range([0, 50]);
+			.range([0, 400]);
 			
 		const disease_promise = d3.csv("data/test.csv").then((data)=>{
 			let province_daily = {};
@@ -117,6 +93,7 @@ class MapCircle {
 				.attr("transform", (d) => "translate(" + path_generator.centroid(d) + ")")
 				//.translate((d) => path_generator.centroid(d))
 				.attr("dy", ".35em")
+				.attr("dx", "-1em")
 				.text((d) => d.properties.NAME_1)
 				.attr("font-weight", 900)
 				.style("font-size", "10px");
@@ -127,11 +104,11 @@ class MapCircle {
 				.enter()
 				.append("circle")
 				.classed("province-circles", true)
-				.attr("r", (d)=>radius_scale(d.properties.cases))
+				.attr("r", (d)=>Math.sqrt(radius_scale(d.properties.cases)))
 				.attr("transform", (d)=> "translate("+path_generator.centroid(d)+")")
 				.style("fill", "red");
 				
-			this.makeColorbar(this.svg, radius_scale, [50, 30], [20, this.svg_height - 2*30]);
+			this.makeCirclebar(this.svg, radius_scale, [50, 30], [20, this.svg_height - 2*30]);
 		})
 	};
 }

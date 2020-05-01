@@ -2,15 +2,15 @@
 
 
 
-d3.csv("data/essai.csv", function(data){
+d3.csv("data/essai.csv").then((data)=>{
     console.log(data[0].date)});
 
 
-var parseDate = d3.time.format("%Y-%m-%d").parse;
+var parseDate = d3.timeParse("%Y-%m-%d");
 
 console.log(parseDate('2014-10-10'));
 
-d3.csv("data/essai.csv", function(data){
+d3.csv("data/essai.csv").then((data)=>{
     console.log(parseDate(data[0].date))});
 
 
@@ -51,7 +51,7 @@ slider.getValue();
 function createChart(data) {
 	
   
-   data.forEach(function(d) {
+   data.forEach(d => {
    		var formatDate = d3.time.format("%Y-%m-%d").parse;
         d.date = formatDate(d.date);
     });
