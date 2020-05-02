@@ -77,7 +77,7 @@ class MapPlot {
 		const disease_promise = d3.csv("data/test.csv").then((data)=>{
 			let province_concentration = {};
 			data.forEach((row)=> {
-				province_concentration[row.province] = parseFloat(row.proportion_province);
+				province_concentration[row.province] = [parseFloat(row.proportion_province),parseFloat(row.total_province_cases)];
 			});
 			return province_concentration;
 		});
@@ -96,12 +96,12 @@ class MapPlot {
 				.attr("id", "t"+d.properties.NAME_1)
 				.attr("x", coords[0]-30)
 				.attr("y", coords[1]-15)
-				.text(d.properties.NAME_1);
+				.text(d.properties.NAME_1+' Total cases : '+d.properties.total_cases);
 		}
 		
 		function handleMouseOut(d, i) {
 			d3.selectAll('.province').style('fill-opacity', 0.6)
-			.style('stoke-width', 0.2)
+			.style('stroke-width', 0.2)
 			d3.select("#t"+d.properties.NAME_1).remove();
 		}
 		
@@ -110,12 +110,11 @@ class MapPlot {
 			let province_disease = results[1];
 			
 			map_data.forEach(province => {
-				province.properties.density = province_disease[province.properties.NAME_1]
+				province.properties.density = province_disease[province.properties.NAME_1][0];
+				province.properties.total_cases = province_disease[province.properties.NAME_1][1];
 			})
 			
-			const concentration = Object.values(province_disease);
-			
-			color_scale.domain([d3.min(concentration), d3.max(concentration)]);
+			color_scale.domain([0, 2e-4]);
 			
 			this.map_container = this.svg.append('g');
 			

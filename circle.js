@@ -70,11 +70,11 @@ class MapCircle {
 				.attr("id", "t"+d.properties.NAME_1)
 				.attr("x", coords[0]-30)
 				.attr("y", coords[1]-15)
-				.text(d.properties.NAME_1);
+				.text(d.properties.NAME_1 + ' Daily cases: ' + d.properties.cases);
 		}
 		
 		function handleMouseOut(d, i) {
-			d3.selectAll('.province').style('stoke-width', 0.2)
+			d3.selectAll('.province').style('stroke-width', 0.2);
 			d3.select("#t"+d.properties.NAME_1).remove();
 		}
 		
