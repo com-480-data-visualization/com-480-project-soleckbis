@@ -54,7 +54,7 @@ class MapPlot {
 			.style('stroke-width', '1px')
 	}
 	
-	constructor(svg_element_id){
+	constructor(svg_element_id, Type){
 		this.svg = d3.select('#' + svg_element_id);
 		const svg_viewbox = this.svg.node().viewBox.animVal;
 		this.svg_width = svg_viewbox.width;
@@ -74,7 +74,7 @@ class MapPlot {
 			.range(["rgb(255,237,160)", "rgb(240,59,32)"])
 			.interpolate(d3.interpolateHcl);
 			
-		const disease_promise = d3.csv("data/test.csv").then((data)=>{
+		var disease_promise = d3.csv("data/test.csv").then((data)=>{
 			let province_concentration = {};
 			data.forEach((row)=> {
 				province_concentration[row.province] = [parseFloat(row.proportion_province),parseFloat(row.total_province_cases)];
@@ -82,21 +82,58 @@ class MapPlot {
 			return province_concentration;
 		});
 			
-		const map_promise = d3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
+		var map_promise = d3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
 			const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.provinces);
 			return province_paths.features;
 		});
+		
+		if (Type=='provinces') {
+			disease_promise = d3.csv("data/test.csv").then((data)=>{
+				let province_concentration = {};
+				data.forEach((row)=> {
+					province_concentration[row.province] = [parseFloat(row.proportion_province),parseFloat(row.total_province_cases)];
+				});
+				return province_concentration;
+			});
+			
+			map_promise = d3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
+				const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.provinces);
+				return province_paths.features;
+			});
+		} else if (Type='municipalities') {
+			disease_promise = d3.csv("data/test.csv").then((data)=>{
+				let province_concentration = {};
+				data.forEach((row)=> {
+					province_concentration[row.province] = [parseFloat(row.proportion_city),parseFloat(row.total_city_cases)];
+				});
+				return province_concentration;
+			});
+			
+			map_promise = d3.json('json/skorea-municipalities-topo.json').then((topojson_raw)=> {
+				const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.municipalities);
+				return province_paths.features;
+			});
+		}
+			
 		
 		function handleMouseOver(d, i) {
 			var coords = d3.mouse(this)
 			var svg = d3.select('#' + svg_element_id);
 			d3.select(this).style('fill-opacity', 1)
 			.style('stroke-width', 1)
-			d3.select('#' + svg_element_id).append('text')
-				.attr("id", "t"+d.properties.NAME_1)
-				.attr("x", coords[0]-30)
-				.attr("y", coords[1]-15)
-				.text(d.properties.NAME_1+' Total cases : '+d.properties.total_cases);
+			if (Type=='provinces') {
+				d3.select('#' + svg_element_id).append('text')
+					.attr("id", "t"+d.properties.NAME_1)
+					.attr("x", coords[0]-30)
+					.attr("y", coords[1]-15)
+					.text(d.properties.NAME_1+' Total cases : '+d.properties.total_cases);
+			} else if (Type='municipalities') {
+				d3.select('#' + svg_element_id).append('text')
+					.attr("id", "t"+d.properties.NAME_1)
+					.attr("x", coords[0]-30)
+					.attr("y", coords[1]-15)
+					.text(d.properties.NAME_2+' Total cases : '+d.properties.total_cases);
+			}
 		}
 		
 		function handleMouseOut(d, i) {
@@ -155,7 +192,16 @@ function whenDocumentLoaded(action) {
 }
 
 whenDocumentLoaded(() => {
-	plot_object = new MapPlot('concentration');
+	const radios = document.getElementsByName("MapType1");
+	var Type = 'provinces';
+	plot_object = new MapPlot('concentration', Type);
+	for (var i = 0, max=radios.length; i<max; i++) {
+		radios[i].onclick = function () {
+			d3.select('#concentration').selectAll("*").remove();
+			Type = this.value;
+			plot_object = new MapPlot('concentration', Type);
+		}
+	}
 	// plot object is global, you can inspect it in the dev-console
 });
 
