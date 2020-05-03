@@ -116,9 +116,16 @@ class MapPlot {
 			
 			color_scale.domain([0, 2e-4]);
 			
-			this.map_container = this.svg.append('g');
+			const map_container = this.svg.append('g');
 			
-			this.map_container.selectAll(".province")
+			const zoom = d3.zoom()
+				.scaleExtent([1, 8])
+				.on('zoom', zoomed);
+		
+			this.svg.call(zoom);
+		
+			
+			map_container.selectAll(".province")
 				.data(map_data)
 				.enter()
 				.append("path")
@@ -127,6 +134,11 @@ class MapPlot {
 				.style("fill", (d)=> color_scale(d.properties.density))
 				.on('mouseover', handleMouseOver) 
 				.on('mouseout', handleMouseOut);
+				
+			function zoomed() {
+				map_container.selectAll('path')
+				.attr('transform', d3.event.transform);
+			}
 			
 			this.makeColorbar(this.svg, color_scale, [50, 30], [20, this.svg_height - 2*30]);
 		})

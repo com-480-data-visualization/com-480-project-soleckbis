@@ -90,10 +90,16 @@ class MapCircle {
 			
 			radius_scale.domain([0, 100]);
 			
-			this.map_container = this.svg.append('g');
-			this.circle_container = this.svg.append('g');
+			const map_container = this.svg.append('g');
+			const circle_container = this.svg.append('g');
 			
-			this.map_container.selectAll(".province")
+			const zoom = d3.zoom()
+				.scaleExtent([1, 8])
+				.on('zoom', zoomed);
+		
+			this.svg.call(zoom);
+			
+			map_container.selectAll(".province")
 				.data(map_data)
 				.enter()
 				.append("path")
@@ -105,7 +111,7 @@ class MapCircle {
 
 				
 				
-			this.circle_container.selectAll(".province-circles")
+			circle_container.selectAll(".province-circles")
 				.data(map_data)
 				.enter()
 				.append("circle")
@@ -113,6 +119,14 @@ class MapCircle {
 				.attr("r", (d)=>Math.sqrt(radius_scale(d.properties.cases)))
 				.attr("transform", (d)=> "translate("+path_generator.centroid(d)+")")
 				.style("fill", "red");
+				
+			function zoomed() {
+				var t = d3.event.transform;
+				map_container.selectAll('path')
+				.attr('transform', t);
+				circle_container.selectAll("circle")
+				.attr("transform", (d)=> "translate("+[t.k*path_generator.centroid(d)[0]+t.x,+t.k*path_generator.centroid(d)[1]+t.y]+")");
+			}
 				
 			this.makeCirclebar(this.svg, radius_scale, [50, 30], [20, this.svg_height - 2*30]);
 		})
