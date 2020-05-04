@@ -180,6 +180,12 @@ console.log(corr)
       .attr('y',5)
       .attr('dy','.71em')
       .style('text-anchor','end')
-      .text('Temp')      
+      .text('Temp')
+      
+      
+      // Listen to the button -> update if user change it
+  d3.select("#nBin").on("input", function() {
+    update(+this.value);
+  });  
       
 }

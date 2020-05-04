@@ -55,7 +55,7 @@ class MapPlot {
 	}
 	
 	constructor(svg_element_id, Type){
-		this.svg = d3_v3.select('#' + svg_element_id);
+		this.svg = d3.select('#' + svg_element_id);
 		const svg_viewbox = this.svg.node().viewBox.animVal;
 		this.svg_width = svg_viewbox.width;
 		this.svg_height = svg_viewbox.height;
