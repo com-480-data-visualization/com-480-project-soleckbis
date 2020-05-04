@@ -1,6 +1,8 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
+	<script src="lib/d3.min.js"></script>
+	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	<title>Korea timeline</title>
 	<link rel="stylesheet", href="style.css">
 </head>
@@ -41,9 +43,16 @@
 			}
 		</style>
 	</svg>
-	<script src="lib/d3.min.js"></script>
+	<h3>
+		Weather 1
+	</h3>
+	<div id="my_dataviz">
+	</div>
+	
 	<script src="lib/topojson.min.js"></script>
+	<script src="weather_1.js"></script>
 	<script src="concentration.js"></script>
 	<script src="circle.js"></script>
+	<script src="./lib/spearson.js"></script>
 </body>
 </html>
