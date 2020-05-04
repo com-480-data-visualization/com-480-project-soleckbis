@@ -8,8 +8,13 @@
 	<h3>
 		Concentration of cases by provinces
 	</h3>
-	<input type="radio" name="MapType1" value="provinces">Provinces<br>
-	<input type="radio" name="MapType1" value="municipalities">Municipalities<br>
+	<div>
+		<input type="radio" name="MapType1" value="provinces" id="provinces1"><label for="provinces1">Provinces</label>
+		<input type="radio" name="MapType1" value="municipalities" id="municipalities1"><label for="municipalities1">Municipalities</label><br>
+	</div>
+	<button id="PlayButton1">Play</button>
+	<button id="PauseButton1">Pause</button>
+	<button id="RewindButton1">Rewind</button><br>
 	<svg id ="concentration" viewBox="0 0 400 500" width="900" height="700">
 		<style>
 			.province {
@@ -21,8 +26,13 @@
 	<h3>
 		Daily new cases by provinces
 	</h3>
-	<input type="radio" name="MapType2" value="provinces">Provinces<br>
-	<input type="radio" name="MapType2" value="municipalities">Municipalities<br>
+	<div>
+		<input type="radio" name="MapType2" value="provinces" id="provinces2"><label for="provinces2">Provinces</label>
+		<input type="radio" name="MapType2" value="municipalities" id="municipalities2"><label for="municipalities2">Municipalities</label><br>
+	</div>
+	<button id="PlayButton2">Play</button>
+	<button id="PauseButton2">Pause</button>
+	<button id="RewindButton2">Rewind</button><br>
 	<svg id ="circles" viewBox="0 0 400 500" width="900" height="700">
 		<style>
 			.province {
