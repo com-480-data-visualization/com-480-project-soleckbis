@@ -164,7 +164,8 @@ class MapPlot {
 			.projection(projection);
 			
 		const color_scale = d3.scaleLinear()
-			.range(["rgb(255,237,160)", "rgb(240,59,32)"])
+			.domain([0, 2e-5, 4e-5, 8e-5, 1e-4, 2e-4, 4e-4])
+			.range(['#eaff78', '#ffdf01', '#ffc203', '#ffa406', '#ff8308', '#ff5a0c', '#ff0013'])
 			.interpolate(d3.interpolateHcl);
 		
 		var disease_promise = d3.csv("data/test.csv").then((data)=>{
@@ -193,11 +194,11 @@ class MapPlot {
 				const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.provinces);
 				return province_paths.features;
 			});
-		} else if (Type='municipalities') {
+		} else if (Type=='municipalities') {
 			disease_promise = d3.csv("data/test.csv").then((data)=>{
 				let province_concentration = {};
 				data.forEach((row)=> {
-					province_concentration[row.province] = [parseFloat(row.proportion_city),parseFloat(row.total_city_cases)];
+					province_concentration[row.city] = [parseFloat(row.proportion_city),parseFloat(row.total_city_cases)];
 				});
 				return province_concentration;
 			});
@@ -220,7 +221,7 @@ class MapPlot {
 					.attr("x", coords[0]-30)
 					.attr("y", coords[1]-15)
 					.text(d.properties.NAME_1+' Total cases : '+d.properties.total_cases);
-			} else if (Type='municipalities') {
+			} else if (Type=='municipalities') {
 				d3.select('#' + svg_element_id).append('text')
 					.attr("id", "t"+d.properties.NAME_1)
 					.attr("x", coords[0]-30)
@@ -240,11 +241,24 @@ class MapPlot {
 			let province_disease = results[1];
 			
 			map_data.forEach(province => {
-				province.properties.density = province_disease[province.properties.NAME_1][0];
-				province.properties.total_cases = province_disease[province.properties.NAME_1][1];
+				if (Type=="provinces") {
+					try {
+						province.properties.density = province_disease[province.properties.NAME_1][0];
+						province.properties.total_cases = province_disease[province.properties.NAME_1][1];
+					} catch (error) {
+						province.properties.density = 0
+						province.properties.total_cases = 0
+					}
+				} else if (Type="municipalities") {
+					try {
+						province.properties.density = province_disease[province.properties.NAME_2][0];
+						province.properties.total_cases = province_disease[province.properties.NAME_2][1];
+					} catch (error) {
+						province.properties.density = 0
+						province.properties.total_cases = 0
+					}
+				}
 			})
-			
-			color_scale.domain([0, 2e-4]);
 				
 			const map_container = this.svg.append('g');
 			

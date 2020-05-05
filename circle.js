@@ -158,7 +158,7 @@ class MapCircle {
 			disease_promise = d3.csv("data/test.csv").then((data)=>{
 				let province_concentration = {};
 				data.forEach((row)=> {
-					province_concentration[row.province] = parseFloat(row.province_cases);
+					province_concentration[row.province] = [parseFloat(row.province_cases)];
 				});
 				return province_concentration;
 			});
@@ -167,11 +167,12 @@ class MapCircle {
 				const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.provinces);
 				return province_paths.features;
 			});
-		} else if (Type='municipalities') {
+		} else if (Type=='municipalities') {
+
 			disease_promise = d3.csv("data/test.csv").then((data)=>{
 				let province_concentration = {};
 				data.forEach((row)=> {
-					province_concentration[row.province] = parseFloat(row.city_cases);
+					province_concentration[row.city] = [parseFloat(row.city_cases)];
 				});
 				return province_concentration;
 			});
@@ -191,13 +192,13 @@ class MapCircle {
 					.attr("id", "t"+d.properties.NAME_1)
 					.attr("x", coords[0]-30)
 					.attr("y", coords[1]-15)
-					.text(d.properties.NAME_1+' Daily cases : '+d.properties.cases);
-			} else if (Type='municipalities') {
+					.text(d.properties.NAME_1+' Total cases : '+d.properties.cases);
+			} else if (Type=='municipalities') {
 				d3.select('#' + svg_element_id).append('text')
 					.attr("id", "t"+d.properties.NAME_1)
 					.attr("x", coords[0]-30)
 					.attr("y", coords[1]-15)
-					.text(d.properties.NAME_2+' Daily cases : '+d.properties.cases);
+					.text(d.properties.NAME_2+' Total cases : '+d.properties.cases);
 			}
 		}
 		
@@ -211,8 +212,21 @@ class MapCircle {
 			let province_disease = results[1];
 			
 			map_data.forEach(province => {
-				province.properties.cases = province_disease[province.properties.NAME_1]
+				if (Type=="provinces") {
+					try {
+						province.properties.cases = province_disease[province.properties.NAME_1][0];
+					} catch (error) {
+						province.properties.cases = 0
+					}
+				} else if (Type="municipalities") {
+					try {
+						province.properties.cases = province_disease[province.properties.NAME_2][0];
+					} catch (error) {
+						province.properties.cases = 0
+					}
+				}
 			})
+			
 			
 			const cases = Object.values(province_disease);
 			
