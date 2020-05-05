@@ -1,59 +1,54 @@
 
+d3.csv('data/essai.csv', createChart);
 
-// set the dimensions and margins of the graph
-var margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+function createChart(data) {
 
-// append the svg object to the body of the page
-var svg = d3.select("#my_dataviz")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
-
-
-d3.csv("data/essai.csv", function(row) {
-  return {date: row.date, count: row.count, avg_temp: row.avg_temp}
-}).then(function(d){
-	
-	var avg_temp = d3.nest()
-  	.key(function(d1) {return d1.date; })
-  	.rollup(function(v) { return d3.mean(v, function(d1) { return d1.avg_temp}); })
-  	.entries(d);
+	var formatDate = d3.time.format("%Y-%m-%d").parse;
+  
+   data.forEach(row()=>{
+   		
+        d.date = formatDate(d.date);
+    });
     
-   	console.log(avg_temp);
-
-
-	var mapped_count = d.map(d => {
+    	
+  
+   var avg_temp = d3.nest()
+  	.key(function(d) { return new Date(d.date); })
+  	.rollup(function(v) { return d3.mean(v, function(d) { return d.avg_temp; }); })
+  	.entries(data);
+	console.log(d3.max(avg_temp, function(d) { return d.values; }));
+  
+  var mapped_count = data.map(d => {
   	return {date: d.date,count: d.count}});
   
-  	var mapped_temp = avg_temp.map(d => {
+  var mapped_temp = avg_temp.map(d => {
   	return {date: new Date(d.key),count: d.values}});
 
-	console.log(mapped_count);
-	console.log(mapped_count.splice(0,2));
-	
-	console.log(mapped_count);
-	
-	console.log(mapped_temp);
-	console.log(mapped_temp.splice(mapped_temp.length-2,mapped_temp.length-1));
-	console.log(mapped_temp);
+console.log(mapped_count);
+console.log(mapped_count.splice(0,2));
 
-	var count = Object.keys(mapped_count).map(e => mapped_count[e].count);
-	var temp = Object.keys(mapped_temp).map(e => mapped_temp[e].count);
-	
-	
-	
-	
-var body = d3.select('body')
+console.log(mapped_count);
+
+console.log(mapped_temp);
+console.log(mapped_temp.splice(mapped_temp.length-2,mapped_temp.length-1));
+console.log(mapped_temp);
+
+var count = Object.keys(mapped_count).map(e => mapped_count[e].count);
+var temp = Object.keys(mapped_temp).map(e => mapped_temp[e].count);
+
+var corr = spearson.correlation.spearman(count,temp);
+
+console.log(corr)
+
+  // Variables
+  var body = d3.select('body')
 	var margin = { top: 150, right: 50, bottom: 50, left: 50 }
 	var h = 500 - margin.top - margin.bottom
 	var w = 500 - margin.left - margin.right
 	var formatPercent = d3.format('.2%')
 	// Scales
+  
+  var colorScale = d3.scale.category20()
   
   var padding = 1;
   
@@ -66,21 +61,21 @@ var body = d3.select('body')
   var minTemp = d3.min(avg_temp, function(d) { return d.values; });
   var maxTemp = d3.max(avg_temp, function(d) { return d.values; });
   
-  var xScale = d3.scaleTime()
+  var xScale = d3.time.scale()
     .domain([minDate_1, maxDate_1])
     .range([0,w]);
   
-  var xScale2 = d3.scaleTime()
+  var xScale2 = d3.time.scale()
     .domain([minDate_2, maxDate_2])
     .range([0,w]);
   
-  var yScale = d3.scaleLinear()
+  var yScale = d3.scale.linear()
     .domain([
-    	d3.min([0,d3.min(d,function (d) { return d.count })]),
-    	d3.max([0,d3.max(d,function (d) { return d.count })])
+    	d3.min([0,d3.min(data,function (d) { return d.count })]),
+    	d3.max([0,d3.max(data,function (d) { return d.count })])
     	])
     .range([h,0])
-  var yScale2 = d3.scaleLinear().domain([minTemp,maxTemp]).range([h, 0]);
+  var yScale2 = d3.scale.linear().domain([minTemp,maxTemp]).range([h, 0]);
    
 	// SVG
   
@@ -90,24 +85,27 @@ var body = d3.select('body')
 	  .append('g')
 	    .attr('transform','translate(' + margin.left + ',' + margin.top + ')')
 	// X-axis
-  var xAxis = d3.axisBottom()
+  var xAxis = d3.svg.axis()
 	  .scale(xScale)
 	  .ticks(5)
+	  .orient('bottom')
 	  
-	  
- var xAxis2 = d3.axisBottom()
+ var xAxis2 = d3.svg.axis()
 	  .scale(xScale2)
 	  .ticks(5)
-	  
+	  .orient('bottom')
   // Y-axis
-  var yAxis =  d3.axisLeft()
+  var yAxis = d3.svg.axis()
 	  .scale(yScale)
 	  .ticks(5)
+	  .orient('left')
 	  
-	  
-  var yAxis2 =  d3.axisLeft()
+  var yAxis2 = d3.svg.axis()
 				   .scale(yScale2)
-				   .ticks(5) 
+				   .ticks(5)
+    			   .orient("right")  
+    
+  var formatDate = d3.time.format("%d-%m-%Y")
   
   // Circles
   var circles = svg.selectAll('circle')
@@ -135,9 +133,17 @@ var body = d3.select('body')
       })
       .append('title') // Tooltip
       .text(function (d) { return '\nNew cases: ' + d.count +
-                           '\nDate: ' + new Date(d.date)})
+                           '\nDate: ' + formatDate(new Date(d.date))})
   
- 
+ svg.append("path")
+      .datum(mapped_count)
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 1.5)
+      .attr("d", d3.svg.line()
+        .x(function(d) { return xScale(d.date) })
+        .y(function(d) { return yScale(d.count)  })
+        ) 
     
   
   var circles = svg.selectAll('circle2')
@@ -150,7 +156,15 @@ var body = d3.select('body')
       .attr('stroke','red')
       .attr('fill','red')
   
-
+  svg.append("path")
+      .datum(mapped_temp)
+      .attr("fill", "none")
+      .attr("stroke", "red")
+      .attr("stroke-width", 1.5)
+      .attr("d", d3.svg.line()
+        .x(function(d) { return xScale2(d.date) })
+        .y(function(d) { return yScale2(d.count)  })
+        )
         
   // X-axis
   svg.append('g')
@@ -208,7 +222,6 @@ var body = d3.select('body')
       // Listen to the button -> update if user change it
   d3.select("#nBin").on("input", function() {
     update(+this.value);
-
-});
-
-});
+  });  
+      
+}

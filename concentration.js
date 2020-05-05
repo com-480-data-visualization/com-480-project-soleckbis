@@ -1,20 +1,20 @@
 
 class MapPlot {
 	
-	makeColorbar(svg, color_scale, top_left, colorbar_size, scaleClass=d3_v3.scaleLinear) {
+	makeColorbar(svg, color_scale, top_left, colorbar_size, scaleClass=d3.scaleLinear) {
 
 		const value_to_svg = scaleClass()
 			.domain(color_scale.domain())
 			.range([colorbar_size[1], 0]);
 
-		const range01_to_color = d3_v3.scaleLinear()
+		const range01_to_color = d3.scaleLinear()
 			.domain([0, 1])
 			.range(color_scale.range())
 			.interpolate(color_scale.interpolate());
 
 		// Axis numbers
-		const colorbar_axis = d3_v3.axisLeft(value_to_svg)
-			.tickFormat(d3_v3.format(".0e"))
+		const colorbar_axis = d3.axisLeft(value_to_svg)
+			.tickFormat(d3.format(".0e"))
 
 		const colorbar_g = this.svg.append("g")
 			.attr("id", "colorbar")
@@ -60,21 +60,21 @@ class MapPlot {
 		this.svg_width = svg_viewbox.width;
 		this.svg_height = svg_viewbox.height;
 		
-		const projection = d3_v3.geoNaturalEarth1()
+		const projection = d3.geoNaturalEarth1()
 			.rotate([0,0])
 			.center([128, 36])
 			.scale(5000)
 			.translate([this.svg_width, this.svg_height/2])
 			.precision(0.1);
 			
-		const path_generator = d3_v3.geoPath()
+		const path_generator = d3.geoPath()
 			.projection(projection);
 			
-		const color_scale = d3_v3.scaleLinear()
+		const color_scale = d3.scaleLinear()
 			.range(["rgb(255,237,160)", "rgb(240,59,32)"])
-			.interpolate(d3_v3.interpolateHcl);
+			.interpolate(d3.interpolateHcl);
 			
-		var disease_promise = d3_v3.csv("data/test.csv").then((data)=>{
+		var disease_promise = d3.csv("data/test.csv").then((data)=>{
 			let province_concentration = {};
 			data.forEach((row)=> {
 				province_concentration[row.province] = [parseFloat(row.proportion_province),parseFloat(row.total_province_cases)];
@@ -82,13 +82,13 @@ class MapPlot {
 			return province_concentration;
 		});
 			
-		var map_promise = d3_v3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
+		var map_promise = d3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
 			const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.provinces);
 			return province_paths.features;
 		});
 		
 		if (Type=='provinces') {
-			disease_promise = d3_v3.csv("data/test.csv").then((data)=>{
+			disease_promise = d3.csv("data/test.csv").then((data)=>{
 				let province_concentration = {};
 				data.forEach((row)=> {
 					province_concentration[row.province] = [parseFloat(row.proportion_province),parseFloat(row.total_province_cases)];
@@ -96,12 +96,12 @@ class MapPlot {
 				return province_concentration;
 			});
 			
-			map_promise = d3_v3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
+			map_promise = d3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
 				const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.provinces);
 				return province_paths.features;
 			});
 		} else if (Type='municipalities') {
-			disease_promise = d3_v3.csv("data/test.csv").then((data)=>{
+			disease_promise = d3.csv("data/test.csv").then((data)=>{
 				let province_concentration = {};
 				data.forEach((row)=> {
 					province_concentration[row.province] = [parseFloat(row.proportion_city),parseFloat(row.total_city_cases)];
@@ -109,7 +109,7 @@ class MapPlot {
 				return province_concentration;
 			});
 			
-			map_promise = d3_v3.json('json/skorea-municipalities-topo.json').then((topojson_raw)=> {
+			map_promise = d3.json('json/skorea-municipalities-topo.json').then((topojson_raw)=> {
 				const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.municipalities);
 				return province_paths.features;
 			});
@@ -117,18 +117,18 @@ class MapPlot {
 			
 		
 		function handleMouseOver(d, i) {
-			var coords = d3_v3.mouse(this)
-			var svg = d3_v3.select('#' + svg_element_id);
-			d3_v3.select(this).style('fill-opacity', 1)
+			var coords = d3.mouse(this)
+			var svg = d3.select('#' + svg_element_id);
+			d3.select(this).style('fill-opacity', 1)
 			.style('stroke-width', 1)
 			if (Type=='provinces') {
-				d3_v3.select('#' + svg_element_id).append('text')
+				d3.select('#' + svg_element_id).append('text')
 					.attr("id", "t"+d.properties.NAME_1)
 					.attr("x", coords[0]-30)
 					.attr("y", coords[1]-15)
 					.text(d.properties.NAME_1+' Total cases : '+d.properties.total_cases);
 			} else if (Type='municipalities') {
-				d3_v3.select('#' + svg_element_id).append('text')
+				d3.select('#' + svg_element_id).append('text')
 					.attr("id", "t"+d.properties.NAME_1)
 					.attr("x", coords[0]-30)
 					.attr("y", coords[1]-15)
@@ -137,9 +137,9 @@ class MapPlot {
 		}
 		
 		function handleMouseOut(d, i) {
-			d3_v3.selectAll('.province').style('fill-opacity', 0.6)
+			d3.selectAll('.province').style('fill-opacity', 0.6)
 			.style('stroke-width', 0.2)
-			d3_v3.select("#t"+d.properties.NAME_1).remove();
+			d3.select("#t"+d.properties.NAME_1).remove();
 		}
 		
 		Promise.all([map_promise, disease_promise]).then((results)=> {
@@ -155,7 +155,7 @@ class MapPlot {
 			
 			const map_container = this.svg.append('g');
 			
-			const zoom = d3_v3.zoom()
+			const zoom = d3.zoom()
 				.scaleExtent([1, 8])
 				.on('zoom', zoomed);
 		
@@ -174,7 +174,7 @@ class MapPlot {
 				
 			function zoomed() {
 				map_container.selectAll('path')
-				.attr('transform', d3_v3.event.transform);
+				.attr('transform', d3.event.transform);
 			}
 			
 			this.makeColorbar(this.svg, color_scale, [50, 30], [20, this.svg_height - 2*30]);
@@ -197,7 +197,7 @@ whenDocumentLoaded(() => {
 	plot_object = new MapPlot('concentration', Type);
 	for (var i = 0, max=radios.length; i<max; i++) {
 		radios[i].onclick = function () {
-			d3_v3.select('#concentration').selectAll("*").remove();
+			d3.select('#concentration').selectAll("*").remove();
 			Type = this.value;
 			plot_object = new MapPlot('concentration', Type);
 		}
