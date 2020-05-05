@@ -29,17 +29,21 @@ class MapCircle {
 		
 	makeSlider(svg) {
 		
+		var timer;
+		
 		var currentValue = 0;
 		var targetValue = 700;
 		
 		var playButton = d3.select("#PlayButton2");
+		var pauseButton = d3.select("#PauseButton2");
+		var restartButton = d3.select("#RestartButton2");
 		
 		var formatDate = d3.timeFormat("%d %B %Y");
 		var formatDateintoMonth = d3.timeFormat("%B");
 		
 		const startDate = new Date("2020-02-01");
 		const endDate = new Date("2020-04-15");
-			
+
 		var time_value = d3.scaleTime()
 			.domain([startDate, endDate])
 			.range([0, targetValue])
@@ -49,7 +53,6 @@ class MapCircle {
 			update(time_value.invert(currentValue));
 			currentValue = currentValue + (targetValue/151);
 			if (currentValue > targetValue) {
-				currentValue = 0;
 				clearInterval(timer);
 			}
 		}
@@ -103,8 +106,19 @@ class MapCircle {
 			.attr("transform", "translate(0, -25)")
 		
 		playButton.on("click", function() {
-			var timer = setInterval(step, 100);
-		})
+			timer = setInterval(step, 100);
+		});
+		
+		pauseButton.on("click", function() {
+			clearInterval(timer);
+		});
+		
+		restartButton.on("click", function() {
+			currentValue = 0;
+			update(time_value.invert(currentValue));
+			clearInterval(timer);
+		});
+		
 	}		
 		
 	

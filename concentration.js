@@ -56,10 +56,14 @@ class MapPlot {
 	
 	makeSlider(svg) {
 		
+		var timer;
+		
 		var currentValue = 0;
 		var targetValue = 700;
 		
 		var playButton = d3.select("#PlayButton1");
+		var pauseButton = d3.select("#PauseButton1");
+		var restartButton = d3.select("#RestartButton1");
 		
 		var formatDate = d3.timeFormat("%d %B %Y");
 		var formatDateintoMonth = d3.timeFormat("%B");
@@ -76,7 +80,6 @@ class MapPlot {
 			update(time_value.invert(currentValue));
 			currentValue = currentValue + (targetValue/151);
 			if (currentValue > targetValue) {
-				currentValue = 0;
 				clearInterval(timer);
 			}
 		}
@@ -130,8 +133,18 @@ class MapPlot {
 			.attr("transform", "translate(0, -25)")
 		
 		playButton.on("click", function() {
-			var timer = setInterval(step, 100);
-		})
+			timer = setInterval(step, 100);
+		});
+		
+		pauseButton.on("click", function() {
+			clearInterval(timer);
+		});
+		
+		restartButton.on("click", function() {
+			currentValue = 0;
+			update(time_value.invert(currentValue));
+			clearInterval(timer);
+		});
 	}
 	
 	constructor(svg_element_id, Type){
