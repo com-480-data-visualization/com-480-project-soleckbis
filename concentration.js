@@ -54,6 +54,86 @@ class MapPlot {
 			.style('stroke-width', '1px')
 	}
 	
+	makeSlider(svg) {
+		
+		var currentValue = 0;
+		var targetValue = 700;
+		
+		var playButton = d3.select("#PlayButton1");
+		
+		var formatDate = d3.timeFormat("%d %B %Y");
+		var formatDateintoMonth = d3.timeFormat("%B");
+		
+		const startDate = new Date("2020-02-01");
+		const endDate = new Date("2020-04-15");
+			
+		var time_value = d3.scaleTime()
+			.domain([startDate, endDate])
+			.range([0, targetValue])
+			.clamp(true);
+		
+		function step() {
+			update(time_value.invert(currentValue));
+			currentValue = currentValue + (targetValue/151);
+			if (currentValue > targetValue) {
+				currentValue = 0;
+				clearInterval(timer);
+			}
+		}
+		
+		function update(h) {
+			handle.attr("cx", time_value(h));
+			label.attr("x", time_value(h))
+			.text(formatDate(h))
+		}
+			
+		var slider = this.svg.append("g")
+			.attr("class", "slider")
+			.attr("transform", "translate(20,-70)");	
+			
+		slider.append("line")
+			.attr("class","track")
+			.attr("x1", time_value.range()[0])
+			.attr("x2", time_value.range()[1])
+			.select(function() { return this.parentNode.appendChild(this.cloneNode(true));})
+				.attr("class", "track-inset")
+			.select(function() {return this.parentNode.appendChild(this.cloneNode(true));})
+				.attr("class", "track-overlay")
+				.call(d3.drag()
+					.on("start.interrupt", function(){slider.interrupt(); })
+					.on("start drag", function(){
+						currentValue = d3.event.x;
+						update(time_value.invert(currentValue));
+					})
+				);
+		
+		slider.insert("g", ".track-overlay")
+			.attr("class", "ticks")
+			.attr("transform", "translate(0,10)")
+		.selectAll("text")
+			.data(time_value.ticks(5))
+			.enter()
+			.append("text")
+			.attr("x", time_value)
+			.attr("y", 10)
+			.attr("text-anchor", "middle")
+			.text(function(d) {return formatDateintoMonth(d);});
+				
+		var handle = slider.insert("circle", ".track-overlay")
+			.attr("class", "handle")
+			.attr("r", 9);
+		
+		var label = slider.append("text")
+			.attr("class", "label")
+			.attr("text-anchor", "middle")
+			.text(formatDate(startDate))
+			.attr("transform", "translate(0, -25)")
+		
+		playButton.on("click", function() {
+			var timer = setInterval(step, 100);
+		})
+	}
+	
 	constructor(svg_element_id, Type){
 		this.svg = d3.select('#' + svg_element_id);
 		const svg_viewbox = this.svg.node().viewBox.animVal;
@@ -73,7 +153,7 @@ class MapPlot {
 		const color_scale = d3.scaleLinear()
 			.range(["rgb(255,237,160)", "rgb(240,59,32)"])
 			.interpolate(d3.interpolateHcl);
-			
+		
 		var disease_promise = d3.csv("data/test.csv").then((data)=>{
 			let province_concentration = {};
 			data.forEach((row)=> {
@@ -152,7 +232,7 @@ class MapPlot {
 			})
 			
 			color_scale.domain([0, 2e-4]);
-			
+				
 			const map_container = this.svg.append('g');
 			
 			const zoom = d3.zoom()
@@ -178,6 +258,7 @@ class MapPlot {
 			}
 			
 			this.makeColorbar(this.svg, color_scale, [50, 30], [20, this.svg_height - 2*30]);
+			this.makeSlider(this.svg);
 		})
 	};
 }
