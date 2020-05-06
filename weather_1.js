@@ -57,6 +57,13 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
   	var xScale2 = d3.scaleTime()
     .domain([minDate_2, maxDate_2])
     .range([0,width]);
+    
+    
+    var position_x_score = width +100
+    
+    var xScale3 = d3.scaleTime()
+    .domain([0, 0])
+    .range([position_x_score,position_x_score]);
   
   	var yScale = d3.scaleLinear()
     .domain([
@@ -69,6 +76,9 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
   	domain([minTemp,maxTemp])
   	.range([height, 0]);
   	
+  	var yScale3 = d3.scaleLinear().
+  	domain([-1,1])
+  	.range([height, 0]);
   	
   	var xAxis = d3.axisBottom()
 	  .scale(xScale)
@@ -76,6 +86,10 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
 	  
  	var xAxis2 = d3.axisBottom()
 	  .scale(xScale2)
+	  .ticks(5)
+	 
+	 var xAxis3= d3.axisBottom()
+	  .scale(xScale3)
 	  .ticks(5)
 	  
   	// Y-axis
@@ -87,7 +101,53 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
 		.scale(yScale2)
 		.ticks(5) 
 		
-	// X-axis
+	var yAxis3 =  d3.axisLeft()
+		.scale(yScale3)
+		.ticks(5) 
+		
+	
+	
+   var svgContainer = d3.select("body").append("svg")
+                                    .attr("width", 200)
+                                     .attr("height", 200);
+ 
+ 	//Draw the Circle
+ 	var circle = svgContainer.append("circle")
+                          .attr("cx", 100)
+                          .attr("cy", yScale3(R))
+                         .attr("r", 20);
+   
+
+// X-axis
+  svg.append('g')
+      .attr('class','axis')
+      .attr('transform', 'translate(' + position_x_score + ',0)')
+      .call(xAxis3)
+      .append('text') // X-axis Label
+      .attr('class','label')
+      .attr('y',-20)
+      .attr('x',width-5)
+      .attr('dy','.71em')
+      .style('text-anchor','end')
+      .text('Dates nb cases')
+  	  .style("fill", "blue")
+
+// Y axis correlation
+svg.append('g').data(mapped_temp)
+      .attr('class', 'axis')  
+      .attr('transform','translate(' + position_x_score + ',0)')    
+      .call(yAxis3)
+      .append('text') // y-axis Label
+      .attr('class','label')
+      .attr('x',+70)
+      .attr('y',-20)
+      .attr('dy','.71em')
+      .style('text-anchor','end')
+      .text('Spearson correlation score')
+  	  .style("fill", "black")
+
+
+// X-axis
   svg.append('g')
       .attr('class','axis')
       .attr('transform', 'translate(0,' + height + ')')
@@ -142,9 +202,10 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
       .text('Weather feature')
   	  .style("fill", "red")
        
-        
+   console.log(4)
    var formatTime = d3.timeFormat("%B %d, %Y")
    
+
    var circles = svg.selectAll('circle')
       .data(mapped_count)
       .enter()
@@ -173,7 +234,7 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
                            '\nDate: ' + formatTime(new Date(d.date))})
                            
                            
-     var circles = svg.selectAll('circle2')
+     var circles2 = svg.selectAll('circle2')
       .data(mapped_temp)
       .enter()
       .append('circle')
@@ -199,6 +260,8 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
       .append('title') // Tooltip
       .text(function (d) { return '\nAvg_Temp: ' + d.temp +'\ deg. C. '+
                            '\nDate: ' + formatTime(new Date(d.date))})               
+  
+  
   
    svg.append("path")
       .datum(mapped_count)

@@ -86,6 +86,4 @@ input[type=radio]:checked + label{
 }
 
 
-#linear-gauge {
-  position : relative; 
-}
+
