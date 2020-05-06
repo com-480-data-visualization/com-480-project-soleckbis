@@ -61,10 +61,6 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
     
     var position_x_score = width +100
     
-    var xScale3 = d3.scaleTime()
-    .domain([0, 0])
-    .range([position_x_score,position_x_score]);
-  
   	var yScale = d3.scaleLinear()
     .domain([
     	d3.min([0,d3.min(d,function (d) { return d.count })]),
@@ -87,10 +83,6 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
  	var xAxis2 = d3.axisBottom()
 	  .scale(xScale2)
 	  .ticks(5)
-	 
-	 var xAxis3= d3.axisBottom()
-	  .scale(xScale3)
-	  .ticks(5)
 	  
   	// Y-axis
   	var yAxis =  d3.axisLeft()
@@ -107,30 +99,16 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
 		
 	
 	
-   var svgContainer = d3.select("body").append("svg")
-                                    .attr("width", 200)
-                                     .attr("height", 200);
- 
+   var svgContainer = d3.select("body").append("svg");
+                           
  	//Draw the Circle
  	var circle = svgContainer.append("circle")
-                          .attr("cx", 100)
+                          .attr("cx", position_x_score -width+7)
                           .attr("cy", yScale3(R))
-                         .attr("r", 20);
+                         .attr("r", 10)
+      					.attr('stroke','red')
+      					.attr('fill','white')
    
-
-// X-axis
-  svg.append('g')
-      .attr('class','axis')
-      .attr('transform', 'translate(' + position_x_score + ',0)')
-      .call(xAxis3)
-      .append('text') // X-axis Label
-      .attr('class','label')
-      .attr('y',-20)
-      .attr('x',width-5)
-      .attr('dy','.71em')
-      .style('text-anchor','end')
-      .text('Dates nb cases')
-  	  .style("fill", "blue")
 
 // Y axis correlation
 svg.append('g').data(mapped_temp)
