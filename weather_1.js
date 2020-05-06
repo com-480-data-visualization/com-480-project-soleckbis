@@ -197,7 +197,7 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
           .attr('stroke-width',1)
       })
       .append('title') // Tooltip
-      .text(function (d) { return '\nNew cases: ' + d.count +
+      .text(function (d) { return '\nAvg_Temp: ' + d.temp +'\ deg. C. '+
                            '\nDate: ' + formatTime(new Date(d.date))})               
   
    svg.append("path")
