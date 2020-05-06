@@ -27,12 +27,13 @@ class MapCircle {
 		}
 		
 		
-	makeSlider(svg) {
+	makeSlider(svg, time_value, svg_element_id, Type, projection, path_generator, radius_scale) {
 		
 		var timer;
 		
+		const $this = this;
+		
 		var currentValue = 0;
-		var targetValue = 700;
 		
 		var playButton = d3.select("#PlayButton2");
 		var pauseButton = d3.select("#PauseButton2");
@@ -40,18 +41,40 @@ class MapCircle {
 		
 		var formatDate = d3.timeFormat("%d %B %Y");
 		var formatDateintoMonth = d3.timeFormat("%B");
+		var formatDateString = d3.timeFormat("%Y-%m-%d");
 		
-		const startDate = new Date("2020-02-01");
-		const endDate = new Date("2020-04-15");
-
-		var time_value = d3.scaleTime()
-			.domain([startDate, endDate])
-			.range([0, targetValue])
-			.clamp(true);
+		var targetValue = time_value.range()[1];
+		
+		updateMap(time_value.domain()[0], true);
+		
+		function handleMouseOver(d, i) {
+			var coords = d3.mouse(this)
+			var svg = d3.select('#' + svg_element_id);
+			d3.select(this).style('stroke-width', 1)
+			if (Type=='provinces') {
+				d3.select('#' + svg_element_id).append('text')
+					.attr("id", "t"+d.properties.NAME_1)
+					.attr("x", coords[0]-30)
+					.attr("y", coords[1]-15)
+					.text(d.properties.NAME_1+' Total cases : '+d.properties.cases);
+			} else if (Type=='municipalities') {
+				d3.select('#' + svg_element_id).append('text')
+					.attr("id", "t"+d.properties.NAME_1)
+					.attr("x", coords[0]-30)
+					.attr("y", coords[1]-15)
+					.text(d.properties.NAME_2+' Total cases : '+d.properties.cases);
+			}
+		}
+		
+		function handleMouseOut(d, i) {
+			d3.selectAll('.province').style('stroke-width', 0.2);
+			d3.select("#t"+d.properties.NAME_1).remove();
+		}
+			
 		
 		function step() {
 			update(time_value.invert(currentValue));
-			currentValue = currentValue + (targetValue/151);
+			currentValue = currentValue + (targetValue/300);
 			if (currentValue > targetValue) {
 				clearInterval(timer);
 			}
@@ -60,7 +83,8 @@ class MapCircle {
 		function update(h) {
 			handle.attr("cx", time_value(h));
 			label.attr("x", time_value(h))
-			.text(formatDate(h))
+			.text(formatDate(h));
+			updateMap(h);
 		}
 			
 		var slider = this.svg.append("g")
@@ -102,7 +126,7 @@ class MapCircle {
 		var label = slider.append("text")
 			.attr("class", "label")
 			.attr("text-anchor", "middle")
-			.text(formatDate(startDate))
+			.text(formatDate(time_value.domain()[0]))
 			.attr("transform", "translate(0, -25)")
 		
 		playButton.on("click", function() {
@@ -119,7 +143,138 @@ class MapCircle {
 			clearInterval(timer);
 		});
 		
-	}		
+		
+		function updateMap(date, new_map=false) {
+			
+			var disease_promise = d3.csv("data/test.csv").then((data)=>{
+				let province_concentration = {};
+				var filter_data = data.filter(function (a){return a.date==formatDateString(date)});
+				filter_data.forEach((row)=> {
+					province_concentration[row.province] = parseFloat(row.province_cases);
+				});
+				return province_concentration;
+			});
+			
+			var map_promise = d3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
+				const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.provinces);
+				return province_paths.features;
+			});
+			
+			if (Type=='provinces') {
+				disease_promise = d3.csv("data/test.csv").then((data)=>{
+					let province_concentration = {};
+					var filter_data = data.filter(function (a){return a.date==formatDateString(date)});
+					filter_data.forEach((row)=> {
+						province_concentration[row.province] = [parseFloat(row.province_cases)];
+					});
+					return province_concentration;
+				});
+			
+				map_promise = d3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
+					const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.provinces);
+					return province_paths.features;
+				});
+			} else if (Type=='municipalities') {
+
+				disease_promise = d3.csv("data/test.csv").then((data)=>{
+					let province_concentration = {};
+					var filter_data = data.filter(function (a){return a.date==formatDateString(date)});
+					filter_data.forEach((row)=> {
+						province_concentration[row.city] = [parseFloat(row.city_cases)];
+					});
+					return province_concentration;
+				});
+			
+				map_promise = d3.json('json/skorea-municipalities-topo.json').then((topojson_raw)=> {
+					const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.municipalities);
+					return province_paths.features;
+				});
+			}
+			
+			Promise.all([map_promise, disease_promise]).then((results)=> {
+				let map_data = results[0];
+				let province_disease = results[1];
+			
+				map_data.forEach(province => {
+					if (Type=="provinces") {
+						try {
+							province.properties.cases = province_disease[province.properties.NAME_1][0];						
+						} catch (error) {
+							province.properties.cases = 0
+						}
+					} else if (Type="municipalities") {
+						try {
+							province.properties.cases = province_disease[province.properties.NAME_2][0];
+						} catch (error) {
+							province.properties.cases = 0
+						}
+					}
+				})
+			
+			radius_scale.domain([0, 100]);
+			
+			var map_container;
+			var circle_container;
+			
+			if (new_map==true) {
+				map_container = svg.append('g').attr("class", "Map");
+				circle_container = svg.append('g').attr("class", "Circle");
+			} else {
+				map_container = d3.select('#circles').select(".Map");
+				circle_container = d3.select("#circles").select(".Circle");
+			}
+			
+			const zoom = d3.zoom()
+				.scaleExtent([1, 8])
+				.on('zoom', zoomed);
+		
+			svg.call(zoom);
+			
+			if (new_map==true) {
+				map_container.selectAll(".province")
+					.data(map_data)
+					.enter()
+					.append("path")
+					.classed("province", true)
+					.attr("d", path_generator)
+					.style("fill", 'white')
+					.on('mouseover', handleMouseOver)
+					.on('mouseout', handleMouseOut);
+			}
+
+				
+			if (new_map==true) {
+				circle_container.selectAll(".province-circles")
+					.data(map_data)
+					.enter()
+					.append("circle")
+					.classed("province-circles", true)
+					.attr("r", (d)=>Math.sqrt(radius_scale(d.properties.cases)))
+					.attr("transform", (d)=> "translate("+path_generator.centroid(d)+")")
+					.style("fill", "red");
+			} else {
+				circle_container.selectAll(".province-circles")
+					.data(map_data)
+					.attr("r", (d)=>Math.sqrt(radius_scale(d.properties.cases)))
+					.attr("transform", (d)=> "translate("+path_generator.centroid(d)+")")
+					.style("fill", "red");
+			}
+				
+				
+			function zoomed() {
+				var t = d3.event.transform;
+				map_container.selectAll('path')
+				.attr('transform', t);
+				circle_container.selectAll("circle")
+				.attr("transform", (d)=> "translate("+[t.k*path_generator.centroid(d)[0]+t.x,+t.k*path_generator.centroid(d)[1]+t.y]+")");
+			}
+			
+			if (new_map==true) {
+				$this.makeCirclebar($this.svg, radius_scale, [50, 30], [20, $this.svg_height - 2*30]);
+			}
+		});
+	}	
+}
 		
 	
 	constructor(svg_element_id, Type){
@@ -127,6 +282,16 @@ class MapCircle {
 		const svg_viewbox = this.svg.node().viewBox.animVal;
 		this.svg_width = svg_viewbox.width;
 		this.svg_height = svg_viewbox.height;
+		
+		var targetValue = 700;
+		
+		var time_promise = d3.csv("data/test.csv").then((data) => {
+			var time_value = d3.scaleTime()
+			.domain(d3.extent(data, function(d){return new Date(d.date);}))
+			.range([0, targetValue])
+			.clamp(true);
+			return time_value;
+		})
 		
 		const projection = d3.geoNaturalEarth1()
 			.rotate([0,0])
@@ -141,138 +306,11 @@ class MapCircle {
 		const radius_scale = d3.scaleLinear()
 			.range([0, 400]);
 			
-		var disease_promise = d3.csv("data/test.csv").then((data)=>{
-			let province_concentration = {};
-			data.forEach((row)=> {
-				province_concentration[row.province] = parseFloat(row.province_cases);
-			});
-			return province_concentration;
-		});
-			
-		var map_promise = d3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
-			const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.provinces);
-			return province_paths.features;
-		});
-			
-		if (Type=='provinces') {
-			disease_promise = d3.csv("data/test.csv").then((data)=>{
-				let province_concentration = {};
-				data.forEach((row)=> {
-					province_concentration[row.province] = [parseFloat(row.province_cases)];
-				});
-				return province_concentration;
-			});
-			
-			map_promise = d3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
-				const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.provinces);
-				return province_paths.features;
-			});
-		} else if (Type=='municipalities') {
-
-			disease_promise = d3.csv("data/test.csv").then((data)=>{
-				let province_concentration = {};
-				data.forEach((row)=> {
-					province_concentration[row.city] = [parseFloat(row.city_cases)];
-				});
-				return province_concentration;
-			});
-			
-			map_promise = d3.json('json/skorea-municipalities-topo.json').then((topojson_raw)=> {
-				const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.municipalities);
-				return province_paths.features;
-			});
-		}
-		
-		function handleMouseOver(d, i) {
-			var coords = d3.mouse(this)
-			var svg = d3.select('#' + svg_element_id);
-			d3.select(this).style('stroke-width', 1)
-			if (Type=='provinces') {
-				d3.select('#' + svg_element_id).append('text')
-					.attr("id", "t"+d.properties.NAME_1)
-					.attr("x", coords[0]-30)
-					.attr("y", coords[1]-15)
-					.text(d.properties.NAME_1+' Total cases : '+d.properties.cases);
-			} else if (Type=='municipalities') {
-				d3.select('#' + svg_element_id).append('text')
-					.attr("id", "t"+d.properties.NAME_1)
-					.attr("x", coords[0]-30)
-					.attr("y", coords[1]-15)
-					.text(d.properties.NAME_2+' Total cases : '+d.properties.cases);
-			}
-		}
-		
-		function handleMouseOut(d, i) {
-			d3.selectAll('.province').style('stroke-width', 0.2);
-			d3.select("#t"+d.properties.NAME_1).remove();
-		}
-		
-		Promise.all([map_promise, disease_promise]).then((results)=> {
-			let map_data = results[0];
-			let province_disease = results[1];
-			
-			map_data.forEach(province => {
-				if (Type=="provinces") {
-					try {
-						province.properties.cases = province_disease[province.properties.NAME_1][0];
-					} catch (error) {
-						province.properties.cases = 0
-					}
-				} else if (Type="municipalities") {
-					try {
-						province.properties.cases = province_disease[province.properties.NAME_2][0];
-					} catch (error) {
-						province.properties.cases = 0
-					}
-				}
-			})
-			
-			
-			const cases = Object.values(province_disease);
-			
-			radius_scale.domain([0, 100]);
-			
-			const map_container = this.svg.append('g');
-			const circle_container = this.svg.append('g');
-			
-			const zoom = d3.zoom()
-				.scaleExtent([1, 8])
-				.on('zoom', zoomed);
-		
-			this.svg.call(zoom);
-			
-			map_container.selectAll(".province")
-				.data(map_data)
-				.enter()
-				.append("path")
-				.classed("province", true)
-				.attr("d", path_generator)
-				.style("fill", 'white')
-				.on('mouseover', handleMouseOver)
-				.on('mouseout', handleMouseOut);
-
-				
-				
-			circle_container.selectAll(".province-circles")
-				.data(map_data)
-				.enter()
-				.append("circle")
-				.classed("province-circles", true)
-				.attr("r", (d)=>Math.sqrt(radius_scale(d.properties.cases)))
-				.attr("transform", (d)=> "translate("+path_generator.centroid(d)+")")
-				.style("fill", "red");
-				
-			function zoomed() {
-				var t = d3.event.transform;
-				map_container.selectAll('path')
-				.attr('transform', t);
-				circle_container.selectAll("circle")
-				.attr("transform", (d)=> "translate("+[t.k*path_generator.centroid(d)[0]+t.x,+t.k*path_generator.centroid(d)[1]+t.y]+")");
-			}
-				
-			this.makeCirclebar(this.svg, radius_scale, [50, 30], [20, this.svg_height - 2*30]);
-			this.makeSlider(this.svg);
+		Promise.all([time_promise]).then((results)=> {
+			let time_value = results[0];
+			this.makeSlider(this.svg, time_value, svg_element_id, Type, projection, path_generator, radius_scale);
 		})
+		
 	};
 }
 
