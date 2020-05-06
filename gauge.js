@@ -3,7 +3,7 @@ var $container = d3.select('#linear-gauge');
 var         width = parseFloat($container.style("width"));
 var        height = parseFloat($container.style("height"));
 
-window.onresize = resize;
+
 
 function resize()
 {
@@ -47,7 +47,7 @@ var gauge_h = 60;
 var chart_w = width;
 var chart_y_pos = 0;
 
-var result = 0.76;	// in a scale [0 1]
+var result = 0.16;	// in a scale [0 1]
 var resultPos = chart_w * result;
 
 var text_margins = {top: chart_y_pos + gauge_h + 35, right: 10, bottom: 0, left: 10};
