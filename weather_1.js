@@ -1,4 +1,5 @@
 
+
 // set the dimensions and margins of the graph
 var margin = {top: 10, right:0, bottom: 30, left:0},
     width = 500 - margin.left - margin.right,
@@ -18,6 +19,14 @@ d3.csv("data/essai.csv", function(row) {
   return {date: row.date, count: row.count, avg_temp: row.avg_temp}
 }).then(function(d){
 	
+	
+	
+let arrX = [2,4,2];
+let arrY = [1,2,1];
+let R = pcorr(arrX, arrY);
+console.log('arrX', arrX, 'arrY', arrY, 'R', R);
+	
+
 	var avg_temp = d3.nest()
   	.key(function(d1) {return d1.date; })
   	.rollup(function(v) { return d3.mean(v, function(d1) { return d1.avg_temp}); })
@@ -40,9 +49,6 @@ d3.csv("data/essai.csv", function(row) {
   
   	var minTemp = d3.min(mapped_temp, function(d) { return d.temp; });
   	var maxTemp = d3.max(mapped_temp, function(d) { return d.temp; });
-  	
-  	console.log(minTemp);
-  	console.log(maxTemp);
   	
   	var xScale = d3.scaleTime()
     .domain([minDate_1, maxDate_1])
