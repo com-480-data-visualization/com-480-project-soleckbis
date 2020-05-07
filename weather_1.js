@@ -1,30 +1,31 @@
 
 
-// set the dimensions and margins of the graph
-var margin = {top: 10, right:0, bottom: 30, left:0},
-    width = 500 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
-
-// append the svg object to the body of the page
-var svg = d3.select("#my_dataviz")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
-
-
-d3.csv("data/essai.csv", function(row) {
-  return {date: row.date, count: row.count, avg_temp: row.avg_temp}
-}).then(function(d){
+	// set the dimensions and margins of the graph
+	var margin = {top: 10, right:0, bottom: 30, left:0},
+	    width = 800 - margin.left - margin.right,
+	    height = 500 - margin.top - margin.bottom;
 	
-	
-	
-let arrX = [2,4,2];
-let arrY = [1,2,1];
-let R = pcorr(arrX, arrY);
-console.log('arrX', arrX, 'arrY', arrY, 'R', R);
+	var width_score = 100
+	var width_s = width -width_score
+	// append the svg object to the body of the page
+	var svg = d3.select("#my_dataviz")
+	  .append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	  .append("g")
+	    .attr("transform",
+	          "translate(" + margin.left + "," + margin.top + ")");
+
+
+	d3.csv("data/essai.csv", function(row) {
+	  return {date: row.date, count: row.count, avg_temp: row.avg_temp}
+	}).then(function(d){
+		
+	let arrX = [2,4,2];
+	let arrY = [1,2,1];
+	let R = pcorr(arrX, arrY);
+	var R_mapped = [{'value':R}]
+	console.log('arrX', arrX, 'arrY', arrY, 'R', R);
 	
 
 	var avg_temp = d3.nest()
@@ -37,9 +38,12 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
   
   	var mapped_temp = avg_temp.map(d => {
   	return {date: new Date(d.key),temp: d.value}});
+  	console.log(mapped_temp)
+  	console.log(mapped_count.date)
   	
   	var count = Object.keys(mapped_count).map(e => mapped_count[e].count);
 	var temp = Object.keys(mapped_temp).map(e => mapped_temp[e].count);
+	
 	
 	var minDate_1 = d3.min(mapped_count, function(d) { return d.date; });
   	var maxDate_1 = d3.max(mapped_count, function(d) { return d.date; });
@@ -52,11 +56,11 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
   	
   	var xScale = d3.scaleTime()
     .domain([minDate_1, maxDate_1])
-    .range([0,width]);
+    .range([0,width_s]);
   
   	var xScale2 = d3.scaleTime()
     .domain([minDate_2, maxDate_2])
-    .range([0,width]);
+    .range([0,width_s]);
     
     
     var position_x_score = width +100
@@ -101,19 +105,24 @@ console.log('arrX', arrX, 'arrY', arrY, 'R', R);
 	
    var svgContainer = d3.select("body").append("svg");
                            
- 	//Draw the Circle
- 	var circle = svgContainer.append("circle")
-                          .attr("cx", position_x_score -width+7)
-                          .attr("cy", yScale3(R))
-                         .attr("r", 10)
-      					.attr('stroke','red')
-      					.attr('fill','white')
+ 
    
-
+   var circles = svg.selectAll('circle3')
+      .data(R_mapped)
+      .enter()
+      .append('circle')
+      .attr('cx',width)
+      .attr('cy',function (d) { return yScale3(d.value) })
+      .attr('r','10')
+      .attr('stroke','blue')
+      .attr('fill','orange')
+   
+   
+	console.log(yScale3(100))
 // Y axis correlation
-svg.append('g').data(mapped_temp)
+svg.append('g').data(R_mapped)
       .attr('class', 'axis')  
-      .attr('transform','translate(' + position_x_score + ',0)')    
+      .attr('transform','translate(' + width + ',0)')    
       .call(yAxis3)
       .append('text') // y-axis Label
       .attr('class','label')
@@ -133,7 +142,7 @@ svg.append('g').data(mapped_temp)
       .append('text') // X-axis Label
       .attr('class','label')
       .attr('y',-20)
-      .attr('x',width-5)
+      .attr('x',width_s-5)
       .attr('dy','.71em')
       .style('text-anchor','end')
       .text('Dates nb cases')
@@ -146,7 +155,7 @@ svg.append('g').data(mapped_temp)
       .append('text') // X-axis Label
       .attr('class','label')
       .attr('y',-20)
-      .attr('x',width)
+      .attr('x',width_s)
       .attr('dy','.71em')
       .style('text-anchor','end')
       .text('Dates weather feature')
@@ -168,7 +177,7 @@ svg.append('g').data(mapped_temp)
   	  
   svg.append('g').data(mapped_temp)
       .attr('class', 'axis')  
-      .attr('transform','translate('+ width +',0)')    
+      .attr('transform','translate('+ width_s +',0)')    
       .call(yAxis2)
       .append('text') // y-axis Label
       .attr('class','label')
@@ -182,7 +191,7 @@ svg.append('g').data(mapped_temp)
        
    console.log(4)
    var formatTime = d3.timeFormat("%B %d, %Y")
-   
+
 
    var circles = svg.selectAll('circle')
       .data(mapped_count)
