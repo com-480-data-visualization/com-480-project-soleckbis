@@ -20,13 +20,14 @@
 	d3.csv("data/essai.csv", function(row) {
 	  return {date: row.date, count: row.count, avg_temp: row.avg_temp}
 	}).then(function(d){
-		
+	
+	/*	
 	let arrX = [2,4,2];
 	let arrY = [1,2,1];
 	let R = pcorr(arrX, arrY);
 	var R_mapped = [{'value':R}]
 	console.log('arrX', arrX, 'arrY', arrY, 'R', R);
-	
+	*/
 
 	var avg_temp = d3.nest()
   	.key(function(d1) {return d1.date; })
@@ -34,25 +35,46 @@
   	.entries(d);
    	
    	var mapped_count = d.map(d => {
-  	return {date: new Date(d.date),count: d.count}});
-  
-  	var mapped_temp = avg_temp.map(d => {
-  	return {date: new Date(d.key),temp: d.value}});
-  	console.log(mapped_temp)
-  	console.log(mapped_count.date)
+  	return {date: new Date(d.date),value: d.count}});
+
+	function reduce_left(mapped,nb) { 
+  		return mapped.slice(nb);
+	}
   	
-  	var count = Object.keys(mapped_count).map(e => mapped_count[e].count);
-	var temp = Object.keys(mapped_temp).map(e => mapped_temp[e].count);
-	
-	
-	var minDate_1 = d3.min(mapped_count, function(d) { return d.date; });
-  	var maxDate_1 = d3.max(mapped_count, function(d) { return d.date; });
+  	function reduce_right(mapped,nb) { 
+  		return mapped.slice(0,mapped.length-nb);
+	}
   
-  	var minDate_2 = d3.min(mapped_temp, function(d) { return d.date; });
-  	var maxDate_2 = d3.max(mapped_temp, function(d) { return d.date; });
+  	
+  	var mapped_temp = avg_temp.map(d => {
+  	return {date: new Date(d.key),value: d.value}});
+  	
+  	mapped_count = reduce_left(mapped_count,2)
+	mapped_temp = reduce_right(mapped_temp,2)
+	
+	console.log(mapped_count)
+	console.log(mapped_temp)
+	
+  	var count = Object.keys(mapped_count).map(e => parseFloat(mapped_count[e].value));
+	var temp = Object.keys(mapped_temp).map(e => parseFloat(mapped_temp[e].value));
+	
+	console.log(count)
+	
+	let R = pcorr(count,temp);
+	var R_mapped = [{'value':Math.round(R*100)/100}]
+	
+	var minDate_1 = get_min_date(mapped_count);
+  	var maxDate_1 = get_max_date(mapped_count);
   
-  	var minTemp = d3.min(mapped_temp, function(d) { return d.temp; });
-  	var maxTemp = d3.max(mapped_temp, function(d) { return d.temp; });
+  	var minDate_2 = get_min_date(mapped_temp);
+  	var maxDate_2 = get_max_date(mapped_temp);
+  
+  	var minTemp = get_min_value(mapped_temp);
+  	var maxTemp = get_max_value(mapped_temp);
+  	
+  	var minCount = get_min_value(mapped_count);
+  	var maxCount= get_max_value(mapped_count);
+  	
   	
   	var xScale = d3.scaleTime()
     .domain([minDate_1, maxDate_1])
@@ -62,14 +84,8 @@
     .domain([minDate_2, maxDate_2])
     .range([0,width_s]);
     
-    
-    var position_x_score = width +100
-    
   	var yScale = d3.scaleLinear()
-    .domain([
-    	d3.min([0,d3.min(d,function (d) { return d.count })]),
-    	d3.max([0,d3.max(d,function (d) { return d.count })])
-    	])
+    .domain([0,maxCount])
     .range([height,0])
   	
   	var yScale2 = d3.scaleLinear().
@@ -101,12 +117,8 @@
 		.scale(yScale3)
 		.ticks(5) 
 		
-	
-	
    var svgContainer = d3.select("body").append("svg");
                            
- 
-   
    var circles = svg.selectAll('circle3')
       .data(R_mapped)
       .enter()
@@ -116,11 +128,25 @@
       .attr('r','10')
       .attr('stroke','blue')
       .attr('fill','orange')
+   	  .on('mouseover', function () {
+        d3.select(this)
+          .transition()
+          .duration(500)
+          .attr('r',15)
+          .attr('stroke-width',3)
+      })
+      .on('mouseout', function () {
+        d3.select(this)
+          .transition()
+          .duration(500)
+          .attr('r',8)
+          .attr('stroke-width',1)
+      })
+      .append('title') // Tooltip
+      .text(function (d) { return '\nCorrelation score between variables: ' + d.value})
    
-   
-	console.log(yScale3(100))
 // Y axis correlation
-svg.append('g').data(R_mapped)
+	svg.append('g').data(R_mapped)
       .attr('class', 'axis')  
       .attr('transform','translate(' + width + ',0)')    
       .call(yAxis3)
@@ -189,16 +215,14 @@ svg.append('g').data(R_mapped)
       .text('Weather feature')
   	  .style("fill", "red")
        
-   console.log(4)
    var formatTime = d3.timeFormat("%B %d, %Y")
-
 
    var circles = svg.selectAll('circle')
       .data(mapped_count)
       .enter()
       .append('circle')
       .attr('cx',function (d) { return xScale(d.date) })
-      .attr('cy',function (d) { return yScale(d.count) })
+      .attr('cy',function (d) { return yScale(d.value) })
       .attr('r','4')
       .attr('stroke','blue')
       .attr('fill','blue')
@@ -217,7 +241,7 @@ svg.append('g').data(R_mapped)
           .attr('stroke-width',1)
       })
       .append('title') // Tooltip
-      .text(function (d) { return '\nNew cases: ' + d.count +
+      .text(function (d) { return '\nNew cases: ' + d.value +
                            '\nDate: ' + formatTime(new Date(d.date))})
                            
                            
@@ -226,7 +250,7 @@ svg.append('g').data(R_mapped)
       .enter()
       .append('circle')
       .attr('cx',function (d) { return xScale2(d.date) })
-      .attr('cy',function (d) { return yScale2(d.temp) })
+      .attr('cy',function (d) { return yScale2(d.value) })
       .attr('r','4')
       .attr('stroke','red')
       .attr('fill','red')
@@ -245,30 +269,48 @@ svg.append('g').data(R_mapped)
           .attr('stroke-width',1)
       })
       .append('title') // Tooltip
-      .text(function (d) { return '\nAvg_Temp: ' + d.temp +'\ deg. C. '+
+      .text(function (d) { return '\nAvg_Temp: ' + d.value +'\ deg. C. '+
                            '\nDate: ' + formatTime(new Date(d.date))})               
   
-  
-  
-   svg.append("path")
-      .datum(mapped_count)
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
-      .attr("d", d3.line()
-        .x(function(d) { return xScale(d.date) })
-        .y(function(d) { return yScale(d.count)  })
-        ) 
-  
-  
-  svg.append("path")
-      .datum(mapped_temp)
-      .attr("fill", "none")
-      .attr("stroke", "red")
-      .attr("stroke-width", 1.5)
-      .attr("d", d3.line()
-        .x(function(d) { return xScale2(d.date) })
-        .y(function(d) { return yScale2(d.temp)  })
-        ) 
+	   svg.append("path")
+	      .datum(mapped_count)
+	      .attr("fill", "none")
+	      .attr("stroke", "steelblue")
+	      .attr("stroke-width", 1.5)
+	      .attr("d", d3.line()
+	        .x(function(d) { return xScale(d.date) })
+	        .y(function(d) { return yScale(d.value)  })
+	        ) 
+	  
+	  
+	  svg.append("path")
+	      .datum(mapped_temp)
+	      .attr("fill", "none")
+	      .attr("stroke", "red")
+	      .attr("stroke-width", 1.5)
+	      .attr("d", d3.line()
+	        .x(function(d) { return xScale2(d.date) })
+	        .y(function(d) { return yScale2(d.value)  })
+	        ) 
   	
 });
+
+
+
+function get_min_date(mapped) {
+  return d3.min(mapped, function(d) { return d.date; });
+}
+
+function get_max_date(mapped) {
+  return d3.max(mapped, function(d) { return d.date; });
+}
+
+function get_min_value(mapped) {
+  return d3.min(mapped, function(d) { return d.value; });
+}
+
+function get_max_value(mapped) {
+  return d3.max(mapped, function(d) { return d.value; });
+}
+
+
