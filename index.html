@@ -14,7 +14,7 @@
 	</div>
 	<button id="PlayButton1">Play</button>
 	<button id="PauseButton1">Pause</button>
-	<button id="RestartButton1">Restart</button><br>
+	<button id="RewindButton1">Rewind</button><br>
 	<svg id ="concentration" viewBox="0 0 400 500" width="900" height="700">
 		<style>
 			.province {
@@ -32,7 +32,7 @@
 	</div>
 	<button id="PlayButton2">Play</button>
 	<button id="PauseButton2">Pause</button>
-	<button id="RestartButton2">Restart</button><br>
+	<button id="RewindButton2">Rewind</button><br>
 	<svg id ="circles" viewBox="0 0 400 500" width="900" height="700">
 		<style>
 			.province {
@@ -47,13 +47,18 @@
 	
   	<label># bins</label>
   	<input type="number" min="1" max="100" step="30" value="20" id="nBin">
+		<svg id="my_dataviz" viewBox="0 0 400 500" width="900" height="700">
+	</svg>
 	
-	<div id="my_dataviz">
-	</div>
+	
+	
+	<script type="text/javascript" src="function.js"></script>
 	<script src="lib/d3.min.js"></script>
 	<script src="lib/topojson.min.js"></script>
+	<script src="weather_1.js"></script>
 	<script src="concentration.js"></script>
 	<script src="circle.js"></script>
+	
 	
 </body>
 </html>
