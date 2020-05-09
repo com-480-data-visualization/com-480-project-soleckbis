@@ -8,13 +8,42 @@
 	<h3>
 		Concentration of cases by provinces
 	</h3>
-	<div>
+	<div class="gender_button">
+		<h4>
+			Filter by Gender
+		</h4>
+		<select id="Gender1">
+			<option value="All">All</option>
+			<option value="female">Women</option>
+			<option value="male">Men</option>
+		</select>
+	</div>
+	<div class="age_button">
+		<h4>
+			Filter by Age
+		</h4>
+		<select id="Age1">
+			<option value="All">All</option>
+			<option value="0.0">0-9</option>
+			<option value="10.0">10-19</option>
+			<option value="20.0">20-29</option>
+			<option value="30.0">30-39</option>
+			<option value="40.0">40-49</option>
+			<option value="50.0">50-59</option>
+			<option value="60.0">60-69</option>
+			<option value="70.0">70-79</option>
+			<option value="80.0">80-89</option>
+			<option value="90.0">90-99</option>
+			<option value="100.0">100-109</option>
+		</select>
+	</div>
+	<div class="radio_button">
 		<input type="radio" name="MapType1" value="provinces" id="provinces1"><label for="provinces1">Provinces</label>
 		<input type="radio" name="MapType1" value="municipalities" id="municipalities1"><label for="municipalities1">Municipalities</label><br>
 	</div>
 	<button id="PlayButton1">Play</button>
 	<button id="PauseButton1">Pause</button>
-	<button id="RewindButton1">Rewind</button><br>
+	<button id="RestartButton1">Restart</button><br>
 	<svg id ="concentration" viewBox="0 0 400 500" width="900" height="700">
 		<style>
 			.province {
@@ -26,13 +55,42 @@
 	<h3>
 		Daily new cases by provinces
 	</h3>
-	<div>
+	<div class="gender_button">
+		<h4>
+			Filter by Gender
+		</h4>
+		<select id="Gender2">
+			<option value="All">All</option>
+			<option value="female">Women</option>
+			<option value="male">Men</option>
+		</select>
+	</div>
+	<div class="age_button">
+		<h4>
+			Filter by Age
+		</h4>
+		<select id="Age2">
+			<option value="All">All</option>
+			<option value="0.0">0-9</option>
+			<option value="10.0">10-19</option>
+			<option value="20.0">20-29</option>
+			<option value="30.0">30-39</option>
+			<option value="40.0">40-49</option>
+			<option value="50.0">50-59</option>
+			<option value="60.0">60-69</option>
+			<option value="70.0">70-79</option>
+			<option value="80.0">80-89</option>
+			<option value="90.0">90-99</option>
+			<option value="100.0">100-109</option>
+		</select>
+	</div>
+	<div class="radio_button">
 		<input type="radio" name="MapType2" value="provinces" id="provinces2"><label for="provinces2">Provinces</label>
 		<input type="radio" name="MapType2" value="municipalities" id="municipalities2"><label for="municipalities2">Municipalities</label><br>
 	</div>
 	<button id="PlayButton2">Play</button>
 	<button id="PauseButton2">Pause</button>
-	<button id="RewindButton2">Rewind</button><br>
+	<button id="RestartButton2">Restart</button><br>
 	<svg id ="circles" viewBox="0 0 400 500" width="900" height="700">
 		<style>
 			.province {
@@ -47,18 +105,13 @@
 	
   	<label># bins</label>
   	<input type="number" min="1" max="100" step="30" value="20" id="nBin">
-		<svg id="my_dataviz" viewBox="0 0 400 500" width="900" height="700">
-	</svg>
 	
-	
-	
-	<script type="text/javascript" src="function.js"></script>
+	<div id="my_dataviz">
+	</div>
 	<script src="lib/d3.min.js"></script>
 	<script src="lib/topojson.min.js"></script>
-	<script src="weather_1.js"></script>
 	<script src="concentration.js"></script>
 	<script src="circle.js"></script>
-	
 	
 </body>
 </html>

@@ -38,6 +38,8 @@ class MapCircle {
 		var playButton = d3.select("#PlayButton2");
 		var pauseButton = d3.select("#PauseButton2");
 		var restartButton = d3.select("#RestartButton2");
+		var genderButton = d3.select("#Gender2");
+		var ageButton = d3.select("#Age2");
 		
 		var formatDate = d3.timeFormat("%d %B %Y");
 		var formatDateintoMonth = d3.timeFormat("%B");
@@ -45,7 +47,10 @@ class MapCircle {
 		
 		var targetValue = time_value.range()[1];
 		
-		updateMap(time_value.domain()[0], true);
+		var disease_promise;
+		var map_promise;
+		
+		updateMap(time_value.domain()[0], genderButton.node().value, ageButton.node().value, true);
 		
 		function handleMouseOver(d, i) {
 			var coords = d3.mouse(this)
@@ -84,7 +89,9 @@ class MapCircle {
 			handle.attr("cx", time_value(h));
 			label.attr("x", time_value(h))
 			.text(formatDate(h));
-			updateMap(h);
+			genderButton = d3.select("#Gender2");
+			ageButton = d3.select("#Age2");
+			updateMap(h, genderButton.node().value, ageButton.node().value);
 		}
 			
 		var slider = this.svg.append("g")
@@ -144,24 +151,10 @@ class MapCircle {
 		});
 		
 		
-		function updateMap(date, new_map=false) {
-			
-			var disease_promise = d3.csv("data/test.csv").then((data)=>{
-				let province_concentration = {};
-				var filter_data = data.filter(function (a){return a.date==formatDateString(date)});
-				filter_data.forEach((row)=> {
-					province_concentration[row.province] = parseFloat(row.province_cases);
-				});
-				return province_concentration;
-			});
-			
-			var map_promise = d3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
-				const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.provinces);
-				return province_paths.features;
-			});
+		function updateMap(date, gender, age, new_map=false) {
 			
 			if (Type=='provinces') {
-				disease_promise = d3.csv("data/test.csv").then((data)=>{
+				disease_promise = d3.csv("data/"+gender+"_"+age+".csv").then((data)=>{
 					let province_concentration = {};
 					var filter_data = data.filter(function (a){return a.date==formatDateString(date)});
 					filter_data.forEach((row)=> {
@@ -176,7 +169,7 @@ class MapCircle {
 				});
 			} else if (Type=='municipalities') {
 
-				disease_promise = d3.csv("data/test.csv").then((data)=>{
+				disease_promise = d3.csv("data/"+gender+"_"+age+".csv").then((data)=>{
 					let province_concentration = {};
 					var filter_data = data.filter(function (a){return a.date==formatDateString(date)});
 					filter_data.forEach((row)=> {
@@ -285,7 +278,7 @@ class MapCircle {
 		
 		var targetValue = 700;
 		
-		var time_promise = d3.csv("data/test.csv").then((data) => {
+		var time_promise = d3.csv("data/All_All.csv").then((data) => {
 			var time_value = d3.scaleTime()
 			.domain(d3.extent(data, function(d){return new Date(d.date);}))
 			.range([0, targetValue])

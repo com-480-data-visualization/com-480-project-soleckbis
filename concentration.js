@@ -5,10 +5,10 @@ class MapPlot {
 
 		const value_to_svg = scaleClass()
 			.domain(color_scale.domain())
-			.range([colorbar_size[1], 0]);
+			.range([colorbar_size[1], 0.9*colorbar_size[1], 0.81*colorbar_size[1], 0.72*colorbar_size[1], 0.63*colorbar_size[1], 0.54*colorbar_size[1], 0.45*colorbar_size[1], 0.36*colorbar_size[1], 0.27*colorbar_size[1], 0.18*colorbar_size[1], 0.09*colorbar_size[1], 0]);
 
 		const range01_to_color = d3.scaleLinear()
-			.domain([0, 1])
+			.domain([0, 0.09, 0.18, 0.27, 0.36, 0.45, 0.54, 0.63, 0.72, 0.81, 0.9, 1])
 			.range(color_scale.range())
 			.interpolate(color_scale.interpolate());
 
@@ -65,6 +65,8 @@ class MapPlot {
 		var playButton = d3.select("#PlayButton1");
 		var pauseButton = d3.select("#PauseButton1");
 		var restartButton = d3.select("#RestartButton1");
+		var genderButton = d3.select("#Gender1");
+		var ageButton = d3.select("#Age1");
 		
 		var formatDate = d3.timeFormat("%d %B %Y");
 		var formatDateintoMonth = d3.timeFormat("%B");
@@ -72,7 +74,10 @@ class MapPlot {
 		
 		var targetValue = time_value.range()[1];
 		
-		updateMap(time_value.domain()[0], true);
+		var disease_promise;
+		var map_promise;
+		
+		updateMap(time_value.domain()[0], genderButton.node().value, ageButton.node().value, true);
 		
 		function step() {
 			update(time_value.invert(currentValue));
@@ -86,7 +91,9 @@ class MapPlot {
 			handle.attr("cx", time_value(h));
 			label.attr("x", time_value(h))
 			.text(formatDate(h))
-			updateMap(h);
+			genderButton = d3.select("#Gender1");
+			ageButton = d3.select("#Age1");
+			updateMap(h, genderButton.node().value, ageButton.node().value);
 		}
 			
 		var slider = this.svg.append("g")
@@ -166,30 +173,16 @@ class MapPlot {
 		}
 		
 		function handleMouseOut(d, i) {
-			d3.selectAll('.province').style('fill-opacity', 0.6)
+			d3.selectAll('.province').style('fill-opacity', 0.8)
 			.style('stroke-width', 0.2)
 			d3.select("#t"+d.properties.NAME_1).remove();
 		}
 
 		
-		var disease_promise = d3.csv("data/test.csv").then((data)=>{
-			let province_concentration = {};
-			var filter_data = data.filter(function (a){return a.date==formatDateString(time_value.invert(currentValue))});
-			filter_data.forEach((row)=> {
-				province_concentration[row.province] = [parseFloat(row.proportion_province),parseFloat(row.total_province_cases)];
-			});
-			return province_concentration;
-		});
-			
-		var map_promise = d3.json('json/skorea-provinces-topo.json').then((topojson_raw)=> {
-			const province_paths = topojson.feature(topojson_raw,  topojson_raw.objects.provinces);
-			return province_paths.features;
-		});
-		
-		function updateMap(date, new_map=false) {
+		function updateMap(date, gender, age, new_map=false) {
 		
 			if (Type=='provinces') {
-				disease_promise = d3.csv("data/test.csv").then((data)=>{
+				disease_promise = d3.csv("data/"+gender+"_"+age+".csv").then((data)=>{
 					let province_concentration = {};
 					var filter_data = data.filter(function (a){return a.date==formatDateString(date)});
 					filter_data.forEach((row)=> {
@@ -203,7 +196,7 @@ class MapPlot {
 					return province_paths.features;
 				});
 			} else if (Type=='municipalities') {
-				disease_promise = d3.csv("data/test.csv").then((data)=>{
+				disease_promise = d3.csv("data/"+gender+"_"+age+".csv").then((data)=>{
 					let province_concentration = {};
 					var filter_data = data.filter(function (a){return a.date==formatDateString(date)});
 					filter_data.forEach((row)=> {
@@ -293,7 +286,7 @@ class MapPlot {
 		var targetValue = 700;
 		
 		
-		var time_promise = d3.csv("data/test.csv").then((data) => {
+		var time_promise = d3.csv("data/All_ALL.csv").then((data) => {
 			var time_value = d3.scaleTime()
 			.domain(d3.extent(data, function(d){return new Date(d.date);}))
 			.range([0, targetValue])
@@ -312,7 +305,7 @@ class MapPlot {
 			.projection(projection);
 			
 		const color_scale = d3.scaleLinear()
-			.domain([0, 1e-5, 2e-5, 4e-5, 8e-5, 1e-4, 2e-4, 4e-4, 8e-4, 1e-3, 2e-3, 4e-3])
+			.domain([0, 2e-6, 4e-6, 8e-6, 1e-5, 2e-5, 4e-5, 8e-5, 1e-4, 2e-4, 4e-4, 8e-4])
 			.range(['#b6e200', '#e2c84b', '#e7b94c', '#e9aa4b', '#ea9b49', '#ea8c47', '#ea7d44', '#e86c41', '#e65b3d', '#e4483a', '#e13036', '#dd0032'])
 			.interpolate(d3.interpolateHcl);
 		
