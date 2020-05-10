@@ -72,6 +72,19 @@ input[type=radio]:checked + label{
     stroke-width: 1.25px;
  }
 
+.hidden {
+    display: none;
+}
+
+div.tooltip {
+    color: #222;
+    background-color: #fff;
+    padding: .5em;
+    text-shadow: #f5f5f5 0 1px 0;
+    border-radius: 2px;
+    opacity: 0.9;
+    position: absolute;
+}
 
 #PlayButton1, #PlayButton2, #PauseButton1, #PauseButton2, #RewindButton1, #RewindButton2 {
 	position : relative;
