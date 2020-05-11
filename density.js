@@ -122,7 +122,7 @@ class DensityMapPlot {
                     console.log(this);
                     tooltip.classed('hidden', false)
                         .attr('style', 'left:' + (mouse[0] + 100) +
-                            'px; top:' + (mouse[1] + 2800) + 'px')
+                            'px; top:' + (mouse[1] + 3000) + 'px')
                         .html(d.properties.NAME_1 + ": " + d.properties.density);
                 })
                 .on('mouseout', function() {
