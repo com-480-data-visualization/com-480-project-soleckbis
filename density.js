@@ -87,6 +87,8 @@ class DensityMapPlot {
             const canton_paths = topojson.feature(topojson_raw, topojson_raw.objects.provinces);
             return canton_paths.features;
         });
+
+        const agg_promise = d3.csv()
 /*
         const point_promise = d3.csv("data/locations.csv").then((data) => {
 
@@ -122,7 +124,7 @@ class DensityMapPlot {
                     console.log(this);
                     tooltip.classed('hidden', false)
                         .attr('style', 'left:' + (mouse[0] + 100) +
-                            'px; top:' + (mouse[1] + 3000) + 'px')
+                            'px; top:' + (mouse[1] + 3200) + 'px')
                         .html(d.properties.NAME_1 + ": " + d.properties.density);
                 })
                 .on('mouseout', function() {
