@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<title>Korea timeline</title>
-	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet", href="style.css">
 </head>
 <body>
 	<h3>
@@ -44,6 +44,10 @@
 	<button id="PlayButton1">Play</button>
 	<button id="PauseButton1">Pause</button>
 	<button id="RestartButton1">Restart</button><br>
+	<div class="Event1">
+		<b></b>
+	</div>
+	<div class="Notes1"></div>
 	<svg id ="concentration" viewBox="0 0 400 500" width="900" height="700">
 		<style>
 			.province {
@@ -91,6 +95,10 @@
 	<button id="PlayButton2">Play</button>
 	<button id="PauseButton2">Pause</button>
 	<button id="RestartButton2">Restart</button><br>
+	<div class="Event2">
+		<b></b>
+	</div>
+	<div class="Notes2"></div>
 	<svg id ="circles" viewBox="0 0 400 500" width="900" height="700">
 		<style>
 			.province {
@@ -108,16 +116,10 @@
 	
 	<div id="my_dataviz">
 	</div>
-	<h3>
-		Population density map
-	</h3>
-	<svg id="density_map" viewBox="0 0 400 500" width="900" height="700">
-
-	</svg>
 	<script src="lib/d3.min.js"></script>
 	<script src="lib/topojson.min.js"></script>
 	<script src="concentration.js"></script>
 	<script src="circle.js"></script>
-	<script src="density.js"></script>
+	
 </body>
 </html>

@@ -93,6 +93,7 @@ class MapPlot {
 			.text(formatDate(h))
 			genderButton = d3.select("#Gender1");
 			ageButton = d3.select("#Age1");
+			updateEvent(h);
 			updateMap(h, genderButton.node().value, ageButton.node().value);
 		}
 			
@@ -176,6 +177,34 @@ class MapPlot {
 			d3.selectAll('.province').style('fill-opacity', 0.8)
 			.style('stroke-width', 0.2)
 			d3.select("#t"+d.properties.NAME_1).remove();
+		}
+		
+		function isnotEmpty(obj) {
+    			for(var key in obj) {
+        		if(obj.hasOwnProperty(key))
+            		return true;
+    			}
+    			return false;
+		}
+		
+		function updateEvent(date) {
+			var event_promise = d3.csv("data/Policy.csv").then((data)=>{
+				let event_policy = {};
+				var filter_data = data.filter(function (a){return a.start_date==formatDateString(date)});
+				filter_data.forEach((row)=> {
+					event_policy = row.policy;
+				})
+				return event_policy;
+			});
+			Promise.all([event_promise]).then((results)=>{
+				let event = results[0];
+				if (isnotEmpty(event)) {
+					d3.select(".Event1").selectAll("*").remove();
+					d3.select(".Event1").append("b")
+					.append("text")
+					.text(event);
+				}
+			});
 		}
 
 		
@@ -319,6 +348,21 @@ class MapPlot {
 	}	
 }
 
+class MakeNotes {
+	constructor(Type) {
+		this.Type = Type;
+		
+		if (this.Type==="provinces") {
+			d3.select(".Notes1").selectAll("*").remove();
+			d3.select(".Notes1").append("text").text("Note: The provinces correspond to the 6 metropolitain cities,"+"\n"+"a special city (Seoul), a special autonomous city (Sejong) and the 9 provinces.");
+		}
+		else if (this.Type=="municipalities") {
+			d3.select(".Notes1").selectAll("*").remove();
+			d3.select(".Notes1").append("text").text("Note: The municipalities correspond to the cities, counties" +"\n"+ "and districts of South Korea.")
+		}
+	}
+}
+
 function whenDocumentLoaded(action) {
 	if (document.readyState === "loading") {
 		document.addEventListener("DOMContentLoaded", action);
@@ -329,6 +373,8 @@ function whenDocumentLoaded(action) {
 }
 
 whenDocumentLoaded(() => {
+	document.getElementById("provinces1").click();
+	text = new MakeNotes("provinces");
 	const radios = document.getElementsByName("MapType1");
 	var Type = 'provinces';
 	plot_object = new MapPlot('concentration', Type);
@@ -336,6 +382,7 @@ whenDocumentLoaded(() => {
 		radios[i].onclick = function () {
 			d3.select('#concentration').selectAll("*").remove();
 			Type = this.value;
+			text = new MakeNotes(Type);
 			plot_object = new MapPlot('concentration', Type);
 		}
 	}
