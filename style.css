@@ -13,11 +13,27 @@ svg {
 	overflow: visible;
 }
 
-div {
-	margin-top: 3cm;
+.gender_button, .age_button {
+	position: relative;
+	top: 350px;
+	left: 40px;
+}
+
+.gender_button select, .age_button select {
+	display: inline-block;
+    background-color: #ddd;
+    padding: 10px 20px;
+    font-family: sans-serif, Arial;
+    font-size: 12px;
+    border: 2px solid #444;
+    border-radius: 4px;
+}
+
+.radio_button {
+	margin-top: -4cm;
 	position : relative;
-	top : 50px;
-	left : 1000px;
+	top : 90px;
+	left : 700px;
 }
 
 input[type=radio] {
@@ -65,12 +81,49 @@ input[type=radio]:checked + label{
  
  .handle {
  	fill: #fff;
- 	
- 
     stroke: #000;
     stroke-opacity: 0.5;
     stroke-width: 1.25px;
  }
+
+.Event1, .Event2 {
+	position: relative;
+	top : -50px;
+	left: 350px;
+}
+
+.Notes1, .Notes2 {
+	position: relative;
+	top : 50px;
+	left : 700px;
+	white-space: pre;
+}
+
+#PlayButton1, #PlayButton2, #PauseButton1, #PauseButton2, #RestartButton1, #RestartButton2 {
+	position : relative;
+    top: 60px;
+    left: 150px;
+	background: #f08080;
+    padding: 10px 20px;
+    font-family: sans-serif, Arial;
+    font-size: 12px;
+    border: 2px solid #444;
+    border-radius: 3px;
+}
+
+#ZoomIn1, #ZoomIn2, #ZoomOut1, #ZoomOut2 {
+	position: relative;
+	top: 550px;
+	left: 700px;
+	background: #d3e2ff;
+	height:30px;
+    width:30px;
+    font-family: sans-serif, Arial;
+    font-size: 12px;
+    border: 2px solid #444;
+    border-radius: 3px;
+	
+}
 
 .hidden {
     display: none;
@@ -85,18 +138,3 @@ div.tooltip {
     opacity: 0.9;
     position: absolute;
 }
-
-#PlayButton1, #PlayButton2, #PauseButton1, #PauseButton2, #RewindButton1, #RewindButton2 {
-	position : relative;
-    top: 0px;
-    left: 200px;
-	background: #f08080;
-    padding: 10px 20px;
-    font-family: sans-serif, Arial;
-    font-size: 12px;
-    border: 2px solid #444;
-    border-radius: 3px;
-}
-
-
-

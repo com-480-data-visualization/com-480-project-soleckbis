@@ -47,17 +47,14 @@
 	<div class="Event1">
 		<b></b>
 	</div>
+	<div>
+		<button id="ZoomIn1"><b>+</b></button> <br>
+		<button id="ZoomOut1"><b>-</b></button>
+	</div>
 	<div class="Notes1"></div>
-	<svg id ="concentration" viewBox="0 0 400 500" width="900" height="700">
-		<style>
-			.province {
-				stroke: rgb(25,25,25);
-				stroke-width: 0.4px;
-			}
-		</style>
+	<svg id ="concentration" viewBox="0 0 400 500" width="700" height="550">
 	</svg><br>
-	
-		<h3>
+	<h3>
 		Daily new cases by provinces
 	</h3>
 	<div class="gender_button">
@@ -99,15 +96,14 @@
 	<div class="Event2">
 		<b></b>
 	</div>
+	<div>
+		<button id="ZoomIn2"><b>+</b></button><br>
+		<button id="ZoomOut2"><b>-</b></button>
+	</div>
 	<div class="Notes2"></div>
-	<svg id ="circles" viewBox="0 0 400 500" width="900" height="700">
-		<style>
-			.province {
-				stroke: rgb(25,25,25);
-				stroke-width: 0.4px;
-			}
-		</style>
+		<svg id ="circles" viewBox="0 0 400 500" width="700" height="550">
 	</svg>
+	
 	
 	
 	<h3>
@@ -135,13 +131,12 @@
 	</svg>
 	
 	
-	
-	<script type="text/javascript" src="function.js"></script>
 	<script src="lib/d3.min.js"></script>
 	<script src="lib/topojson.min.js"></script>
-	<script src="weather_1.js"></script>
 	<script src="concentration.js"></script>
 	<script src="circle.js"></script>
+	<script type="text/javascript" src="function.js"></script>
+	<script src="weather_1.js"></script>
 	<script src="density.js"></script>
 	
 </body>

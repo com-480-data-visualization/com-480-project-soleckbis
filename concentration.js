@@ -2,19 +2,22 @@
 class MapPlot {
 	
 	makeColorbar(svg, color_scale, top_left, colorbar_size, scaleClass=d3.scaleLinear) {
+		
+		const yScale = [0, 2, 4, 8, 10, 20, 40, 80, 100, 200, 400, 800];
 
 		const value_to_svg = scaleClass()
-			.domain(color_scale.domain())
+			.domain(yScale)
 			.range([colorbar_size[1], 0.9*colorbar_size[1], 0.81*colorbar_size[1], 0.72*colorbar_size[1], 0.63*colorbar_size[1], 0.54*colorbar_size[1], 0.45*colorbar_size[1], 0.36*colorbar_size[1], 0.27*colorbar_size[1], 0.18*colorbar_size[1], 0.09*colorbar_size[1], 0]);
-
+		
 		const range01_to_color = d3.scaleLinear()
 			.domain([0, 0.09, 0.18, 0.27, 0.36, 0.45, 0.54, 0.63, 0.72, 0.81, 0.9, 1])
 			.range(color_scale.range())
 			.interpolate(color_scale.interpolate());
+			
+		this.svg.append("text").text("Cases per million of inhabitants");
 
 		// Axis numbers
-		const colorbar_axis = d3.axisLeft(value_to_svg)
-			.tickFormat(d3.format(".0e"))
+		const colorbar_axis = d3.axisLeft(value_to_svg).tickValues(yScale);
 
 		const colorbar_g = this.svg.append("g")
 			.attr("id", "colorbar")
@@ -77,6 +80,7 @@ class MapPlot {
 		var disease_promise;
 		var map_promise;
 		
+		updateEvent(time_value.domain()[0]);
 		updateMap(time_value.domain()[0], genderButton.node().value, ageButton.node().value, true);
 		
 		function step() {
@@ -99,7 +103,7 @@ class MapPlot {
 			
 		var slider = this.svg.append("g")
 			.attr("class", "slider")
-			.attr("transform", "translate(20,-70)");	
+			.attr("transform", "translate(20,-120)");	
 			
 		slider.append("line")
 			.attr("class","track")
@@ -243,6 +247,9 @@ class MapPlot {
 			Promise.all([map_promise, disease_promise]).then((results)=> {
 				let map_data = results[0];
 				let province_disease = results[1];
+				
+				var zoominButton = d3.select("#ZoomIn1");
+				var zoomoutButton = d3.select("#ZoomOut1");
 			
 				map_data.forEach(province => {
 					if (Type=="provinces") {
@@ -273,10 +280,17 @@ class MapPlot {
 				}
 
 				const zoom = d3.zoom()
-					.scaleExtent([1, 8])
 					.on('zoom', zoomed);
 			
-				svg.call(zoom);
+				svg.call(zoom).on("dblclick.zoom", null)
+					.on("wheel.zoom", null);
+				
+				zoominButton.on("click", function() {
+					zoom.scaleBy(svg.transition().duration(750), 1.2)
+				});
+				zoomoutButton.on("click", function() {
+					zoom.scaleBy(svg.transition().duration(750), 0.8)
+				});
 				
 				if (new_map==true) {
 					map_container.selectAll(".province")
@@ -286,12 +300,16 @@ class MapPlot {
 						.classed("province", true)
 						.attr("d", path_generator)
 						.style("fill", (d)=> color_scale(d.properties.density))
+						.style("stroke", "rgb(25,25,25)")
+						.style("stroke-width", 0.2)
 						.on('mouseover', handleMouseOver) 
 						.on('mouseout', handleMouseOut);
 				} else {
 					map_container.selectAll(".province")
 						.data(map_data)
 						.style("fill", (d)=> color_scale(d.properties.density))
+						.style("stroke", "rgb(25,25,25)")
+						.style("stroke-width", 0.2);
 				}
 				
 				function zoomed() {
@@ -300,7 +318,7 @@ class MapPlot {
 				}
 				
 				if (new_map==true) {
-					$this.makeColorbar(svg, color_scale, [50, 30], [20, $this.svg_height - 2*30]);
+					$this.makeColorbar(svg, color_scale, [100, 30], [20, $this.svg_height - 2*30]);
 				};
 			})
 		}

@@ -24,6 +24,8 @@ class MapCircle {
 				.attr('r', (d)=>Math.sqrt(range01_to_radius(d)))
 				.attr("cx", 50)
 				.style("fill", "red");	
+				
+		this.svg.append("text").text("Total daily cases");
 		}
 		
 		
@@ -50,6 +52,7 @@ class MapCircle {
 		var disease_promise;
 		var map_promise;
 		
+		updateEvent(time_value.domain()[0]);
 		updateMap(time_value.domain()[0], genderButton.node().value, ageButton.node().value, true);
 		
 		function handleMouseOver(d, i) {
@@ -97,7 +100,7 @@ class MapCircle {
 			
 		var slider = this.svg.append("g")
 			.attr("class", "slider")
-			.attr("transform", "translate(20,-70)");	
+			.attr("transform", "translate(20,-120)");	
 			
 		slider.append("line")
 			.attr("class","track")
@@ -216,6 +219,9 @@ class MapCircle {
 			Promise.all([map_promise, disease_promise]).then((results)=> {
 				let map_data = results[0];
 				let province_disease = results[1];
+				
+				var zoominButton = d3.select("#ZoomIn2");
+				var zoomoutButton = d3.select("#ZoomOut2");
 			
 				map_data.forEach(province => {
 					if (Type=="provinces") {
@@ -247,10 +253,17 @@ class MapCircle {
 			}
 			
 			const zoom = d3.zoom()
-				.scaleExtent([1, 8])
 				.on('zoom', zoomed);
-		
-			svg.call(zoom);
+			
+			svg.call(zoom).on("dblclick.zoom", null)
+				.on("wheel.zoom", null);
+				
+			zoominButton.on("click", function() {
+				zoom.scaleBy(svg.transition().duration(750), 1.2)
+			});
+			zoomoutButton.on("click", function() {
+				zoom.scaleBy(svg.transition().duration(750), 0.8)
+			});
 			
 			if (new_map==true) {
 				map_container.selectAll(".province")
@@ -259,7 +272,9 @@ class MapCircle {
 					.append("path")
 					.classed("province", true)
 					.attr("d", path_generator)
-					.style("fill", 'white')
+					.style("stroke", "rgb(25,25,25)")
+					.style("stroke-width", 0.2)
+					.style("fill", "white")
 					.on('mouseover', handleMouseOver)
 					.on('mouseout', handleMouseOut);
 			}
@@ -292,7 +307,7 @@ class MapCircle {
 			}
 			
 			if (new_map==true) {
-				$this.makeCirclebar($this.svg, radius_scale, [50, 30], [20, $this.svg_height - 2*30]);
+				$this.makeCirclebar($this.svg, radius_scale, [100, 30], [20, $this.svg_height - 2*30]);
 			}
 		});
 	}	
