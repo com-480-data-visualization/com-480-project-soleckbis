@@ -138,10 +138,12 @@ class DensityMapPlot {
 whenDocumentLoaded(() => {
     const feature_selector = document.getElementsByName("featureselect");
     let feature_ = "density";
-    const densityMap = new DensityMapPlot('density_map', feature_);
+    let densityMap = new DensityMapPlot('density_map', feature_);
     feature_selector.forEach((input) => {
         input.onclick = (() => {
             feature_ = input.value;
+            d3.select('density_map').remove();
+            densityMap = new DensityMapPlot('density_map', feature_);
         });
     });
 });
