@@ -31,15 +31,15 @@ class MapPlot {
 
 		const svg_defs = this.svg.append("defs");
 
-		const gradient = svg_defs.append('linearGradient')
-			.attr('id', 'colorbar-gradient')
+		const gradient1 = svg_defs.append('linearGradient')
+			.attr('id', 'colorbar-gradient1')
 			.attr('x1', '0%') // bottom
 			.attr('y1', '100%')
 			.attr('x2', '0%') // to top
 			.attr('y2', '0%')
 			.attr('spreadMethod', 'pad');
 
-		gradient.selectAll('stop')
+		gradient1.selectAll('stop')
 			.data(range01(10))
 			.enter()
 			.append('stop')
@@ -52,7 +52,7 @@ class MapPlot {
 			.attr('id', 'colorbar-area')
 			.attr('width', colorbar_size[0])
 			.attr('height', colorbar_size[1])
-			.style('fill', 'url(#colorbar-gradient)')
+			.style('fill', 'url(#colorbar-gradient1)')
 			.style('stroke', 'black')
 			.style('stroke-width', '1px')
 	}
