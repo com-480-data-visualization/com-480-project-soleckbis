@@ -54,7 +54,7 @@ class DensityMapPlot {
             .style('stroke-width', '1px')
     }
 
-    constructor(svg_element_id) {
+    constructor(svg_element_id, feature) {
         let tooltip = d3.select('body').append('div')
             .attr('class', 'hidden tooltip');
         console.log(tooltip);
@@ -69,13 +69,13 @@ class DensityMapPlot {
             .translate([this.svg_width / 2, this.svg_height / 2]) // SVG space
             .precision(.1);
         // may be useful for calculating scales
-
         const path_generator = d3.geoPath()
             .projection(projection);
         //colormap for population density
         this.color_scale = d3.scaleLog()
             .range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"])
             .interpolate(d3.interpolateHcl);
+
         const population_promise = d3.csv("data/convertcsv.csv").then((data) => {
             return data.reduce((acc, d) => {
                 acc[d.name] = d;
@@ -88,19 +88,18 @@ class DensityMapPlot {
             return canton_paths.features;
         });
 
-        const agg_promise = d3.csv()
-/*
-        const point_promise = d3.csv("data/locations.csv").then((data) => {
-
-            // process the Instagram data here (optional)
-
-            return data;
+        const agg_promise = d3.csv("data/agg.csv").then((data)=> {
+            return data.reduce((acc, d) => {
+                acc[d.province] = d;
+                return acc;
+            })
         });
-*/
-        Promise.all([map_promise, population_promise]).then((results) => {
+
+
+        Promise.all([map_promise, population_promise, agg_promise]).then((results) => {
             let map_data = results[0];
             let stats = results[1];
-            console.log(stats)
+            let province_agg = results[2];
             //let point_data = results[2];
             this.map_container = this.svg.append('g');
             //this.point_container = this.svg.append('g');
@@ -121,7 +120,6 @@ class DensityMapPlot {
                     let mouse = d3.mouse(this).map(function(d) {
                         return parseInt(d);
                     });
-                    console.log(this);
                     tooltip.classed('hidden', false)
                         .attr('style', 'left:' + (mouse[0] + 100) +
                             'px; top:' + (mouse[1] + 3200) + 'px')
@@ -138,6 +136,12 @@ class DensityMapPlot {
 }
 
 whenDocumentLoaded(() => {
-    const densityMap = new DensityMapPlot('density_map');
-    // plot object is global, you can inspect it in the dev-console
+    const feature_selector = document.getElementsByName("featureselect");
+    let feature_ = "density";
+    const densityMap = new DensityMapPlot('density_map', feature_);
+    feature_selector.forEach((input) => {
+        input.onclick = (() => {
+            feature_ = input.value;
+        });
+    });
 });
