@@ -129,6 +129,11 @@ input[type=radio]:checked + label{
     display: none;
 }
 
+.province {
+    stroke: black;
+    stroke-width: 0.2;
+}
+
 div.tooltip {
     color: #222;
     background-color: #fff;
