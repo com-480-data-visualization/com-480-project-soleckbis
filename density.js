@@ -78,7 +78,7 @@ class DensityMapPlot {
                 });
                 tooltip.classed('hidden', false)
                     .attr('style', 'left:' + (mouse[0] + 100) +
-                        'px; top:' + (mouse[1] + 1700) + 'px')
+                        'px; top:' + (mouse[1] + 1800) + 'px')
                     .html(d.properties.NAME_1 + ": " + d.properties[feature]);
             })
             .on('mouseout', function() {
@@ -126,6 +126,8 @@ class DensityMapPlot {
             this.map_data.forEach((province) => {
                 province.properties.density = parseFloat(stats[province.properties.NAME_1].population_density);
                 province.properties.schools = parseFloat(stats[province.properties.NAME_1].elementary_school_count);
+                province.properties.universities = parseFloat(stats[province.properties.NAME_1].university_count);
+                province.properties.elderly = parseFloat(stats[province.properties.NAME_1].elderly_population_ratio);
             });
             this.fill(feature, this.path_generator, scale);
         });
@@ -147,7 +149,7 @@ whenDocumentLoaded(() => {
             }
             //console.log(scale.)
             densityMap.map_container.selectAll("*").remove();
-            densityMap.fill(feature_, densityMap.path_generator, scale);
+            densityMap.fill(feature_, densityMap.path_generator, scale, class_);
         });
     });
 });

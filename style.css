@@ -111,6 +111,13 @@ input[type=radio]:checked + label{
     border-radius: 3px;
 }
 
+.radio_button_left {
+    margin-top: -4cm;
+    position : relative;
+    top : 90px;
+    left : 70px;
+}
+
 #ZoomIn1, #ZoomIn2, #ZoomOut1, #ZoomOut2 {
 	position: relative;
 	top: 550px;
