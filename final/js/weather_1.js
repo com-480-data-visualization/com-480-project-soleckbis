@@ -2,10 +2,10 @@
 
 	// set the dimensions and margins of the graph
 	var margin = {top: 10, right:0, bottom: 30, left:0},
-	    width = 800 - margin.left - margin.right,
-	    height = 500 - margin.top - margin.bottom;
+	    width = 1050 - margin.left - margin.right,
+	    height = 400 - margin.top - margin.bottom;
 	
-	var width_score = 100
+	var width_score = 150
 	var width_s = width -width_score
 	// append the svg object to the body of the page
 	var svg = d3.select("#my_dataviz")
@@ -17,7 +17,7 @@
 	          "translate(" + margin.left + "," + margin.top + ")");
 
 
-	d3.csv("data/essai.csv", function(row) {
+	d3.csv("data/sick_meteo.csv", function(row) {
 	  return {date: row.date, count: row.count, avg_temp: row.avg_temp}
 	}).then(function(d){
 
@@ -25,12 +25,17 @@
   	.key(function(d1) {return d1.date; })
   	.rollup(function(v) { return d3.mean(v, function(d1) { return d1.avg_temp}); })
   	.entries(d);
+  	
+  	var nb_patient = d3.nest()
+  	.key(function(d1) {return d1.date; })
+  	.rollup(function(v) { return d3.sum(v, function(d1) { return d1.count}); })
+  	.entries(d);
    	
-   	var mapped_count_0 = d.map(d => {
-  	return {date: new Date(d.date),value: d.count,rayon:7}});
+   	var mapped_count_0 = nb_patient.map(d => {
+  	return {date: new Date(d.key),value: d.value,rayon:3}});
 
 	var mapped_temp_0 = avg_temp.map(d => {
-  	return {date: new Date(d.key),value: d.value,rayon:7}});
+  	return {date: new Date(d.key),value: d.value,rayon:3}});
   	
 	function reduce_left(mapped,nb) { 
   		return mapped.slice(nb);
@@ -46,7 +51,7 @@
   					mapped[i].rayon =0;
   				}
   				else{
-  					mapped[i].rayon =7;
+  					mapped[i].rayon =2;
   				}
 			} 
   		return mapped;
@@ -58,7 +63,7 @@
   					mapped[i].rayon =0;
   				}
   				else{
-  					mapped[i].rayon =7;
+  					mapped[i].rayon =2;
   				}
 			} 
   		return mapped;
@@ -72,8 +77,7 @@
 				} 
 	  		return mapped_init;
 		}
-  	
-  	
+  	 	
   	var mapped_count = reduce_left(mapped_count_0,0)
 	var mapped_temp = reduce_right(mapped_temp_0,0)
 	
@@ -97,17 +101,22 @@
   	var maxCount= get_max_value(mapped_count);
   	
   	
+  	console.log(mapped_temp)
+  	console.log(maxCount)
+  	console.log('ici')
   	var xScale1 = d3.scaleTime()
-    .range([0,width_s]);
-  
+  	.nice(d3.timeDay)
+    .range([0,width_s])
+  	
+  	
   	var xScale2 = d3.scaleTime()
     .range([0,width_s]);
     
   	var xAxis1 = d3.axisBottom()
-	  .ticks(5)
+	  .ticks(10)
 	  
- 	var xAxis2 = d3.axisBottom()
-	  .ticks(5)
+ 	var xAxis2 = d3.axisTop()
+	  .ticks(10)
   	
   	var yScale1 = d3.scaleLinear()
     .domain([0,maxCount])
@@ -124,44 +133,20 @@
   	// Y-axis
   	var yAxis1 =  d3.axisLeft()
 	  .scale(yScale1)
-	  .ticks(5)
-	  
-  	var yAxis2 =  d3.axisLeft()
+	  .ticks(10)
+	    
+	    
+  	var yAxis2 =  d3.axisRight()
 		.scale(yScale2)
-		.ticks(5) 
+		.ticks(10) 
+	
 		
 	var yAxis3 =  d3.axisLeft()
 		.scale(yScale3)
-		.ticks(5) 
+		.ticks(10) 
 		
    var svgContainer = d3.select("body").append("svg");
-   /*                      
-   var c_corr = svg.selectAll('c_corr')
-      .data(R_mapped)
-      .enter()
-      .append('circle')
-      .attr('cx',width)
-      .attr('cy',function (d) { return yScale3(d.value) })
-      .attr('r','10')
-      .attr('stroke','blue')
-      .attr('fill','orange')
-   	  .on('mouseover', function () {
-        d3.select(this)
-          .transition()
-          .duration(500)
-          .attr('r',15)
-          .attr('stroke-width',3)
-      })
-      .on('mouseout', function () {
-        d3.select(this)
-          .transition()
-          .duration(500)
-          .attr('r',8)
-          .attr('stroke-width',1)
-      })
-      .append('title') // Tooltip
-      .text(function (d) { return '\nCorrelation score between variables: ' + d.value})
-   */
+  
 // Y axis correlation
 	svg.append('g').data(R_mapped)
       .attr('class', 'axis')  
@@ -169,47 +154,54 @@
       .call(yAxis3)
       .append('text') // y-axis Label
       .attr('class','label')
-      .attr('x',+80)
+      .attr('x',+70)
       .attr('y',-33)
       .attr('dy','.71em')
       .style('text-anchor','end')
       .style("font", "18px times")
-      .text('Spearson correlation:')
+      .text('Pearson correlation')
   	  .style("fill", "black")
 
 // X-axis
+var pos = height +10
  x_axis_real1 = svg.append('g')
       .attr('class','axis')
-      .attr('transform', 'translate(0,' + height + ')')
-  	  
+      .attr('transform', 'translate(0,' + pos + ')')
+  	  .attr("stroke","blue")
+  	   
  x_axis_real2 =svg.append('g')
       .attr('class','axis')
-      .attr('transform', 'translate(0,0)')
+      .attr('transform', 'translate(0,-10)')
+      .attr("stroke","red")
       
   // Y-axis
   svg.append('g').data(mapped_count)
-      .attr('class', 'axis')      
+      .attr('class', 'axis')
+       .attr("stroke","blue")
       .call(yAxis1)
       .append('text') // y-axis Label
       .attr('class','label')
       .attr('transform','rotate(-90)')
-      .attr('x',-10)
-      .attr('y',-40)
+      .attr('x',-height/2 + 65)
+      .attr('y',-45)
       .attr('dy','.71em')
       .style('text-anchor','end')
       .style("font", "18px times")
-      .text('Nb cases')
+      .text('Nb new cases')
   	  .style("fill", "blue")
   	  
+  	  
   svg.append('g').data(mapped_temp)
-      .attr('class', 'axis')  
+      .attr('class', 'axis')
+       .attr("stroke","red") 
       .attr('transform','translate('+ width_s +',0)')    
       .call(yAxis2)
       .append('text') // y-axis Label
       .attr('class','label')
       .attr('transform','rotate(-90)')
-      .attr('x',-10)
-      .attr('y',+15)
+      .attr("stroke","red")
+      .attr('x',-height/2 + 70)
+      .attr('y',+25)
       .attr('dy','.71em')
       .style('text-anchor','end')
       .style("font", "18px times")
@@ -228,10 +220,10 @@
 	      .append('circle')
 	      .attr('cx',width)
 	      .attr('cy',function (d) { return yScale3(d.value) })
-	      .attr('r','10')
+	      .attr('r','5')
 	      .attr('stroke','')
 	      .attr('fill','orange')
-
+		  .attr('stroke','red')
 	
 	var mapped_init_1 = initialize_circles(mapped_count);
 	
@@ -268,18 +260,6 @@
 	      .attr('stroke','')
 	      .attr('fill','orange')
 	
-	/*
-	essai = [{date:40,value:40},{date:180,value:80},{date:300,value:300}]
-	var essai2 = svg.selectAll('essai_2')
-	      .data(essai)
-	      .enter()
-	      .append('circle')
-	      .attr('cx',function (d) { return d.date })
-	      .attr('cy',function (d) { return d.date } )
-	      .attr('r','10')
-	      .attr('stroke','')
-	      .attr('fill','orange')
-	*/
 
 // update the elements
 function update(time_lag) {
@@ -316,11 +296,12 @@ function update(time_lag) {
         d3.select(this)
           .transition()
           .duration(500)
-          .attr('r',4)
+          .attr('r',5)
           .attr('stroke-width',1)
       })
       .append('title') // Tooltip
-      .text('\nSpearson correlation between two variables: ' + Math.round(R*100)/100)
+      .text('\nPearson correlation between two variables: ' + Math.round(R*100)/100)
+  
   minDate_1 = get_min_date(mapped_count);
   maxDate_1 = get_max_date(mapped_count);
   
@@ -336,8 +317,8 @@ function update(time_lag) {
   x_axis_real1.call(xAxis1)
       .append('text') // X-axis Label
       .attr('class','label')
-      .attr('y',-20)
-      .attr('x',width_s-5)
+      .attr('y',35)
+      .attr('x',width_s/2 +100)
       .style('text-anchor','end')
       .style("font", "18px times")
       .text('Dates nb new cases')
@@ -346,8 +327,8 @@ function update(time_lag) {
   x_axis_real2.call(xAxis2)     
   	  .append('text') // X-axis Label
       .attr('class','label')
-      .attr('y',-20)
-      .attr('x',width_s)
+      .attr('y',-35)
+      .attr('x',width_s/2 +75 )
       .style('text-anchor','end')
       .style("font", "18px times")
       .text('Dates weather feature')
@@ -355,7 +336,7 @@ function update(time_lag) {
   	  
    path1.datum(mapped_count)
 	      .attr("fill", "none")
-	      .attr("stroke", "steelblue")
+	      .attr("stroke", "blue")
 	      .attr("stroke-width", 1.5)
 	      .attr("d", d3.line()
 	        .x(function(d) { return xScale1(d.date) })
@@ -383,13 +364,13 @@ function update(time_lag) {
           .transition()
           .duration(500)
           .attr('r',10)
-          .attr('stroke-width',3)
+          .attr('stroke-width',4)
       })
       .on('mouseout', function () {
         d3.select(this)
           .transition()
           .duration(500)
-          .attr('r',4)
+          .attr('r',2)
           .attr('stroke-width',1)
       })
       .append('title') // Tooltip
@@ -408,76 +389,18 @@ function update(time_lag) {
           .transition()
           .duration(500)
           .attr('r',10)
-          .attr('stroke-width',3)
+          .attr('stroke-width',4)
       })
       .on('mouseout', function () {
         d3.select(this)
           .transition()
           .duration(500)
-          .attr('r',7)
+          .attr('r',2)
           .attr('stroke-width',1)
       })
       .append('title') // Tooltip
-      .text(function (d) { return '\nAvg_Temp: ' + d.value +'\ deg. C. '+
+      .text(function (d) { return '\nAvg_Temp: ' + Math.round(d.value*10)/10 +'\ deg. C. '+
                            '\nDate: ' + formatTime(new Date(d.date))}) 
-	/*
-	essai_new= [{date:150,value:150},{date:300,value:300},{date:100,value:100}]  
-	
-	console.log(mapped_count)
-	console.log(essai_new)
-	essai2 
-      .data(essai_new)
-      .attr('cx', function (d) { return d.date })
-      .attr('cy', function (d) { return d.date })
-      .attr('r', 80)
-      .attr('stroke','red')
-      .attr('fill','red')
-	
-    */
-     
-      
-      /*
-      .on('mouseover', function () {
-        d3.select(this)
-          .transition()
-          .duration(500)
-          .attr('r',10)
-          .attr('stroke-width',3)
-      })
-      .on('mouseout', function () {
-        d3.select(this)
-          .transition()
-          .duration(500)
-          .attr('r',4)
-          .attr('stroke-width',1)
-      })
-      .append('title') // Tooltip
-      .text(function (d) { return '\nNew cases: ' + d.value +
-                           '\nDate: ' + formatTime(new Date(d.date))})
-  	  
-	*/
-	
-	 
-      /*
-      .on('mouseover', function () {
-        d3.select(this)
-          .transition()
-          .duration(500)
-          .attr('r',10)
-          .attr('stroke-width',3)
-      })
-      .on('mouseout', function () {
-        d3.select(this)
-          .transition()
-          .duration(500)
-          .attr('r',4)
-          .attr('stroke-width',1)
-      })
-      .append('title') // Tooltip
-      .text(function (d) { return '\nAvg_Temp: ' + d.value +'\ deg. C. '+
-                           '\nDate: ' + formatTime(new Date(d.date))}) 
-
-	*/
 	
 	 
 }
