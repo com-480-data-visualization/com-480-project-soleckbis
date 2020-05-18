@@ -8,12 +8,6 @@
     initializeChapterSidebar();
   }
 
-  var mailingListForm = document.querySelector('.js-about__mailing-list-form');
-  if (mailingListForm) {
-    initializeMailingListForm();
-  }
-
-  insertObfuscatedEmails();
 })();
 
 
