@@ -3,7 +3,7 @@
 	// set the dimensions and margins of the graph
 	var margin = {top: 10, right:0, bottom: 30, left:0},
 	    width = 1050 - margin.left - margin.right,
-	    height = 400 - margin.top - margin.bottom;
+	    height = 350 - margin.top - margin.bottom;
 	
 	var width_score = 150
 	var width_s = width -width_score
@@ -101,9 +101,7 @@
   	var maxCount= get_max_value(mapped_count);
   	
   	
-  	console.log(mapped_temp)
-  	console.log(maxCount)
-  	console.log('ici')
+  	
   	var xScale1 = d3.scaleTime()
   	.nice(d3.timeDay)
     .range([0,width_s])
@@ -147,24 +145,30 @@
 		
    var svgContainer = d3.select("body").append("svg");
   
+  var textSpec = [{"content" : "testing", "font-family" : "sans-serif","font-size" : "80px", "color" : "red" , "x" : 100 , "y" : 15}];
+  
 // Y axis correlation
 	svg.append('g').data(R_mapped)
       .attr('class', 'axis')  
       .attr('transform','translate(' + width + ',0)')    
       .call(yAxis3)
       .append('text') // y-axis Label
+       .attr("font-family", "Saira")
       .attr('class','label')
       .attr('x',+70)
       .attr('y',-33)
       .attr('dy','.71em')
       .style('text-anchor','end')
+      .style("font-family",'Harman Sans')
       .style("font", "18px times")
       .text('Pearson correlation')
   	  .style("fill", "black")
-
+	  
+	
 // X-axis
 var pos = height +10
  x_axis_real1 = svg.append('g')
+ 		 .attr("font-family", "century")
       .attr('class','axis')
       .attr('transform', 'translate(0,' + pos + ')')
   	  .attr("stroke","blue")
@@ -182,14 +186,13 @@ var pos = height +10
       .append('text') // y-axis Label
       .attr('class','label')
       .attr('transform','rotate(-90)')
-      .attr('x',-height/2 + 65)
-      .attr('y',-45)
+      .attr('x',-height/2 + 60)
+      .attr('y',-40)
       .attr('dy','.71em')
       .style('text-anchor','end')
-      .style("font", "18px times")
+      .style("font", "15px times")
       .text('Nb new cases')
-  	  .style("fill", "blue")
-  	  
+  	  .style("text-decoration", "oblique")
   	  
   svg.append('g').data(mapped_temp)
       .attr('class', 'axis')
@@ -204,14 +207,15 @@ var pos = height +10
       .attr('y',+25)
       .attr('dy','.71em')
       .style('text-anchor','end')
-      .style("font", "18px times")
+      .style("font", "15px times")
       .text('Weather feature')
   	  .style("fill", "red")
        
    var formatTime = d3.timeFormat("%B %d, %Y")
                     
    path1 = svg.append("path")
-	      
+    		
+	      	
    path2 = svg.append("path")
 	      
    var CorCircle = svg.selectAll('CorCircle')
@@ -260,7 +264,14 @@ var pos = height +10
 	      .attr('stroke','')
 	      .attr('fill','orange')
 	
-
+	label1 = svg
+        .append('g')
+        .append("text")
+    
+    label2 = svg
+        .append('g')
+        .append("text")
+    
 // update the elements
 function update(time_lag) {
 
@@ -321,7 +332,6 @@ function update(time_lag) {
       .attr('x',width_s/2 +100)
       .style('text-anchor','end')
       .style("font", "18px times")
-      .text('Dates nb new cases')
   	  .style("fill", "blue")
   	  
   x_axis_real2.call(xAxis2)     
@@ -331,7 +341,6 @@ function update(time_lag) {
       .attr('x',width_s/2 +75 )
       .style('text-anchor','end')
       .style("font", "18px times")
-      .text('Dates weather feature')
   	  .style("fill", "red")
   	  
    path1.datum(mapped_count)
@@ -341,8 +350,8 @@ function update(time_lag) {
 	      .attr("d", d3.line()
 	        .x(function(d) { return xScale1(d.date) })
 	        .y(function(d) { return yScale1(d.value)  })
-	        ) 
-	        
+	        )
+
    path2.datum(mapped_temp)
 	      .attr("fill", "none")
 	      .attr("stroke", "red")
@@ -351,7 +360,23 @@ function update(time_lag) {
 	        .x(function(d) { return xScale2(d.date) })
 	        .y(function(d) { return yScale2(d.value)  })
 	        )
-		
+	
+	var date_end_temp = mapped_temp[0]
+	var date_end_count = mapped_count[mapped_count.length -1]
+	
+	label1.attr("transform", function(d) { return "translate(" + xScale2(date_end_temp.date) + "," + yScale2(date_end_temp.value) + ")"; }) // Put the text at the position of the last point
+          .attr("x", +10) 
+          .attr("y", +10) 
+          .text(function(d) {return 'weather feature'; })
+          .style("fill", 'red')
+          .style("font-size", 10)
+          
+    label2.attr("transform", function(d) { return "translate(" + xScale1(date_end_count.date) + "," + yScale1(date_end_count.value) + ")"; }) // Put the text at the position of the last point
+          .attr("x", -70)
+          .text(function(d) {return 'nb new cases'; })
+          .style("fill", 'blue')
+          .style("font-size", 10)
+          
 	circles_count 
       .data(mapped_count_clean)
       .attr('cx', function (d) { return xScale1(d.date) })
@@ -406,7 +431,11 @@ function update(time_lag) {
 }
     
 update(0)
-
+    
+ d3.selectAll("text")
+  .style('font-family', 'Harman Simple')
+    
+               
 // Initial starting radius of the circle 
 
 });

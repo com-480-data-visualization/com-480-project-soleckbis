@@ -165,7 +165,16 @@ h1, h2, h3, h4, h5, h6 {
           align-items: center;
 }
 
-/* --- Header --- */
+/* ---- header ---- */
+
+.cell_graph {
+  font-family: 'Century';
+  font-weight: normal;
+  font-size: 37px;
+  line-height: 40px;
+  text-transform: lowercase;
+}
+
 
 .head__title {
   font-family: 'Harman Simple';
@@ -174,8 +183,6 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 40px;
   text-transform: lowercase;
 }
-
-/* This chapter needs smaller font size */
 
 .head__title--success {
   color: #5995DA;
@@ -227,10 +234,10 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 22px;
 }
 
-/* --- End Heading --- */
+/* ---- end header ---- */
 
 
-/* --- Subheading --- */
+/* ---- subheader ---- */
 
 .subheading {
   text-align: center;

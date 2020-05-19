@@ -165,7 +165,7 @@ h1, h2, h3, h4, h5, h6 {
           align-items: center;
 }
 
-/* --- Header --- */
+/* ---- header ---- */
 
 .head__title {
   font-family: 'Harman Simple';
@@ -175,8 +175,6 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: lowercase;
 }
 
-/* This chapter needs smaller font size */
-
 .head__title--success {
   color: #5995DA;
 }
@@ -184,7 +182,6 @@ h1, h2, h3, h4, h5, h6 {
 .heading__title--error {
   color: #D55C5F;
 }
-
 
 .heading__parenthesis {
   font-family: 'Harman Simple';
@@ -227,10 +224,10 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 22px;
 }
 
-/* --- End Heading --- */
+/* ---- end heading ---- */
 
 
-/* --- Subheading --- */
+/* ---- subheading ---- */
 
 .subheading {
   text-align: center;
@@ -247,13 +244,8 @@ h1, h2, h3, h4, h5, h6 {
 .subheading__heading span {
   background-color: #FFFFFF;
 
-  /* Clever trick for padding each line of text */
-  /* This color needs to change based on background (JS in base.html) */
   box-shadow: 11px 0 0 #FFFFFF, -13px 0 0 #FFFFFF;
 
-  /* For Firefox */
-  -webkit-box-decoration-break: clone;
-          box-decoration-break: clone;
 }
 
 .subheading__heading:after {
@@ -271,9 +263,18 @@ h1, h2, h3, h4, h5, h6 {
   display: none;
 }
 
-/* --- End Subheading --- */
+/* ---- end subheading ---- */
 
-/* --- Content --- */
+/* ---- main content ---- */
+
+
+.dgraph {
+  font-family: 'Harman Simple';
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 40px;
+  text-transform: lowercase;
+}
 
 .content {
   border-bottom: 1px solid #EAEDF0;
@@ -292,9 +293,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .content__wrapper > *,
 .content__between > * {
-  /* Get even spacing between content items without explicit classes */
-  /* Use .content__between on any container that needs the spacing between, but
-   * isn't a direct child of .content__wrapper */
   margin-bottom: 26px;
 }
 
@@ -312,9 +310,6 @@ h1, h2, h3, h4, h5, h6 {
 .content__between > *:last-child {
   margin-bottom: 0;
 }
-
-/* Standard behavior for plain elements in .content to avoid unnecessary
- * classes */
 
 .content__between > ol,
 .content__wrapper > ol,
@@ -402,12 +397,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-/* --- End Content --- */
+/* ---- end main content ---- */
 
-/* --- Sidebar --- */
+/* ---- sidebox ---- */
 
 .sidebar {
-  /* Separate position from fonts and colors */
   font-family: 'Harman Simple';
   color: #FFFFFF;
   font-size: 25px;
@@ -464,12 +458,11 @@ h1, h2, h3, h4, h5, h6 {
 .chapter-sidebar--sticky {
   position: fixed;
   right: 28px;
-  /* This needs to match .main-nav height */
   top: 42px;
 }
 
 
-/* --- End Sidebar --- */
+/* ---- end sidebox ---- */
 
 
 
