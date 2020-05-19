@@ -5,9 +5,11 @@
 	<meta charset='UTF-8' />
 	<meta name='viewport'
 		  content='width=device-width, initial-scale=1.0, maximum-scale=1.0' />
+	<link rel='stylesheet' href='css/bootsrap.css' />
 	<link rel='stylesheet' href='css/background.css' />
 	<link rel='stylesheet' href='css/plot.css' />
 	
+
 	
 </head>
 
@@ -174,23 +176,46 @@
   		
   	 	<p>
   	 	
-  	 	<div class='graph'>
+  	 	<div class='graph_container '>
   	 		<h3>
-		Weather 1
-		</h3>
-  	 		<div class='dgraph'>	
-	  		<label for="nRadius" 
+			Weather 1
+			</h3>
+  	 	
+  	 	<div class='dgraph' >
+  	 		
+  	 		
+			<div align="center">
+			<form id="form" class="btn-group btn-group-toggle" data-toggle="buttons">
+				  <label class="btn btn-danger"  onclick="update1('Temp')">
+				    <input type="radio" name="controlHeatmapType" value="MRR" checked>Temperature<br>
+				  </label>
+				  <label class="btn btn-warning"  onclick="update1('Hum')">
+				    <input type="radio" name="controlHeatmapType" value="MRR">Humidity<br>
+				  </label>
+				  <label class="btn btn-success" onclick="update1('Wind')">
+				    <input type="radio" name="controlHeatmapType" value="MRR" checked>Wind<br>
+				  </label>
+				  <label class="btn btn-secondary" onclick="update1('Rain')">
+				    <input type="radio" name="controlHeatmapType" value="LYL">Rain<br>
+				  </label>
+			</form>
+			
+	  		<label for="nRadius"  
 	         style="display: inline-block; width: 240px; text-align: right">
 	         Time_lag (days) = <span id="nRadius-value"> </span>
 	  		</label>
 	  		<input type="range" min="0" max="30" id="time_lag">
-			</p>
+			</div>
+			<br style = “line-height:50;”>
+		
+			<p>
 			<br style = “line-height:100;”>
-			<p></p>
-			
+  			</p>
 			<svg id="my_dataviz" viewBox="0 0 400 500" width="900" height="700">
 			</svg>
-			</div>
+			<br><br>
+			<br><br>
+	</div>
 			
 			<p>blabla</p>
 			<p>blabla</p>
@@ -214,6 +239,7 @@
 		</div>
 	</div>
 </div>
+
 
 <script src='js/side_bar.js'></script>
 <script src="lib/d3.min.js"></script>
