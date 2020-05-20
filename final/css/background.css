@@ -268,7 +268,7 @@ h1, h2, h3, h4, h5, h6 {
 /* ---- main content ---- */
 
 
-.dgraph {
+.graph_container {
   font-family: 'Harman Simple';
   font-weight: normal;
   font-size: 20px;

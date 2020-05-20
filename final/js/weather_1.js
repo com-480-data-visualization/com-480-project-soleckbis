@@ -2,8 +2,8 @@
 	function get_graph(name,color,unit){
 	
 	// set the dimensions and margins of the graph
-	var margin = {top: 10, right:0, bottom: 30, left:0},
-	    width = 1050 - margin.left - margin.right,
+	var margin = {top: 10, right:0, bottom: 0, left:-150},
+	    width = 1100 - margin.left - margin.right,
 	    height = 350 - margin.top - margin.bottom;
 	
 	var width_score = 150
@@ -454,7 +454,8 @@ function update(time_lag) {
       .text(function (d) { return '\n'+name+': ' + Math.round(d.value*10)/10 +'\ '+unit +
                            '\nDay: ' + formatTime(new Date(d.date))}) 
 	
-	 
+	d3.selectAll("text")
+  .style('font-family', 'Harman Simple') 	 
 }
     
 update(0)
@@ -482,11 +483,11 @@ function update1(a) {
 	}
 	else if (a == 'Wind') {
     	d3.select("#my_dataviz").selectAll("svg").remove();
-    	get_graph('Wind','green','%')
+    	get_graph('Wind','green','km/h')
 	}
 	else if (a == 'Rain') {
     	d3.select("#my_dataviz").selectAll("svg").remove();
-    	get_graph('Rain','grey','%')
+    	get_graph('Rain','grey','mm')
 	}
 	
 	
@@ -507,4 +508,21 @@ function get_max_value(mapped) {
   return d3.max(mapped, function(d) { return d.value; });
 }
 
-
+const pcorr = (x, y) => {
+  let sumX = 0,
+    sumY = 0,
+    sumXY = 0,
+    sumX2 = 0,
+    sumY2 = 0;
+  const minLength = x.length = y.length = Math.min(x.length, y.length),
+    reduce = (xi, idx) => {
+      const yi = y[idx];
+      sumX += xi;
+      sumY += yi;
+      sumXY += xi * yi;
+      sumX2 += xi * xi;
+      sumY2 += yi * yi;
+    }
+  x.forEach(reduce);
+  return (minLength * sumXY - sumX * sumY) / Math.sqrt((minLength * sumX2 - sumX * sumX) * (minLength * sumY2 - sumY * sumY));
+};
