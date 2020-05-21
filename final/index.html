@@ -161,7 +161,15 @@
 <div class='content'>
 	<div class='content__wrapper'>
 		<div class='subheading'><h2 class='subheading__heading' id='Part_2'><span>City morphology</span></h2></div>
-		<p>blabla</p>
+		<div class="radio_button_left">
+			<input type="radio" name="featureselect" value="density" checked id="feature1"><label for="feature1">Density</label>
+			<input type="radio" name="featureselect" value="schools" id="feature2"><label for="feature2"># of schools</label>
+			<input type="radio" name="featureselect" value="universities" id="feature3"><label for="feature3"># of universities</label>
+			<input type="radio" name="featureselect" value="elderly" id="feature5"><label for="feature5">Elderly %</label>
+		</div>
+		<br><br><br>
+		<svg id="density_map" viewBox="0 0 400 500" width="900" height="700">
+		</svg>
 	</div>
 </div>
 
@@ -239,6 +247,7 @@
 <script src="js/circle.js"></script>
 <script src="js/weather_1.js"></script>
 <script src="js/weather_2.js"></script>
+<script src="js/density.js"></script>
 
 <script type="text/javascript" src="function.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
