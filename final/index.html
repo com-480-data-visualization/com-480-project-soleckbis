@@ -20,7 +20,7 @@
   	<div><a class='Video' href='Video_ref'>Video</a>
     </div>
   </div>
-  <div><a class='Book' href='Book_ref'>Process Book</a>
+  <div><a href = "https://github.com/com-480-data-visualization/com-480-project-soleckbis/blob/master/Milestone%202%20.pdf " class='Book' href='Book_ref'>Process Book</a>
   </div>
 </nav>
 
@@ -28,23 +28,38 @@
 <header class='page-header'>
 	<div class='page-header__wrapper'>
 		<div class='heading'>
+			<div class='heading__rule-before'></div>
+			<br style = “line-height:200;”>
+			<br style = “line-height:200;”>
 		<h1 class='head__title'>Covid-19 in South Korea</h1>
 			<div class='heading__parenthesis-rule'>
 				<div class='heading__rule-before'></div>
-				<div class='heading__parenthesis'>Find a subtitle</a></div>
+				<div class='heading__parenthesis'>Understand the virus spread differently</a></div>
 				<div class='heading__rule-after'></div>
 			</div>	
-			<div class='heading__subtitle'>Observe & Understand the virus spread differently</div>
+			<div class='heading__subtitle'>May a city or the weather play a role in virus transmission ?</div>
+		
+		<br style = “line-height:200;”>
+			<br style = “line-height:200;”>
+		
+			<div class='heading__rule-before'></div>	
 		</div>
 	</div>
-</header>
-
-<div class='content'>
-	<div class='content__wrapper'>
-		<p>Here introduction text ... <a href='/html-and-css/introduction/'>link</a> </p>
-		<p>blabla ...</p>
-	</div>
+	
+	<div class='intro'>
+		
+		<p><b>Coronavirus</b> is the hot topic of the moment and mobilizes the skills of data-scientists like never before, 
+			and thus not only for describing the spread of the virus, but also for modelling future and even for helping researchers to develop drugs.
+			<br></br>
+On our scale, by exploiting a Korean dataset, published by the <b>KDCC (Korea Center 
+for Disease Control & Prevention)</b>, we want to provide some visualizations allowing to observe the impact of parameters that have been less analysed so far. 
+<br></br>
+Indeed, we would like to provide some representations that shows for example, if <b>some characteristics of a city</b>, like population density,  
+the proportion of persons in the elderly or even the number of schools may play a role in the virus propagation. In the same fashion, 
+the hypothesis that the <b>weather </b>has an impact and in particularly the temperatures is often mentioned, but is it the case in reality ?
+</p>
 </div>
+</header>
 
 <div class='content'>
 	<div class='content__wrapper'>
@@ -178,16 +193,28 @@
 		
 		
 		<h3>
-		Weather 1
+		<div class='text'>
+		
+		<p> Here we provide you all tools to explore any <b>correlation </b>between weather and virus spread !
+		For that, simply choose the weather parameter of your choice and calculate its Pearson correlation with the number of daily new cases. 
+		But of course ... <b>the weather at a given day</b>, may have an impact on the number of new detected sick persons <b>only few days latter </b>. 
+		For that, use the <b>slider</b> to create a <b>time lag</b> between the two signal, and look again at the correlation.
+		<br></br>
+		You will see that for <b>humidity</b> and <b>rain</b> the correlations are always under 0,3 and not significant enough to draw any conclusion. At the opposite it’s interesting to see that 
+		for a <b>delay between 16 and 17 days</b> we get struggling correlation scores around -0,8 between <b>temperature and the number of new sicks persons</b>, this would mean, that <b>increasing temperatures
+		have an negative impacts on the virus </b>. This conclusion is not surprising because all specialist says that hot weather decreases the spread, but it’s interesting to see that it <b>lasts 
+		approximately 2 weeks </b>before observing the <b>impact of temperatures</b>. Concerning wind, an hypothesis could be that wind is favourable to virus, indeed, the virus
+		is viable 3 hours in the air and and wind could facilitate its mixing in the air, but we see here that correlation are constantly blue, so negative, and always below 0.35 so very small.
+		<br></br>
+		Finaly, you can have an <b>overwiev </b>of all the results at a glance with the <b>heatmap</b> provided below, but of course if want to see real values, go <b>back to curves</b> !
+</p>
+</div>
 		</h3>
   		
   	 	<p>
   	 	
   	 	<div class='graph_container '>
-  	 		<h3>
-			Weather 1
-			</h3>
-  	 	
+ 
   	 	<div class='dgraph' >
   	 		
   	 		
@@ -211,7 +238,7 @@
 	         style="display: inline-block; width: 240px; text-align: right">
 	         Time_lag (days) = <span id="nRadius-value"> </span>
 	  		</label>
-	  		<input type="range" min="0" max="30" id="time_lag">
+	  		<input type="range" min="0" max="40" id="time_lag">
 			</div>
 			<br style = “line-height:50;”>
 		
@@ -248,7 +275,6 @@
 <script src="js/weather_2.js"></script>
 <script src="js/density.js"></script>
 
-<script type="text/javascript" src="function.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 </body>
 </html>
