@@ -55,7 +55,7 @@ maingroup.append("text")
     .style("text-decoration", "underline")
     .text("Time lag (in days): ");
     
-d3.csv("data/corrs.csv").then(function(data) {
+d3.csv("data/corrs2.csv").then(function(data) {
     data.forEach(function(d) {
         d.time_lag= +d.time_lag;
         d.temperature = +d.temperature;
