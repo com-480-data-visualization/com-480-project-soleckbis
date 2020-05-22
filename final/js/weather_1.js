@@ -298,10 +298,6 @@
     label2 = svg
         .append('g')
         .append("text")
-
-
-
-
    
 // update the elements
 function update(time_lag) {
@@ -530,6 +526,8 @@ var clip = svg.append("defs").append("svg:clipPath")
    
     x_axis_real2.transition().duration(1000).call(d3.axisTop(xScale2))
 	
+	
+	// functions to get right x and y values when zooming
 	function get_max1(mapped_count){
 		var i;
 		var indice_out = [];
@@ -676,21 +674,11 @@ var clip = svg.append("defs").append("svg:clipPath")
   	.style('font-family', 'Harman Simple') 	 
 	
     }
-
-
-
 }
-
- 
-
-
 
 update(0)
 d3.selectAll("text")
   .style('font-family', 'Harman Simple')   
-
-              
-// Initial starting radius of the circle 
 
 });
 

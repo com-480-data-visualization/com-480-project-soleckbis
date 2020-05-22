@@ -265,6 +265,29 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ---- end subheading ---- */
 
+/* ---- intro ---- */
+.intro {
+  font-family: 'Century';
+  font-style: italic;
+  font-size: 20px;
+  line-height: 35px;
+   margin: 50px 600px 600px;
+  margin-left: 500;
+  margin-right: 300;
+   background-color: #D3E4E0;
+}
+
+.text {
+  font-family: 'Century';
+  
+  font-size: 20px;
+  line-height: 35px;
+  margin: 0px 150px 200px;
+ 
+}
+
+/* ---- end intro ---- */
+
 /* ---- main content ---- */
 
 
@@ -464,7 +487,12 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ---- end sidebox ---- */
 
-
+@media only screen and (min-width: 100px) {
+	.content_intro{
+		font-size: 24px;
+		
+		text-align: center;
+	}
 
 @media only screen and (min-width: 750px) {
 	body {
@@ -472,7 +500,7 @@ h1, h2, h3, h4, h5, h6 {
 		line-height: 28px;
 	}
 	.head__title {
-		font-size: 57px;
+		font-size:px;
 		line-height: 60px;
 		text-align: center;
 		margin-bottom: 12px;
@@ -540,6 +568,10 @@ h1, h2, h3, h4, h5, h6 {
 	}
 	.tutorial-icon__title {
 		font-size: 24px;
+	}
+	.content__intro {
+		padding-top: 80px;
+		padding-bottom: 80px;
 	}
 	.content__wrapper {
 		padding-top: 80px;

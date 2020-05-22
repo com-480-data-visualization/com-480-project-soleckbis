@@ -73,7 +73,7 @@ var colorScale = d3.scaleLinear()
 var tooltip = d3.select("#heatmap")
     .append("div")
  
-  var mouseover = function(d) {
+var mouseover = function(d) {
     tooltip
       .style("opacity", 1)
     d3.select(this)
@@ -81,7 +81,7 @@ var tooltip = d3.select("#heatmap")
       .style("opacity", 1)
   }
 
-  var mouseleave = function(d) {
+var mouseleave = function(d) {
     tooltip
       .style("opacity", 0)
     d3.select(this)
@@ -109,7 +109,6 @@ var heatMap = maingroup.selectAll(".hour")
         .text(function (d) { return '\n'+'Pearson correlation : ' + Math.round(d.temperature*1000)/1000})
 
  
-
 var heatMap = maingroup.selectAll(".hour")
     .data(data)
     .enter().append("rect")
@@ -218,7 +217,6 @@ legendsvg.append("g") // x axis
     .attr("class", "axis")
     .attr("transform", "translate(0," + (10) + ")")
     .call(d3.axisBottom(xScale).ticks(8));
-
 
 });
 
