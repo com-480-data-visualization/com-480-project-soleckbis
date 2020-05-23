@@ -101,12 +101,15 @@ class DensityMapPlot {
             .precision(.1);
         this.path_generator = d3.geoPath()
             .projection(projection);
-
         const population_promise = d3.csv("data/agg.csv").then((data) => {
-            return data.reduce((acc, d) => {
+            console.log(data);
+            let asdf = data.reduce((acc, d) => {
                 acc[d.province] = d;
+                console.log(d);
                 return acc;
             }, {});
+            console.log(asdf);
+            return asdf;
         });
 
         const map_promise = d3.json("json/skorea-provinces-topo.json").then((topojson_raw) => {
@@ -124,8 +127,10 @@ class DensityMapPlot {
                 province.properties.density = parseFloat(stats[province.properties.NAME_1].population_density);
                 province.properties.schools = parseFloat(stats[province.properties.NAME_1].elementary_school_count);
                 province.properties.universities = parseFloat(stats[province.properties.NAME_1].university_count);
+                province.properties.nursing_homes = parseFloat(stats[province.properties.NAME_1].nursing_home_count);
                 province.properties.elderly = parseFloat(stats[province.properties.NAME_1].elderly_population_ratio);
-            });
+            })
+            console.log(this.map_data);
             this.fill(feature, this.path_generator, scale);
         });
     }
