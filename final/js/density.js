@@ -78,7 +78,7 @@ class DensityMapPlot {
                 });
                 tooltip.classed('hidden', false)
                     .attr('style', 'left:' + (mouse[0] + 100) +
-                        'px; top:' + (mouse[1] + 3500) + 'px')
+                        'px; top:' + (mouse[1] + 5150) + 'px')
                     .html(d.properties.NAME_1 + ": " + d.properties[feature]);
             })
             .on('mouseout', function() {
@@ -118,10 +118,7 @@ class DensityMapPlot {
         Promise.all([map_promise, population_promise]).then((results) => {
             this.map_data = results[0];
             let stats = results[1];
-            //let point_data = results[2];
             this.map_container = this.svg.append('g');
-            //this.point_container = this.svg.append('g');
-            //this.label_container = this.svg.append('g');
             console.log(stats);
             this.map_data.forEach((province) => {
                 province.properties.density = parseFloat(stats[province.properties.NAME_1].population_density);

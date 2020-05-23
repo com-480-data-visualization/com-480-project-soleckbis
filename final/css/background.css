@@ -488,11 +488,12 @@ h1, h2, h3, h4, h5, h6 {
 /* ---- end sidebox ---- */
 
 @media only screen and (min-width: 100px) {
-	.content_intro{
-		font-size: 24px;
-		
-		text-align: center;
-	}
+    .content_intro {
+        font-size: 24px;
+
+        text-align: center;
+    }
+}
 
 @media only screen and (min-width: 750px) {
 	body {
@@ -666,4 +667,8 @@ div.tooltip {
     border-radius: 2px;
     opacity: 0.9;
     position: absolute;
+}
+
+table {
+    text-align: center;
 }
