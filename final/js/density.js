@@ -85,10 +85,10 @@ class DensityMapPlot {
                 d3.select(this).style("stroke-width", 0.2);
                 tooltip.classed('hidden', true);
             });
-        this.makeColorbar(this.svg, scale, [50, 30], [20, this.svg_height - 2*30], class_);
+        this.makeColorbar(this.svg, scale, [0, 50], [20, this.svg_height - 2*30], class_);
     }
 
-    constructor(svg_element_id, feature, scale=d3.scaleLog().range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"]).interpolate(d3.interpolateHcl)) {
+    constructor(svg_element_id, feature, scale=d3.scaleLog().range(["hsl(62,100%,90%)", "hsl(12,136%,52%)"]).interpolate(d3.interpolateHcl)) {
         this.svg = d3.select('#' + svg_element_id);
         const svg_viewbox = this.svg.node().viewBox.animVal;
         this.svg_width = svg_viewbox.width;
@@ -143,10 +143,10 @@ whenDocumentLoaded(() => {
     feature_selector.forEach((input) => {
         input.onclick = (() => {
             feature_ = input.value;
-            let scale = d3.scaleLinear().range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"]).interpolate(d3.interpolateHcl);
+            let scale = d3.scaleLinear().range(["hsl(62,100%,90%)", "hsl(12,136%,52%)"]).interpolate(d3.interpolateHcl);
             let class_ = d3.scaleLinear;
             if(feature_ === "density"){
-                scale = d3.scaleLog().range(["hsl(62,100%,90%)", "hsl(228,30%,20%)"]).interpolate(d3.interpolateHcl);
+                scale = d3.scaleLog().range(["hsl(62,100%,90%)", "hsl(12,136%,52%)"]).interpolate(d3.interpolateHcl);
                 class_ = d3.scaleLog;
             }
             //console.log(scale.)
