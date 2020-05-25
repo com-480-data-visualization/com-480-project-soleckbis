@@ -63,8 +63,19 @@ the hypothesis that the <b>weather </b>has an impact and in particularly the tem
 
 <div class='content'>
 	<div class='content__wrapper'>
-		<div class='subheading'><h2 class='subheading__heading' id='Part_1'><span>Name part 1</span></h2></div>
-		<p>blabla</p>
+		<div class='subheading'><h2 class='subheading__heading' id='Part_1'><span>Spreading of Covid-19 in the South Korean population</span></h2></div>
+		
+		<h3>
+		<div class='text'>
+		<p>South Korea has been praised for its <b>control of the Covid-19</b> epidemic taking full advantage
+			of one of the largest and best-organised epidemic control programs in the world and its excellent health system. Having the first case very early (20 January),
+			they managed to control immediately the epidemic. However, the <b>"Patient 31"</b> participated in a social gathering
+			from Shincheonji Church where he had contact with thousands of people causing the outbreak of new cases.
+			South Korea uses a <b>large amount of tests</b> to regulate the contamination of potential cases. In this part, you can visualize
+			the spread of the disease in South Korea among all <b> age groups </b> and <b>gender groups</b>. <b>Special events</b> are displayed to get
+			 a rough estimate of the effects of these events. The <b>fatality rate</b> among these groups has been highlighted too, showing for example a <b>higher risk</b> for eldery people.</p>
+		</div>
+		</h3>
 		<h3>
 		Concentration of cases by provinces
 	</h3>
@@ -98,18 +109,18 @@ the hypothesis that the <b>weather </b>has an impact and in particularly the tem
 		</select>
 	</div>
 	<div class="radio_button">
-		<input type="radio" name="MapType1" value="provinces" id="provinces1"><label for="provinces1">Provinces</label>
-		<input type="radio" name="MapType1" value="municipalities" id="municipalities1"><label for="municipalities1">Municipalities</label><br>
+		<input class="btn btn-gray-dark" type="radio" name="MapType1" value="provinces" id="provinces1"><label for="provinces1">Provinces</label>
+		<input class="btn btn-gray-dark" type="radio" name="MapType1" value="municipalities" id="municipalities1"><label for="municipalities1">Municipalities</label><br>
 	</div>
-	<button id="PlayButton1">Play</button>
-	<button id="PauseButton1">Pause</button>
-	<button id="RestartButton1">Restart</button><br>
+	<button class="btn btn-danger" id="PlayButton1">Play</button>
+	<button class="btn btn-danger" id="PauseButton1">Pause</button>
+	<button class="btn btn-danger" id="RestartButton1">Restart</button><br>
 	<div class="Event1">
 		<b></b>
 	</div>
 	<div>
-		<button id="ZoomIn1"><b>+</b></button> <br>
-		<button id="ZoomOut1"><b>-</b></button>
+		<button  id="ZoomIn1"><b>+</b></button> <br>
+		<button  id="ZoomOut1"><b>-</b></button>
 	</div>
 	<div class="Notes1"></div>
 	<div class="bar_radio">
@@ -117,10 +128,11 @@ the hypothesis that the <b>weather </b>has an impact and in particularly the tem
 		<input type="radio" name="BarRadio" value="Gender" id="GenderRadioButton"><label for="GenderRadioButton">Gender</label><br>
 		<input type="radio" name="BarRadio" value="Province" id="ProvinceRadioButton"><label for="ProvinceRadioButton">Provinces</label>
 	</div>
+	<div class="Fatality1"></div>
 	<svg id ="concentration" viewBox="0 0 400 500" width="700" height="550">
 	</svg>
 	<svg id="barsvg"></svg><br>
-	<div class="provinces_text"></div>
+	<div class="tooltip" id="provinces_text"></div>
 	<h3>
 		Daily new cases by provinces
 	</h3>
@@ -157,9 +169,9 @@ the hypothesis that the <b>weather </b>has an impact and in particularly the tem
 		<input type="radio" name="MapType2" value="provinces" id="provinces2"><label for="provinces2">Provinces</label>
 		<input type="radio" name="MapType2" value="municipalities" id="municipalities2"><label for="municipalities2">Municipalities</label><br>
 	</div>
-	<button id="PlayButton2">Play</button>
-	<button id="PauseButton2">Pause</button>
-	<button id="RestartButton2">Restart</button><br>
+	<button class="btn btn-danger" id="PlayButton2">Play</button>
+	<button class="btn btn-danger" id="PauseButton2">Pause</button>
+	<button class="btn btn-danger" id="RestartButton2">Restart</button><br>
 	<div class="Event2">
 		<b></b>
 	</div>
@@ -168,8 +180,15 @@ the hypothesis that the <b>weather </b>has an impact and in particularly the tem
 		<button id="ZoomOut2"><b>-</b></button>
 	</div>
 	<div class="Notes2"></div>
+	<div class = "display_causes">
+		<select id="display">
+			<option value = "Five">First 5</option>
+			<option value = "All">All</option>
+		</select>
+	</div>
 	<svg id ="circles" viewBox="0 0 400 500" width="700" height="550">
 	</svg>
+	<svg id="Causes"></svg>
 	</div>
 </div>
 
@@ -301,4 +320,3 @@ the hypothesis that the <b>weather </b>has an impact and in particularly the tem
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 </body>
 </html>
-
