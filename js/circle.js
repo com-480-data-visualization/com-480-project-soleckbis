@@ -25,7 +25,7 @@ class MapCircle {
 				.attr("cx", 50)
 				.style("fill", "red");	
 				
-		this.svg.append("text").text("Total daily cases").attr("transform", "translate(50,-170)");
+		this.svg.append("text").text("Total daily cases").attr("transform", "translate(50,-190)");
 		}
 		
 		
@@ -54,35 +54,39 @@ class MapCircle {
 		
 		updateEvent(time_value.domain()[0]);
 		updateMap(time_value.domain()[0], genderButton.node().value, ageButton.node().value, true);
+		updateCauses(time_value.domain()[0], genderButton.node().value, ageButton.node().value, true);
 		
 		function handleMouseOver(d, i) {
-			var coords = d3.mouse(this)
-			var svg = d3.select('#' + svg_element_id);
-			d3.select(this).style('stroke-width', 1)
-			if (Type=='provinces') {
-				d3.select('#' + svg_element_id).append('text')
-					.attr("id", "t"+d.properties.NAME_1)
-					.attr("x", coords[0]-30)
-					.attr("y", coords[1]-15)
-					.text(d.properties.NAME_1+' Total cases : '+d.properties.cases);
-			} else if (Type=='municipalities') {
-				d3.select('#' + svg_element_id).append('text')
-					.attr("id", "t"+d.properties.NAME_1)
-					.attr("x", coords[0]-30)
-					.attr("y", coords[1]-15)
-					.text(d.properties.NAME_2+' Total cases : '+d.properties.cases);
+			d3.select(this).style('opacity', 0.9)
+				.style('stroke-width', 1)
+			d3.select('#provinces_text')
+				.transition()    
+            		.duration(200)
+				.style("opacity", 1)
+			if (Type=="provinces") {
+				d3.select('#provinces_text')
+					.style("visibility", "visible")
+					.html(d.properties.NAME_1+"<br>"+' Total cases : '+d.properties.cases)
+					.style("left", (d3.event.pageX) + "px")		
+                		.style("top", (d3.event.pageY - 28) + "px");
+			} else if (Type == 'municipalities') {
+				d3.select('#provinces_text')
+					.html(d.properties.NAME_2+"<br>"+' Total cases : '+d.properties.cases)
+					.style("left", (d3.event.pageX) + "px")		
+                		.style("top", (d3.event.pageY - 28) + "px");
 			}
 		}
+
 		
 		function handleMouseOut(d, i) {
 			d3.selectAll('.province').style('stroke-width', 0.2);
-			d3.select("#t"+d.properties.NAME_1).remove();
+			d3.select('#provinces_text').style("opacity", 0);
 		}
 			
 		
 		function step() {
 			update(time_value.invert(currentValue));
-			currentValue = currentValue + (targetValue/300);
+			currentValue = currentValue + (targetValue/100);
 			if (currentValue > targetValue) {
 				clearInterval(timer);
 			}
@@ -96,11 +100,12 @@ class MapCircle {
 			ageButton = d3.select("#Age2");
 			updateEvent(h);
 			updateMap(h, genderButton.node().value, ageButton.node().value);
+			updateCauses(h, genderButton.node().value, ageButton.node().value);
 		}
 			
 		var slider = this.svg.append("g")
 			.attr("class", "slider")
-			.attr("transform", "translate(20,-290)");	
+			.attr("transform", "translate(20,-330)");	
 			
 		slider.append("line")
 			.attr("class","track")
@@ -245,7 +250,7 @@ class MapCircle {
 			var circle_container;
 			
 			if (new_map==true) {
-				map_container = svg.append('g').attr("class", "Map").attr("transform", "translate(0,-160)");
+				map_container = svg.append('g').attr("class", "Map").attr("transform", "translate(0,0)");
 				circle_container = svg.append('g').attr("class", "Circle");
 			} else {
 				map_container = d3.select('#circles').select(".Map");
@@ -277,9 +282,11 @@ class MapCircle {
 					.style("fill", "white")
 					.on('mouseover', handleMouseOver)
 					.on('mouseout', handleMouseOut);
+			} else {
+				map_container.selectAll(".province")
+					.data(map_data);
 			}
-
-				
+			
 			if (new_map==true) {
 				circle_container.selectAll(".province-circles")
 					.data(map_data)
@@ -307,9 +314,162 @@ class MapCircle {
 			}
 			
 			if (new_map==true) {
-				$this.makeCirclebar($this.svg, radius_scale, [100, -130], [20, $this.svg_height - 2*30]);
+				$this.makeCirclebar($this.svg, radius_scale, [100, -150], [20, $this.svg_height - 2*30]);
 			}
 		});
+	}
+	
+	function updateCauses(date, gender, age, new_map=false) {
+		var causes_promise = d3.csv("data/infection_causes.csv").then((data)=>{
+			var filter_data = data.filter(function(a){return (a.date==formatDateString(date))&(a.sex==gender)&(a.age==age)});
+			
+			filter_data.sort(function(a,b){return d3.descending(parseInt(a.total_city_cases), parseInt(b.total_city_cases))});
+		
+			var causes_container;
+			var limit;
+			
+			var displayButton = d3.select("#display");
+			
+			if (displayButton.node().value=="Five") {
+				limit = 5; 
+			} else if (displayButton.node().value=="All") {
+				limit = 23;
+			}
+			
+			function search_emojis(d, i) {
+				if (i<limit) {
+					if (d.infection_case == 'Unknown Reason') {
+						return "PNG/Unknown.png";
+					} else if (d.infection_case == 'overseas inflow') {
+						return "PNG/overseas inflow.png";
+					} else if (d.infection_case == 'contact with patient') {
+						return "PNG/contact with patient.png";
+					} else if (d.infection_case == "Shincheonji Church" || d.infection_case == "Dongan Church" || d.infection_case == "Onchun Church" || d.infection_case=="Geochang Church" || d.infection_case=="River of Grace Community Church") {
+						return "PNG/Church.png";
+					} else if (d.infection_case == "Bonghwa Pureun Nursing Home" || d.infection_case=="Gyeongsan Seorin Nursing Home") {
+						return "PNG/Nursing Home.png";
+					} else if (d.infection_case== "Cheongdo Daenam Hospital" || d.infection_case=="Eunpyeong St. Mary's Hospital") {
+						return "PNG/Hospital.png";
+					} else if (d.infection_case == "Changnyeong Coin Karaoke") {
+						return "PNG/karaoke.png";
+					} else if (d.infection_case=="gym facility in Cheonan" || d.infection_case=="gym facility in Sejong") {
+						return "PNG/gym.png";
+					} else if (d.infection_case == "Guro-gu Call Center") {
+						return "PNG/Call Center.png"
+					} else if (d.infection_case == "Seongdong-gu APT" || d.infection_case=="Gyeongsan Jeil Silver Town" || d.infection_case=="Ministry of Oceans and Fisheries") {
+						return "PNG/Office.png"
+					} else if (d.infection_case == "Gyeongsan Community Center" || d.infection_case == "Milal Shelter") {
+						return "PNG/center.png"
+					} else if (d.infection_case=="Pilgrimage to Israel") {
+						return "PNG/Israel.png"
+					} else if (d.infection_case=="Suyeong-gu Kindergarten") {
+						return "PNG/kindergarten.png"
+					}
+				}
+			}
+			
+			if (new_map==true) {
+			 	causes_container = d3.select("#Causes").append('g').attr("class", "list");
+			} else {
+				causes_container = d3.select("#Causes").select(".list");
+			}
+			
+			if (new_map==true) {
+				causes_container.selectAll(".emojis")
+					.data(filter_data)
+					.enter()
+					.append("image").classed("emojis", true)
+					.attr("xlink:href", function(d, i){return search_emojis(d,i)})
+					.attr("width", "30px")
+					.attr("transform", function(d,i){
+						var offset = -330 +49*i;
+						return "translate(100,"+offset+")";
+					});
+			} else {
+				causes_container.selectAll(".emojis")
+					.data(filter_data)
+					.attr("xlink:href", function(d, i){return search_emojis(d, i)})
+					.attr("width", "30px")
+					.attr("transform", function(d,i){
+						var offset = -330 +49*i;
+						return "translate(100,"+offset+")";
+					});
+			}
+			
+			if (new_map==true) {
+				causes_container.selectAll(".emojis_text1")
+					.data(filter_data)
+					.enter()
+					.append("text").classed("emojis_text1", true)
+						.text((d)=>d.infection_case) 
+						.attr("transform", function(d,i) {
+							if (i<limit) {
+								var offset = -300 + 49*i;
+								return "translate(150,"+offset+")";
+							} 
+						})
+						.style("display", function(d,i){
+							if (i<limit){
+								return "block";
+							} else {
+								return "none";
+							}
+						});
+					
+				causes_container.selectAll(".emojis_text2")
+					.data(filter_data)
+					.enter()
+					.append("text").classed("emojis_text2", true)
+						.text((d)=>"Total cases: " + d.total_city_cases)
+						.attr("transform", function(d,i) {
+							if (i<limit) {
+								var offset = -300 + 49*i;
+								return "translate(450,"+offset+")";
+							} 
+						})
+						.style("display", function(d,i){
+							if (i<limit){
+								return "block";
+							} else {
+								return "none";
+							}
+						});
+			} else {
+				causes_container.selectAll(".emojis_text1")
+					.data(filter_data)
+					.text((d)=>d.infection_case)  
+					.attr("transform", function(d,i) {
+						if (i<limit) {
+							var offset = -300 + 49*i;
+							return "translate(150,"+offset+")";
+						} 
+					})
+					.style("display", function(d,i){
+						if (i<limit){
+							return "block";
+						} else {
+							return "none";
+						}
+					});
+					
+				causes_container.selectAll(".emojis_text2")
+					.data(filter_data)
+					.text((d)=>"Total cases: " + d.total_city_cases)  
+					.attr("transform", function(d,i) {
+						if (i<limit) {
+							var offset = -300 + 49*i;
+							return "translate(450,"+offset+")";
+						}
+					})
+					.style("display", function(d,i){
+						if (i<limit){
+							return "block";
+						} else {
+							return "none";
+						}
+					});
+			}
+		})
 	}	
 }
 		
@@ -334,7 +494,7 @@ class MapCircle {
 			.rotate([0,0])
 			.center([128, 36])
 			.scale(5000)
-			.translate([this.svg_width, this.svg_height/2])
+			.translate([this.svg_width, this.svg_height/2-200])
 			.precision(0.1);
 			
 		const path_generator = d3.geoPath()

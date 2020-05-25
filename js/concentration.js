@@ -16,7 +16,7 @@ class MapPlot {
 			.range(color_scale.range())
 			.interpolate(color_scale.interpolate());
 			
-		this.svg.append("text").text("Cases per million of inhabitants").attr("transform", "translate(0,-280)");
+		this.svg.append("text").text("Cases per million of inhabitants").attr("transform", "translate(0,-330)");
 
 		const colorbar_axis = d3.axisLeft(value_to_svg).tickValues(yScale);
 
@@ -76,10 +76,18 @@ class MapPlot {
 		document.getElementById("AgeRadioButton").click()
 		var BarType = "Age";
 		
+		genderButton.on("change", function(d) {
+			updateMap(time_value.invert(currentValue), this.value, ageButton.node().value);
+		})
+		
+		ageButton.on("change", function(d) {
+			updateMap(time_value.invert(currentValue), genderButton.node().value, this.value);
+		})
+		
 		radiobuttons.on("change", function(d) {
 			d3.select("#barsvg").selectAll("*").remove()
 			BarType = this.value;
-			updateBar(time_value.domain()[0], BarType, true);
+			updateBar(time_value.invert(currentValue), BarType, true);
 		})
 		
 		var formatDate = d3.timeFormat("%d %B %Y");
@@ -94,10 +102,11 @@ class MapPlot {
 		updateEvent(time_value.domain()[0]);
 		updateMap(time_value.domain()[0], genderButton.node().value, ageButton.node().value, true);
 		updateBar(time_value.domain()[0], BarType, true);
+		updateFatality(time_value.domain()[0], BarType, genderButton.node().value, ageButton.node().value)
 		
 		function step() {
 			update(time_value.invert(currentValue));
-			currentValue = currentValue + (targetValue/300);
+			currentValue = currentValue + (targetValue/100);
 			if (currentValue > targetValue) {
 				clearInterval(timer);
 			}
@@ -112,11 +121,14 @@ class MapPlot {
 			updateEvent(h);
 			updateMap(h, genderButton.node().value, ageButton.node().value);
 			updateBar(h, BarType);
+			updateFatality(h, BarType, genderButton.node().value, ageButton.node().value);
 		}
 			
 		var slider = this.svg.append("g")
 			.attr("class", "slider")
-			.attr("transform", "translate(20,-400)");	
+			.attr("transform", "translate(20,-450)");
+		
+		slider.transition().duration(350);	
 			
 		slider.append("line")
 			.attr("class","track")
@@ -171,30 +183,29 @@ class MapPlot {
 		});
 		
 		function handleMouseOver(d, i) {
-			if (Type=='provinces') {
-				d3.select('.provinces_text')
-					.style("opacity", 0.9)
+			d3.select(this).style('opacity', 0.9)
+				.style('stroke-width', 1)
+			d3.select('#provinces_text')
+				.transition()    
+            		.duration(200)
+				.style("opacity", 1)
+			if (Type=="provinces") {
+				d3.select('#provinces_text')
+					.html(d.properties.NAME_1+"<br>"+' Total cases : '+d.properties.total_cases)
 					.style("left", (d3.event.pageX) + "px")		
-                		.style("top", (d3.event.pageY - 28) + "px")
-					.append("text")
-						.attr("id", "t"+d.properties.NAME_1)
-						.text(d.properties.NAME_1+"\n"+' Total cases : '+d.properties.total_cases);
-			} else if (Type=='municipalities') {
-				d3.select('.provinces_text')
-					.style("opacity", 0.9)
+                		.style("top", (d3.event.pageY - 28) + "px");
+			} else if (Type == 'municipalities') {
+				d3.select('#provinces_text')
+					.html(d.properties.NAME_2+"<br>"+' Total cases : '+d.properties.total_cases)
 					.style("left", (d3.event.pageX) + "px")		
-                		.style("top", (d3.event.pageY - 28) + "px")
-					.append("text")
-						.attr("id", "t"+d.properties.NAME_1)
-						.text(d.properties.NAME_2+"\n"+' Total cases : '+d.properties.total_cases);
+                		.style("top", (d3.event.pageY - 28) + "px");
 			}
 		}
 		
 		function handleMouseOut(d, i) {
-			d3.selectAll('.province').style('fill-opacity', 0.8)
+			d3.selectAll('.province').style('opacity', 0.8)
 			.style('stroke-width', 0.2)
-			d3.select("#t"+d.properties.NAME_1).remove();
-			d3.select(".provinces_text").style("opacity", 0);
+			d3.select('#provinces_text').style("opacity", 0);
 		}
 		
 		function isnotEmpty(obj) {
@@ -209,6 +220,7 @@ class MapPlot {
 			var event_promise = d3.csv("data/Policy.csv").then((data)=>{
 				let event_policy = {};
 				var filter_data = data.filter(function (a){return a.start_date==formatDateString(date)});
+		
 				filter_data.forEach((row)=> {
 					event_policy = row.policy;
 				})
@@ -288,16 +300,13 @@ class MapPlot {
 				var map_container;
 				
 				if (new_map==true) {
-					map_container = svg.append('g').attr("class", "Map").attr("transform", "translate(0,-280)");
+					map_container = svg.append('g').attr("class", "Map").attr("transform", "translate(0,-330)");
 				} else {
 					map_container = d3.select('#concentration').select(".Map");
 				}
 
 				const zoom = d3.zoom()
 					.on('zoom', zoomed);
-			
-				svg.call(zoom).on("dblclick.zoom", null)
-					.on("wheel.zoom", null);
 				
 				zoominButton.on("click", function() {
 					zoom.scaleBy(svg.transition().duration(750), 1.2)
@@ -316,72 +325,65 @@ class MapPlot {
 						.style("fill", (d)=> color_scale(d.properties.density))
 						.style("stroke", "rgb(25,25,25)")
 						.style("stroke-width", 0.2)
-						.on('mouseover', handleMouseOver) 
-						.on('mouseout', handleMouseOut);
+						.on("mouseover", handleMouseOver)
+						.on("mouseout", handleMouseOut);
 				} else {
 					map_container.selectAll(".province")
 						.data(map_data)
 						.style("fill", (d)=> color_scale(d.properties.density))
 						.style("stroke", "rgb(25,25,25)")
-						.style("stroke-width", 0.2);
+						.style("stroke-width", 0.2)
+						.on("click", handleMouseOver);
 				}
+				
+				svg.call(zoom).on("dblclick.zoom", null)
+						.on("wheel.zoom", null);
 				
 				function zoomed() {
 					map_container.selectAll('path')
 					.attr('transform', d3.event.transform);
 				}
+
 				
 				if (new_map==true) {
-					$this.makeColorbar(svg, color_scale, [100, -250], [20, $this.svg_height - 2*30]);
+					$this.makeColorbar(svg, color_scale, [100, -300], [20, $this.svg_height - 2*30]);
 				};
 			})
 		}
 		
 		function BarOver(d, i, BarType) {
+			d3.select(this).style('opacity', 0.9)
+				.style('stroke-width', 1)
+			d3.select("#provinces_text")
+				.transition()
+				.duration(300)
+				.style("opacity", 1);
 			if(BarType=="Age") {
-				d3.select(".provinces_text")
-					.style("opacity", 0.9)
+				d3.select("#provinces_text")
+					.style("opacity", 1)
 					.style("left", (d3.event.pageX) + "px")		
                 		.style("top", (d3.event.pageY - 28) + "px")
-                		.append("text")
-                			.attr("id", "t"+d.data.age)
-                			.text(d.data.age+"\n"+"Confirmed: "+d.data.confirmed+"\n"+"Deceased: "+d.data.deceased+"\n"+"Fatality rate: "+(100*(d.data.deceased/d.data.confirmed)).toFixed(2)+"%");
+                		.html(d.data.age+"<br>"+"Confirmed: "+d.data.confirmed+"<br>"+"Deceased: "+d.data.deceased+"<br>"+"Fatality rate: "+(100*(d.data.deceased/d.data.confirmed)).toFixed(2)+"%");
 			} else if (BarType=="Gender") {
-				d3.select(".provinces_text")
-					.style("opacity", 0.9)
+				d3.select("#provinces_text")
+					.style("opacity", 1)
 					.style("left", (d3.event.pageX) + "px")		
                 		.style("top", (d3.event.pageY - 28) + "px")
-                		.append("text")
-                			.attr("id", "t"+d.data.sex)
-                			.text(d.data.sex+"\n"+"Confirmed: "+d.data.confirmed+"\n"+"Deceased: "+d.data.deceased+"\n"+"Fatality rate: "+(100*(d.data.deceased/d.data.confirmed)).toFixed(2)+"%");
+                		.html(d.data.sex+"\n"+"Confirmed: "+d.data.confirmed+"\n"+"Deceased: "+d.data.deceased+"\n"+"Fatality rate: "+(100*(d.data.deceased/d.data.confirmed)).toFixed(2)+"%");
             } else if (BarType=="Province") {
-           		d3.select(".provinces_text")
-					.style("opacity", 0.9)
+           		d3.select("#provinces_text")
+					.style("opacity", 1)
 					.style("left", (d3.event.pageX) + "px")		
                 		.style("top", (d3.event.pageY - 28) + "px")
-                		.append("text")
-                			.attr("id", "t"+d.data.province)
-                			.text(d.data.province+"\n"+"Confirmed: "+d.data.confirmed+"\n"+"Deceased: "+d.data.deceased+"\n"+"Fatality rate: "+(100*(d.data.deceased/d.data.confirmed)).toFixed(2)+"%");
+                		.html(d.data.province+"\n"+"Confirmed: "+d.data.confirmed+"\n"+"Deceased: "+d.data.deceased+"\n"+"Fatality rate: "+(100*(d.data.deceased/d.data.confirmed)).toFixed(2)+"%");
             } 
-         }
-         
-         function BarOut(d, i, BarType) {
-         	d3.select(".provinces_text").style("opacity", 0);
-         	if (BarType=="Age") {
-				d3.select("#t"+d.data.age).remove();
-			} else if (BarType=="Gender") {
-				d3.select("#t"+d.data.sex).remove();
-			} else if (BarType=="Province") {
-				d3.select("#t"+d.data.province).remove();
-			}
          }
 		
 		function updateBar (date, BarType, new_map = false) {
-			var age_promise = d3.csv("data/Time"+BarType+".csv").then((data)=> {
+			var bar_promise = d3.csv("data/Time"+BarType+".csv").then((data)=> {
 				
 				var filter_data = data.filter(function(a){return a.date==formatDateString(date)});
-				console.log(data);
-				var subgroups = data.columns.slice(2);
+				var subgroups = data.columns.slice(3);
 				var groups;
 				
 				if (BarType=="Age") {
@@ -404,7 +406,7 @@ class MapPlot {
 				}
 				
 				var height = 300;
-				var heighty = height-600;
+				var heighty = height-450;
 				var maxdomain;
 				
 				if (BarType=="Age") {
@@ -420,30 +422,37 @@ class MapPlot {
     					.range([0, width])
     					.padding(0.2);
     				
-    				svg2.append("g")
-    					.attr("transform", "translate(250,"+heighty+")")
-    					.call(d3.axisBottom(x).tickSizeOuter(0));
+    				if (BarType != "Province") {
+    					svg2.append("g")
+    						.attr("transform", "translate(250,"+heighty+")")
+    						.call(d3.axisBottom(x).tickSizeOuter(0));
+    				} else if (BarType == "Province") {
+    					svg2.append("g")
+    						.attr("transform", "translate(250,"+heighty+")")
+    						.call(d3.axisBottom(x).tickValues([]));
+    				}
     					
     				var y = d3.scaleLinear()
     					.domain([0,maxdomain])
     					.range([height, 0]);
     					
     				svg2.append("g")
-    					.attr("transform", "translate(250,-600)")
+    					.attr("transform", "translate(250,-450)")
     					.call(d3.axisLeft(y));
     					
-    				var color_range = ['#864b97', "#0084d3"]
+    				var color_range = [ "#0084d3", '#864b97', ]
     				
     				var color = d3.scaleOrdinal()
     					.domain(subgroups)
     					.range(color_range);
-    					
-    				var stackedData = d3.stack().keys(subgroups)(filter_data)
-    				console.log(stackedData);
+    				
+    				
+    				var stackedData = d3.stack().keys(subgroups)(filter_data);
 				
 				if (new_map==true) {
 					bar_container = svg2.append("g").attr("class", "Bar");
 				} else {
+					d3.select("#barsvg").select(".Bar").selectAll("*").remove();
 					bar_container = d3.select("#barsvg").select(".Bar");
 				}
 				
@@ -465,7 +474,7 @@ class MapPlot {
 								}
 							})
 							.attr("y", function (d) {return y(d[1])})
-							.attr("transform", "translate(250,-600)")
+							.attr("transform", "translate(250,-450)")
 							.attr("height", function (d) {return y(d[0])-y(d[1])})
 							.attr("width", x.bandwidth())
 							.on("mouseover", function(d,i){
@@ -476,7 +485,7 @@ class MapPlot {
 							});
 				
 				bar_container.append("text").text("Total Cases")
-					.attr("transform", "translate(210,-620)")
+					.attr("transform", "translate(210,-470)")
 					.style("font-size", "15px");
 				
 				bar_container.append("g")
@@ -489,7 +498,7 @@ class MapPlot {
 							.attr("width", 18)
 							.attr("height", 18)
 							.attr("transform", function(d, i){
-								var offset = -680 + 19*i;
+								var offset = -480 + 19*i;
 								return "translate(150,"+offset+")"})
 							.style("fill", function(d, i){return color_range.slice().reverse()[i]})
 							
@@ -500,10 +509,40 @@ class MapPlot {
 						.text(function(d) {return d})
 						.attr("x", width-18)
 						.attr("transform", function(d, i){
-								var offset = -665 + 19*i;
+								var offset = -465 + 19*i;
 								return "translate(180,"+offset+")"})
 						.style("font-size", "15px");
-					
+									
+			})
+		}
+		
+		function updateFatality(date, BarType, gender, age) {
+			d3.csv("data/Time"+BarType+".csv").then((data)=> {
+				
+				var filter_data = data.filter(function(a){return a.date == formatDateString(date)});
+				var filter_data2;
+				
+				if ((gender=="All")&(age=="All")) {
+					filter_data2 = filter_data.slice();
+				} else if ((gender=="All")&(age!="All")) {
+					filter_data2 = filter_data.filter(function(a){return a.age==age});
+				} else if ((gender!="All")&(age=="All")){
+					filter_data2 = filter_data.filter(function(a){return a.sex==gender});
+				} else {
+					filter_data2 = filter_data.filter(function(a){return (a.sex==gender)&(a.age==age)});
+				}
+				
+				if (!(Array.isArray(filter_data) && filter_data.length)) {
+					d3.select(".Fatality1")
+						.html("Population Fatality Rate : 0% Group Fatality Rate : 0%");
+				} else if (!(Array.isArray(filter_data2) && filter_data2.length)) {
+					d3.select(".Fatality1")
+						.html("Population Fatality Rate : "+(100*(d3.sum(filter_data,d=>d.deceased)/d3.sum(filter_data, d=>d.confirmed))).toFixed(2)+"% "+ "Group Fatality Rate : 0%");
+				} else {
+					d3.select(".Fatality1")
+						.html("Population Fatality Rate : "+(100*(d3.sum(filter_data,d=>d.deceased)/d3.sum(filter_data, d=>d.confirmed))).toFixed(2)+"% "+ "Group Fatality Rate : " + (100*(d3.sum(filter_data2,d=>d.deceased)/d3.sum(filter_data2, d=>d.confirmed))).toFixed(2)+"%");
+				}
+
 			})
 		}
 	};
