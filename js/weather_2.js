@@ -44,7 +44,7 @@ maingroup.append("text")
     .attr("x", width / 2)
     .attr("y", -70)
     .style("text-anchor", "middle")
-    .text("Title weather graph 2");
+    .text("Heatmap weather correlations");
     
 maingroup.append("text")
     .attr("class", "title")
