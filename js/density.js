@@ -54,22 +54,25 @@ class DensityMapPlot {
             .style('stroke-width', '1px')
     }
 
-    fill(feature, path_generator, scale, class_) {
+    fill() {
+        const feature = this.feature;
+        const name_property = this.name_property;
         this.svg.select("defs").remove();
         this.svg.select("#colorbar").remove();
         this.svg.empty();
-        const maxValue = Math.max(...this.map_data.map(o => o.properties[feature]), 0);
-        const minValue = Math.min(...this.map_data.map(o => o.properties[feature]), 1e6);
-        scale.domain([minValue, maxValue]);
-        console.log(scale(5000));
+        const maxValue = Math.max(...this.source.map(o => o.properties[this.feature]), 0);
+        const minValue = Math.min(...this.source.map(o => o.properties[this.feature]), 1e6);
+        this.scale.domain([minValue, maxValue]);
+
         let tooltip = d3.select('body').append('div')
             .attr('class', 'hidden tooltip');
-        this.map_container.selectAll(".province").data(this.map_data)
+
+        this.map_container.selectAll(".province").data(this.source)
             .enter()
             .append("path")
             .classed("province", true)
-            .attr("d", path_generator)
-            .style("fill", (d) => scale(d.properties[feature]))
+            .attr("d", this.path_generator)
+            .style("fill", (d) => this.scale(d.properties[feature]))
             .style("stroke-width", 0.2)
             .on('mouseover', function(d) {
                 d3.select(this).style("stroke-width", 1);
@@ -78,21 +81,26 @@ class DensityMapPlot {
                 });
                 tooltip.classed('hidden', false)
                     .attr('style', 'left:' + (mouse[0] + 100) +
-                        'px; top:' + (mouse[1] + 5150) + 'px')
-                    .html(d.properties.NAME_1 + ": " + d.properties[feature]);
+                        'px; top:' + (mouse[1] + 5700) + 'px')
+                    .html(d.properties[name_property] + ": " + d.properties[feature]);
             })
             .on('mouseout', function() {
                 d3.select(this).style("stroke-width", 0.2);
                 tooltip.classed('hidden', true);
             });
-        this.makeColorbar(this.svg, scale, [0, 50], [20, this.svg_height - 2*30], class_);
+        this.makeColorbar(this.svg, this.scale, [0, 50], [20, this.svg_height - 2*30], this.class);
     }
 
     constructor(svg_element_id, feature, scale=d3.scaleLog().range(["hsl(62,100%,90%)", "hsl(12,136%,52%)"]).interpolate(d3.interpolateHcl)) {
+        this.feature = feature;
+        this.scale = scale;
+        this.class = d3.scaleLog;
         this.svg = d3.select('#' + svg_element_id);
         const svg_viewbox = this.svg.node().viewBox.animVal;
+
         this.svg_width = svg_viewbox.width;
         this.svg_height = svg_viewbox.height;
+
         const projection = d3.geoNaturalEarth1()
             .rotate([0, 0])
             .center([127.86, 36.58])
@@ -101,57 +109,91 @@ class DensityMapPlot {
             .precision(.1);
         this.path_generator = d3.geoPath()
             .projection(projection);
+
         const population_promise = d3.csv("data/agg.csv").then((data) => {
-            console.log(data);
-            let asdf = data.reduce((acc, d) => {
+            return data.reduce((acc, d) => {
                 acc[d.province] = d;
-                console.log(d);
                 return acc;
             }, {});
-            console.log(asdf);
-            return asdf;
         });
 
-        const map_promise = d3.json("json/skorea-provinces-topo.json").then((topojson_raw) => {
+        const provinces_stats_promise = d3.csv("data/Region.csv").then((data) => {
+            return data.reduce((acc, d) => {
+                acc[d.city] = d;
+                return acc;
+            }, {});
+        });
+
+
+        const provinces_promise = d3.json("json/skorea-provinces-topo.json").then((topojson_raw) => {
             const canton_paths = topojson.feature(topojson_raw, topojson_raw.objects.provinces);
             return canton_paths.features;
         });
 
+        const municipalities_promise = d3.json("json/skorea-municipalities-topo.json").then((topojson_raw) => {
+            const canton_paths = topojson.feature(topojson_raw, topojson_raw.objects.municipalities);
+            return canton_paths.features;
+        });
 
-        Promise.all([map_promise, population_promise]).then((results) => {
-            this.map_data = results[0];
-            let stats = results[1];
+        Promise.all([provinces_promise, municipalities_promise, population_promise, provinces_stats_promise])
+            .then((results) => {
+            this.provinces_data = results[0];
+            this.municipalities_data = results[1];
+            let province_stats = results[2];
+            let municip_stats = results[3];
             this.map_container = this.svg.append('g');
-            console.log(stats);
-            this.map_data.forEach((province) => {
-                province.properties.density = parseFloat(stats[province.properties.NAME_1].population_density);
-                province.properties.schools = parseFloat(stats[province.properties.NAME_1].elementary_school_count);
-                province.properties.universities = parseFloat(stats[province.properties.NAME_1].university_count);
-                province.properties.nursing_homes = parseFloat(stats[province.properties.NAME_1].nursing_home_count);
-                province.properties.elderly = parseFloat(stats[province.properties.NAME_1].elderly_population_ratio);
-            })
-            console.log(this.map_data);
-            this.fill(feature, this.path_generator, scale);
+            this.provinces_data.forEach((province) => {
+                province.properties.density = parseFloat(province_stats[province.properties.NAME_1].population_density);
+                province.properties.schools = parseFloat(province_stats[province.properties.NAME_1].elementary_school_count);
+                province.properties.universities = parseFloat(province_stats[province.properties.NAME_1].university_count);
+                province.properties.nursing_homes = parseFloat(province_stats[province.properties.NAME_1].nursing_home_count);
+                province.properties.elderly = parseFloat(province_stats[province.properties.NAME_1].elderly_population_ratio);
+            });
+            this.municipalities_data.forEach((province) => {
+                province.properties.density = parseFloat(municip_stats[province.properties.NAME_2].density);
+                province.properties.schools = parseFloat(municip_stats[province.properties.NAME_2].elementary_school_count);
+                province.properties.universities = parseFloat(municip_stats[province.properties.NAME_2].university_count);
+                province.properties.nursing_homes = parseFloat(municip_stats[province.properties.NAME_2].nursing_home_count);
+                province.properties.elderly = parseFloat(municip_stats[province.properties.NAME_2].elderly_population_ratio);
+            });
+            this.source = this.provinces_data;
+            this.name_property = "NAME_1";
+            this.fill();
         });
     }
 }
 
 whenDocumentLoaded(() => {
-    const feature_selector = document.getElementsByName("featureselect");
-    let feature_ = "density";
-    let densityMap = new DensityMapPlot('density_map', feature_);
+    let feature_selector = document.getElementsByName("featureselect");
+    let prov_button = document.getElementById("region_prov");
+    let mun_button = document.getElementById("region_mun");
+    let densityMap = new DensityMapPlot('density_map', "density");
+    prov_button.onclick = (() => {
+        densityMap.map_container.selectAll("*").remove();
+        densityMap.source = densityMap.provinces_data;
+        densityMap.name_property = "NAME_1";
+        densityMap.fill();
+    });
+    mun_button.onclick = (() => {
+        densityMap.map_container.selectAll("*").remove();
+        densityMap.source = densityMap.municipalities_data;
+        densityMap.name_property = "NAME_2";
+        densityMap.fill();
+    });
     feature_selector.forEach((input) => {
         input.onclick = (() => {
-            feature_ = input.value;
-            let scale = d3.scaleLinear().range(["hsl(62,100%,90%)", "hsl(12,136%,52%)"]).interpolate(d3.interpolateHcl);
-            let class_ = d3.scaleLinear;
-            if(feature_ === "density"){
-                scale = d3.scaleLog().range(["hsl(62,100%,90%)", "hsl(12,136%,52%)"]).interpolate(d3.interpolateHcl);
-                class_ = d3.scaleLog;
+            console.log("KEKW");
+            densityMap.feature = input.value;
+            if(densityMap.feature === "density"){
+                densityMap.scale = d3.scaleLog().range(["hsl(62,100%,90%)", "hsl(12,136%,52%)"]).interpolate(d3.interpolateHcl);
+                densityMap.class = d3.scaleLog;
+            } else {
+                densityMap.scale = d3.scaleLinear().range(["hsl(62,100%,90%)", "hsl(12,136%,52%)"]).interpolate(d3.interpolateHcl);
+                densityMap.class = d3.scaleLinear;
             }
-            //console.log(scale.)
             densityMap.map_container.selectAll("*").remove();
-            densityMap.fill(feature_, densityMap.path_generator, scale, class_);
+
+            densityMap.fill();
         });
     });
 });
