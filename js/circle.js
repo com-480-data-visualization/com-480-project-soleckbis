@@ -4,12 +4,12 @@ class MapCircle {
 	makeCirclebar(svg, color_scale, top_left, colorbar_size, scaleClass=d3.scaleLinear) {
 
 		const value_to_svg = d3.scalePoint()
-			.domain([1, 10, 100])
+			.domain([1, 10, 100, 1000])
 			.range([colorbar_size[1], 0]);
 		
 		const range01_to_radius = d3.scaleLinear()
-			.domain([0, 100])
-			.range([0, 400]);
+			.domain([0, 1000])
+			.range([0, 500]);
 
 		// Axis numbers
 		const colorbar_axis = d3.axisLeft(value_to_svg)
@@ -25,7 +25,7 @@ class MapCircle {
 				.attr("cx", 50)
 				.style("fill", "red");	
 				
-		this.svg.append("text").text("Total daily cases").attr("transform", "translate(50,-190)");
+		this.svg.append("text").text("Total daily cases").attr("transform", "translate(200,-340)");
 		}
 		
 		
@@ -51,6 +51,22 @@ class MapCircle {
 		
 		var disease_promise;
 		var map_promise;
+		
+		var displayButton = d3.select("#display");
+		
+		genderButton.on("change", function(d) {
+			updateMap(time_value.invert(currentValue), this.value, ageButton.node().value);
+			updateCauses(time_value.invert(currentValue), this.value, ageButton.node().value);
+		});
+		
+		ageButton.on("change", function(d) {
+			updateMap(time_value.invert(currentValue), genderButton.node().value, this.value);
+			updateCauses(time_value.invert(currentValue), genderButton.node().value, this.value);
+		})
+		
+		displayButton.on("change", function(d) {
+			updateCauses(time_value.invert(currentValue), genderButton.node().value, ageButton.node().value);
+		})
 		
 		updateEvent(time_value.domain()[0]);
 		updateMap(time_value.domain()[0], genderButton.node().value, ageButton.node().value, true);
@@ -105,7 +121,7 @@ class MapCircle {
 			
 		var slider = this.svg.append("g")
 			.attr("class", "slider")
-			.attr("transform", "translate(20,-330)");	
+			.attr("transform", "translate(170,-450)");	
 			
 		slider.append("line")
 			.attr("class","track")
@@ -244,13 +260,13 @@ class MapCircle {
 					}
 				})
 			
-			radius_scale.domain([0, 100]);
+			radius_scale.domain([0, 1000]);
 			
 			var map_container;
 			var circle_container;
 			
 			if (new_map==true) {
-				map_container = svg.append('g').attr("class", "Map").attr("transform", "translate(0,0)");
+				map_container = svg.append('g').attr("class", "Map").attr("transform", "translate(150,-150)");
 				circle_container = svg.append('g').attr("class", "Circle");
 			} else {
 				map_container = d3.select('#circles').select(".Map");
@@ -294,13 +310,21 @@ class MapCircle {
 					.append("circle")
 					.classed("province-circles", true)
 					.attr("r", (d)=>Math.sqrt(radius_scale(d.properties.cases)))
-					.attr("transform", (d)=> "translate("+path_generator.centroid(d)+")")
+					.attr("transform", function(d){
+						var off_x = path_generator.centroid(d)[0]+150;
+						var off_y = path_generator.centroid(d)[1]-150;
+						return "translate("+off_x+off_y+")";
+					})
 					.style("fill", "red");
 			} else {
 				circle_container.selectAll(".province-circles")
 					.data(map_data)
 					.attr("r", (d)=>Math.sqrt(radius_scale(d.properties.cases)))
-					.attr("transform", (d)=> "translate("+path_generator.centroid(d)+")")
+					.attr("transform", function(d){
+						var off_x = path_generator.centroid(d)[0]+150;
+						var off_y = path_generator.centroid(d)[1]-150;
+						return "translate("+off_x+off_y+")";
+					})
 					.style("fill", "red");
 			}
 				
@@ -314,7 +338,7 @@ class MapCircle {
 			}
 			
 			if (new_map==true) {
-				$this.makeCirclebar($this.svg, radius_scale, [100, -150], [20, $this.svg_height - 2*30]);
+				$this.makeCirclebar($this.svg, radius_scale, [250, -300], [20, $this.svg_height - 2*30]);
 			}
 		});
 	}
@@ -364,110 +388,98 @@ class MapCircle {
 						return "PNG/Israel.png"
 					} else if (d.infection_case=="Suyeong-gu Kindergarten") {
 						return "PNG/kindergarten.png"
+					} else if (d.infection_case=="Itaewon Clubs") {
+						return "PNG/nightclubs.png"
 					}
 				}
 			}
 			
 			if (new_map==true) {
-			 	causes_container = d3.select("#Causes").append('g').attr("class", "list");
+			 	causes_container = d3.select("#Causes").append('ul').attr("class", "Causes");
 			} else {
-				causes_container = d3.select("#Causes").select(".list");
+				d3.select("#Causes").select(".Causes").selectAll("li").selectAll("*").remove();
+				causes_container = d3.select("#Causes").select(".Causes");
 			}
 			
 			if (new_map==true) {
-				causes_container.selectAll(".emojis")
+				
+				var emojis = causes_container.selectAll("li")
 					.data(filter_data)
 					.enter()
-					.append("image").classed("emojis", true)
-					.attr("xlink:href", function(d, i){return search_emojis(d,i)})
-					.attr("width", "30px")
-					.attr("transform", function(d,i){
-						var offset = -330 +49*i;
-						return "translate(100,"+offset+")";
-					});
-			} else {
-				causes_container.selectAll(".emojis")
-					.data(filter_data)
-					.attr("xlink:href", function(d, i){return search_emojis(d, i)})
-					.attr("width", "30px")
-					.attr("transform", function(d,i){
-						var offset = -330 +49*i;
-						return "translate(100,"+offset+")";
-					});
-			}
-			
-			if (new_map==true) {
-				causes_container.selectAll(".emojis_text1")
-					.data(filter_data)
-					.enter()
-					.append("text").classed("emojis_text1", true)
+					.append("li");
+				
+				
+					emojis.append("img").classed("emojis", true)
+					.attr("src", function(d, i){return search_emojis(d,i)})
+					.attr("width", "40px")
+					.style("margin-right", "30px")
+					
+					
+					emojis.append("span").classed("emojis_text1", true)
 						.text((d)=>d.infection_case) 
-						.attr("transform", function(d,i) {
-							if (i<limit) {
-								var offset = -300 + 49*i;
-								return "translate(150,"+offset+")";
-							} 
-						})
 						.style("display", function(d,i){
 							if (i<limit){
-								return "block";
+								return "inline-block";
 							} else {
 								return "none";
 							}
-						});
+						})
+						.style("width", "400px");
 					
-				causes_container.selectAll(".emojis_text2")
-					.data(filter_data)
-					.enter()
-					.append("text").classed("emojis_text2", true)
-						.text((d)=>"Total cases: " + d.total_city_cases)
+
+					emojis.append("span").classed("emojis_text2", true)
+						.text((d)=>"Total cases: " + Math.round(d.total_city_cases))
 						.attr("transform", function(d,i) {
 							if (i<limit) {
-								var offset = -300 + 49*i;
-								return "translate(450,"+offset+")";
+								var offset = -450 + 49*i;
+								return "translate(600,"+offset+")";
 							} 
 						})
 						.style("display", function(d,i){
 							if (i<limit){
-								return "block";
+								return "inline-block";
 							} else {
 								return "none";
 							}
 						});
 			} else {
-				causes_container.selectAll(".emojis_text1")
-					.data(filter_data)
-					.text((d)=>d.infection_case)  
-					.attr("transform", function(d,i) {
-						if (i<limit) {
-							var offset = -300 + 49*i;
-							return "translate(150,"+offset+")";
-						} 
-					})
-					.style("display", function(d,i){
-						if (i<limit){
-							return "block";
-						} else {
-							return "none";
-						}
-					});
+				var emojis = causes_container.selectAll("li")
+					.data(filter_data);
+				
+				
+					emojis.append("img").classed("emojis", true)
+					.attr("src", function(d, i){return search_emojis(d,i)})
+					.attr("width", "40px")
+					.style("margin-right", "30px")
 					
-				causes_container.selectAll(".emojis_text2")
-					.data(filter_data)
-					.text((d)=>"Total cases: " + d.total_city_cases)  
-					.attr("transform", function(d,i) {
-						if (i<limit) {
-							var offset = -300 + 49*i;
-							return "translate(450,"+offset+")";
-						}
-					})
-					.style("display", function(d,i){
-						if (i<limit){
-							return "block";
-						} else {
-							return "none";
-						}
-					});
+					
+					emojis.append("span").classed("emojis_text1", true)
+						.text((d)=>d.infection_case) 
+						.style("display", function(d,i){
+							if (i<limit){
+								return "inline-block";
+							} else {
+								return "none";
+							}
+						})
+						.style("width", "400px");
+					
+
+					emojis.append("span").classed("emojis_text2", true)
+						.text((d)=>"Total cases: " + Math.round(d.total_city_cases))
+						.attr("transform", function(d,i) {
+							if (i<limit) {
+								var offset = -450 + 49*i;
+								return "translate(600,"+offset+")";
+							} 
+						})
+						.style("display", function(d,i){
+							if (i<limit){
+								return "inline-block";
+							} else {
+								return "none";
+							}
+						});
 			}
 		})
 	}	
@@ -501,7 +513,7 @@ class MapCircle {
 			.projection(projection);
 			
 		const radius_scale = d3.scaleLinear()
-			.range([0, 400]);
+			.range([0, 500]);
 			
 		Promise.all([time_promise]).then((results)=> {
 			let time_value = results[0];

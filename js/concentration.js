@@ -5,7 +5,7 @@ class MapPlot {
 	makeColorbar(svg, color_scale, top_left, colorbar_size, scaleClass=d3.scaleLinear) {
 		
 		//The axis numbers
-		const yScale = [0, 2, 4, 8, 10, 20, 40, 80, 100, 200, 400, 800];
+		const yScale = [0, 4, 8, 10, 20, 40, 80, 100, 200, 400, 800, 1000];
 
 		const value_to_svg = scaleClass()
 			.domain(yScale)
@@ -16,7 +16,7 @@ class MapPlot {
 			.range(color_scale.range())
 			.interpolate(color_scale.interpolate());
 			
-		this.svg.append("text").text("Cases per million of inhabitants").attr("transform", "translate(0,-330)");
+		this.svg.append("text").text("Cases per million of inhabitants").attr("transform", "translate(150,-480)");
 
 		const colorbar_axis = d3.axisLeft(value_to_svg).tickValues(yScale);
 
@@ -78,10 +78,12 @@ class MapPlot {
 		
 		genderButton.on("change", function(d) {
 			updateMap(time_value.invert(currentValue), this.value, ageButton.node().value);
+			updateFatality(time_value.invert(currentValue), this.value, ageButton.node().value);
 		})
 		
 		ageButton.on("change", function(d) {
 			updateMap(time_value.invert(currentValue), genderButton.node().value, this.value);
+			updateFatality(time_value.invert(currentValue), genderButton.node().value, this.value);
 		})
 		
 		radiobuttons.on("change", function(d) {
@@ -102,7 +104,8 @@ class MapPlot {
 		updateEvent(time_value.domain()[0]);
 		updateMap(time_value.domain()[0], genderButton.node().value, ageButton.node().value, true);
 		updateBar(time_value.domain()[0], BarType, true);
-		updateFatality(time_value.domain()[0], BarType, genderButton.node().value, ageButton.node().value)
+		updateFatality(time_value.domain()[0], genderButton.node().value, ageButton.node().value);
+		d3.select('#provinces_text').style("opacity", 0);
 		
 		function step() {
 			update(time_value.invert(currentValue));
@@ -121,12 +124,12 @@ class MapPlot {
 			updateEvent(h);
 			updateMap(h, genderButton.node().value, ageButton.node().value);
 			updateBar(h, BarType);
-			updateFatality(h, BarType, genderButton.node().value, ageButton.node().value);
+			updateFatality(h, genderButton.node().value, ageButton.node().value);
 		}
 			
 		var slider = this.svg.append("g")
 			.attr("class", "slider")
-			.attr("transform", "translate(20,-450)");
+			.attr("transform", "translate(170,-600)");
 		
 		slider.transition().duration(350);	
 			
@@ -300,7 +303,7 @@ class MapPlot {
 				var map_container;
 				
 				if (new_map==true) {
-					map_container = svg.append('g').attr("class", "Map").attr("transform", "translate(0,-330)");
+					map_container = svg.append('g').attr("class", "Map").attr("transform", "translate(150,-480)");
 				} else {
 					map_container = d3.select('#concentration').select(".Map");
 				}
@@ -346,7 +349,7 @@ class MapPlot {
 
 				
 				if (new_map==true) {
-					$this.makeColorbar(svg, color_scale, [100, -300], [20, $this.svg_height - 2*30]);
+					$this.makeColorbar(svg, color_scale, [250, -450], [20, $this.svg_height - 2*30]);
 				};
 			})
 		}
@@ -406,7 +409,7 @@ class MapPlot {
 				}
 				
 				var height = 300;
-				var heighty = height-450;
+				var heighty = height-600;
 				var maxdomain;
 				
 				if (BarType=="Age") {
@@ -424,11 +427,11 @@ class MapPlot {
     				
     				if (BarType != "Province") {
     					svg2.append("g")
-    						.attr("transform", "translate(250,"+heighty+")")
+    						.attr("transform", "translate(400,"+heighty+")")
     						.call(d3.axisBottom(x).tickSizeOuter(0));
     				} else if (BarType == "Province") {
     					svg2.append("g")
-    						.attr("transform", "translate(250,"+heighty+")")
+    						.attr("transform", "translate(400,"+heighty+")")
     						.call(d3.axisBottom(x).tickValues([]));
     				}
     					
@@ -437,7 +440,7 @@ class MapPlot {
     					.range([height, 0]);
     					
     				svg2.append("g")
-    					.attr("transform", "translate(250,-450)")
+    					.attr("transform", "translate(400,-600)")
     					.call(d3.axisLeft(y));
     					
     				var color_range = [ "#0084d3", '#864b97', ]
@@ -474,7 +477,7 @@ class MapPlot {
 								}
 							})
 							.attr("y", function (d) {return y(d[1])})
-							.attr("transform", "translate(250,-450)")
+							.attr("transform", "translate(400,-600)")
 							.attr("height", function (d) {return y(d[0])-y(d[1])})
 							.attr("width", x.bandwidth())
 							.on("mouseover", function(d,i){
@@ -485,7 +488,7 @@ class MapPlot {
 							});
 				
 				bar_container.append("text").text("Total Cases")
-					.attr("transform", "translate(210,-470)")
+					.attr("transform", "translate(360,-620)")
 					.style("font-size", "15px");
 				
 				bar_container.append("g")
@@ -498,8 +501,8 @@ class MapPlot {
 							.attr("width", 18)
 							.attr("height", 18)
 							.attr("transform", function(d, i){
-								var offset = -480 + 19*i;
-								return "translate(150,"+offset+")"})
+								var offset = -630 + 19*i;
+								return "translate(300,"+offset+")"})
 							.style("fill", function(d, i){return color_range.slice().reverse()[i]})
 							
 				bar_container.select(".legend").selectAll("text")
@@ -509,17 +512,17 @@ class MapPlot {
 						.text(function(d) {return d})
 						.attr("x", width-18)
 						.attr("transform", function(d, i){
-								var offset = -465 + 19*i;
-								return "translate(180,"+offset+")"})
+								var offset = -615 + 19*i;
+								return "translate(330,"+offset+")"})
 						.style("font-size", "15px");
 									
 			})
 		}
 		
-		function updateFatality(date, BarType, gender, age) {
-			d3.csv("data/Time"+BarType+".csv").then((data)=> {
+		function updateFatality(date, gender, age) {
+			d3.csv("data/TimeGenderAge.csv").then((data)=> {
 				
-				var filter_data = data.filter(function(a){return a.date == formatDateString(date)});
+				var filter_data = data.filter(function(a){return (a.date == formatDateString(date))&(a.sex="All")&(a.age=="All")});
 				var filter_data2;
 				
 				if ((gender=="All")&(age=="All")) {
@@ -575,7 +578,7 @@ class MapPlot {
 			.projection(projection);
 			
 		const color_scale = d3.scaleLinear()
-			.domain([0, 2e-6, 4e-6, 8e-6, 1e-5, 2e-5, 4e-5, 8e-5, 1e-4, 2e-4, 4e-4, 8e-4])
+			.domain([0, 4e-6, 8e-6, 1e-5, 2e-5, 4e-5, 8e-5, 1e-4, 2e-4, 4e-4, 8e-4, 1e-3])
 			.range(['#b6e200', '#e2c84b', '#e7b94c', '#e9aa4b', '#ea9b49', '#ea8c47', '#ea7d44', '#e86c41', '#e65b3d', '#e4483a', '#e13036', '#dd0032'])
 			.interpolate(d3.interpolateHcl);
 		
