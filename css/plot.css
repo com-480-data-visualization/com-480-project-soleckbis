@@ -13,16 +13,30 @@ svg {
 	overflow: visible;
 }
 
+.remove_space{
+	margin-bottom: -7cm;
+}
+
+.remove_space2{
+	margin-bottom: -20cm;
+}
+
+.subtitles {
+	position: relative;
+	top: -150px;
+	left: 150px;
+}
+
 .gender_button, .age_button {
 	position: relative;
-	top: 350px;
-	left: 40px;
+	top: 200px;
+	left: 190px;
 }
 
 .display_causes {
 	position: relative;
-	top: -100px;
-	left: 800px;
+	top: -250px;
+	left: 950px;
 }
 
 .gender_button select, .age_button select, .display_causes select {
@@ -38,14 +52,14 @@ svg {
 .radio_button {
 	margin-top: -4cm;
 	position : relative;
-	top : 135px;
-	left : 700px;
+	top : -65px;
+	left : 850px;
 }
 
 .bar_radio {
 	position: relative;
-	top: 0px;
-	left: 800px;
+	top: -150px;
+	left: 950px;
 }
 
 input[type=radio] {
@@ -101,29 +115,29 @@ input[type=radio]:checked + label{
 
 .Event1, .Event2 {
 	position: relative;
-	top : -150px;
-	left: 350px;
+	top : -300px;
+	left: 500px;
 }
 
 .Notes1, .Notes2 {
 	position: relative;
-	top : -100px;
-	left : 700px;
+	top : -250px;
+	left : 850px;
 	white-space: pre;
 }
 
 #PlayButton1, #PlayButton2, #PauseButton1, #PauseButton2, #RestartButton1, #RestartButton2 {
 	position : relative;
-    top: 60px;
-    left: 150px;
+    top: -140px;
+    left: 300px;
 	background: #f08080;
     border: 2px solid #444;
 }
 
 #ZoomIn1, #ZoomIn2, #ZoomOut1, #ZoomOut2 {
 	position: relative;
-	top: 450px;
-	left: 700px;
+	top: 300px;
+	left: 850px;
 	background: #d3e2ff;
 	height:30px;
     width:30px;
@@ -142,8 +156,18 @@ input[type=radio]:checked + label{
 
 .Fatality1 {
 	position: relative;
-	top: 150px;
+	top: 0px;
+	left: 1100px;
+}
+
+nav ul {
+	list-style-type: none;
+	position: relative;
+	top: -850px;
 	left: 950px;
+	height:600px;
+	overflow:hidden; 
+	overflow-y:scroll;
 }
 
 .hidden {
