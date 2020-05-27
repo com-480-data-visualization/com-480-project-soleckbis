@@ -347,78 +347,9 @@ h1, h2, h3, h4, h5, h6 {
 .content__wrapper > figure,
 .content__between > video,
 .content__wrapper > video {
-  /* Requires style='max-width: <whatever>' on the element */
+
   width: 100%;
 }
-
-.content__wrapper > video {
-  -o-object-fit: inherit;
-     object-fit: inherit; /* To fix initial size flash */
-}
-
-.content__between > figure,
-.content__wrapper > figure,
-.content__between > .diagram,
-.content__wrapper > .diagram {
-  /* Kill between paddings in <figure> element because diagrams have their own
-   * padding in the image itself */
-  margin-top: -14px;
-  margin-bottom: 13px;
-}
-
-.content__between > figure > img,
-.content__wrapper > figure > img {
-  /* Want to keep this to be able to have unclassed <figure> and <img>
-   * elements*/
-  width: 100%;
-  display: block;
-  margin: 0 auto;
-}
-
-.diagram__wrapper {
-  /* This does some nifty padding trickery to avoid re-flows */
-  /* This requires a style='max-width: <whatever>px'  on the element */
-  margin: 0 auto;
-}
-
-.diagram__padding {
-  /* This requires a style='padding-bottom: aspectRatio' on the element */
-  position: relative;
-  width: 100%;
-  height: 0;
-}
-
-.diagram__image {
-  /* Diagrams require width, height, and style='max-width: <whatever>px' */
-  /* This is used with {% diagram %} */
-  width: 100%;
-  height: auto;
-  position: absolute;
-}
-
-
-.content__wrapper > table {
-  width: 100%;
-  text-align: left;
-}
-
-.content__wrapper > table th {
-  font-family: 'Harman Sans';
-  font-weight: normal;
-}
-
-.content__wrapper > table td,
-.content__wrapper > table th {
-  font-size: 14px;
-  padding: 5px 10px 5px 0;
-  line-height: 1.4em;
-}
-
-.content__wrapper > table td:last-of-type,
-.content__wrapper > table th:last-of-type {
-  padding-right: 0;
-}
-
 
 /* ---- end main content ---- */
 
