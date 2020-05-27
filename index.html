@@ -50,10 +50,10 @@
 		
 		<p><b>Coronavirus</b> is the hot topic of the moment and mobilizes the skills of data-scientists like never before, 
 			and thus not only for describing the spread of the virus, but also for modelling future and even for helping researchers to develop drugs.
-			<br></br>
+			<br>
 On our scale, by exploiting a Korean dataset, published by the <b>KDCC (Korea Center 
 for Disease Control & Prevention)</b>, we want to provide some visualizations allowing to observe the impact of parameters that have been less analysed so far. 
-<br></br>
+<br>
 Indeed, we would like to provide some representations that shows for example, if <b>some characteristics of a city</b>, like population density,  
 the proportion of persons in the elderly or even the number of schools may play a role in the virus propagation. In the same fashion, 
 the hypothesis that the <b>weather </b>has an impact and in particularly the temperatures is often mentioned, but is it the case in reality ?
@@ -195,6 +195,17 @@ the hypothesis that the <b>weather </b>has an impact and in particularly the tem
 <div class='content'>
 	<div class='content__wrapper'>
 		<div class='subheading'><h2 class='subheading__heading' id='Part_2'><span>City morphology</span></h2></div>
+		<div class="text">
+			Different aspects of <b>city morphology</b> such as population density, number of public places and elderly homes
+			have always been considered in epidemic analysis. To give you the opportunity to
+			explore if they really influenced current COVID-19 pandemic, we created <b>interactive maps</b> of the features. You can go back
+			to the first part and come back again to see the differences in distribution of these features and the number
+			of cases. To demonstrate if these aspects are really significant or not, we calculated <b>Spearman correlations</b>
+			of the features with the number of cases. The highest one is with the number of <b>elderly homes</b> - and this fact
+			is not surprising. In many countries around the world <b>they became hotbeds of the outbreak</b> and Korea is not
+			an exception here: many senior-care facilities were
+			<a href=https://www.scmp.com/week-asia/health-environment/article/3075937/coronavirus-nursing-homes-emerge-south-koreas-new style="text-decoration: underline">affected</a>.
+		</div>
 		<div class="radio_button_left">
 			<input type="radio" name="prov_mun" value="provinces" checked id="region_prov"><label for="region_prov">Provinces</label>
 			<input type="radio" name="prov_mun" value="municipalities" id="region_mun"><label for="region_mun">Municipalities</label>
@@ -245,13 +256,13 @@ the hypothesis that the <b>weather </b>has an impact and in particularly the tem
 		For that, simply choose the weather parameter of your choice and calculate its Pearson correlation with the number of daily new cases. 
 		But of course ... <b>the weather at a given day</b>, may have an impact on the number of new detected sick persons <b>only few days latter </b>. 
 		For that, use the <b>slider</b> to create a <b>time lag</b> between the two signal, and look again at the correlation.
-		<br></br>
+		<br>
 		You will see that for <b>humidity</b> and <b>rain</b> the correlations are always under 0,3 and not significant enough to draw any conclusion. At the opposite it’s interesting to see that 
 		for a <b>delay between 16 and 17 days</b> we get struggling correlation scores around -0,8 between <b>temperature and the number of new sicks persons</b>, this would mean, that <b>increasing temperatures
 		have an negative impacts on the virus </b>. This conclusion is not surprising because all specialist says that hot weather decreases the spread, but it’s interesting to see that it <b>lasts 
 		approximately 2 weeks </b>before observing the <b>impact of temperatures</b>. Concerning wind, an hypothesis could be that wind is favourable to virus, indeed, the virus
 		is viable 3 hours in the air and and wind could facilitate its mixing in the air, but we see here that correlation are constantly blue, so negative, and always below 0.35 so very small.
-		<br></br>
+		<br>
 		Finaly, you can have an <b>overview </b>of all the results at a glance with the <b>heatmap</b> provided below, but of course if want to see real values, go <b>back to curves</b> !
 </p>
 </div>

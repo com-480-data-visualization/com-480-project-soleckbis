@@ -81,7 +81,7 @@ class DensityMapPlot {
                 });
                 tooltip.classed('hidden', false)
                     .attr('style', 'left:' + (mouse[0] + 100) +
-                        'px; top:' + (mouse[1] + 5700) + 'px')
+                        'px; top:' + (mouse[1] + 5900) + 'px')
                     .html(d.properties[name_property] + ": " + d.properties[feature]);
             })
             .on('mouseout', function() {
