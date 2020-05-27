@@ -52,7 +52,7 @@ svg {
 .radio_button {
 	margin-top: -4cm;
 	position : relative;
-	top : -65px;
+	top : -40px;
 	left : 850px;
 }
 
@@ -128,7 +128,7 @@ input[type=radio]:checked + label{
 
 #PlayButton1, #PlayButton2, #PauseButton1, #PauseButton2, #RestartButton1, #RestartButton2 {
 	position : relative;
-    top: -140px;
+    top: -115px;
     left: 300px;
 	background: #f08080;
     border: 2px solid #444;
