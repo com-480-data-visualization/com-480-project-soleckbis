@@ -1,5 +1,5 @@
 class DensityMapPlot {
-
+    // reusing some code from the exercise session
     makeColorbar(svg, color_scale, top_left, colorbar_size, scaleClass=d3.scaleLog) {
 
         const value_to_svg = scaleClass()
@@ -54,12 +54,15 @@ class DensityMapPlot {
             .style('stroke-width', '1px')
     }
 
+    // fills the map with current feature and region
     fill() {
         const feature = this.feature;
         const name_property = this.name_property;
         this.svg.select("defs").remove();
         this.svg.select("#colorbar").remove();
         this.svg.empty();
+
+        // adapting the scale
         const maxValue = Math.max(...this.source.map(o => o.properties[this.feature]), 0);
         const minValue = Math.min(...this.source.map(o => o.properties[this.feature]), 1e6);
         this.scale.domain([minValue, maxValue]);
@@ -67,6 +70,7 @@ class DensityMapPlot {
         let tooltip = d3.select('body').append('div')
             .attr('class', 'hidden tooltip');
 
+        // filling the map, adding tooltip and setting its mouseover
         this.map_container.selectAll(".province").data(this.source)
             .enter()
             .append("path")
@@ -110,6 +114,7 @@ class DensityMapPlot {
         this.path_generator = d3.geoPath()
             .projection(projection);
 
+        // data for provinces
         const population_promise = d3.csv("data/agg.csv").then((data) => {
             return data.reduce((acc, d) => {
                 acc[d.province] = d;
@@ -117,6 +122,7 @@ class DensityMapPlot {
             }, {});
         });
 
+        // data for municipalities
         const provinces_stats_promise = d3.csv("data/Region.csv").then((data) => {
             return data.reduce((acc, d) => {
                 acc[d.city] = d;
@@ -124,12 +130,13 @@ class DensityMapPlot {
             }, {});
         });
 
-
+        // topojson for provinces
         const provinces_promise = d3.json("json/skorea-provinces-topo.json").then((topojson_raw) => {
             const canton_paths = topojson.feature(topojson_raw, topojson_raw.objects.provinces);
             return canton_paths.features;
         });
 
+        // topojson data for municipalities
         const municipalities_promise = d3.json("json/skorea-municipalities-topo.json").then((topojson_raw) => {
             const canton_paths = topojson.feature(topojson_raw, topojson_raw.objects.municipalities);
             return canton_paths.features;
@@ -142,6 +149,8 @@ class DensityMapPlot {
             let province_stats = results[2];
             let municip_stats = results[3];
             this.map_container = this.svg.append('g');
+
+            // parsing data
             this.provinces_data.forEach((province) => {
                 province.properties.density = parseFloat(province_stats[province.properties.NAME_1].population_density);
                 province.properties.schools = parseFloat(province_stats[province.properties.NAME_1].elementary_school_count);
@@ -168,6 +177,8 @@ whenDocumentLoaded(() => {
     let prov_button = document.getElementById("region_prov");
     let mun_button = document.getElementById("region_mun");
     let densityMap = new DensityMapPlot('density_map', "density");
+    // setting events on radio buttons
+    // every time a feature or region type changes we clear and refill the map
     prov_button.onclick = (() => {
         densityMap.map_container.selectAll("*").remove();
         densityMap.source = densityMap.provinces_data;
