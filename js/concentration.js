@@ -1,10 +1,10 @@
 
 class MapPlot {
 	
-	// The color axis
+	// The color axis representing the color corresponding to the concentration
 	makeColorbar(svg, color_scale, top_left, colorbar_size, scaleClass=d3.scaleLinear) {
 		
-		//The axis numbers
+		// The axis numbers
 		const yScale = [0, 4, 8, 10, 20, 40, 80, 100, 200, 400, 800, 1000];
 
 		const value_to_svg = scaleClass()
@@ -16,10 +16,12 @@ class MapPlot {
 			.range(color_scale.range())
 			.interpolate(color_scale.interpolate());
 			
+		// Axis legend	
 		this.svg.append("text").text("Cases per million of inhabitants").attr("transform", "translate(150,-480)");
 
 		const colorbar_axis = d3.axisLeft(value_to_svg).tickValues(yScale);
-
+		
+		// Add the colorbar
 		const colorbar_g = this.svg.append("g")
 			.attr("id", "colorbar")
 			.attr("transform", "translate(" + top_left[0] + ', ' + top_left[1] + ")")
@@ -76,16 +78,19 @@ class MapPlot {
 		document.getElementById("AgeRadioButton").click()
 		var BarType = "Age";
 		
+		// When click on button filtering gender update map and fatality rate automatically
 		genderButton.on("change", function(d) {
 			updateMap(time_value.invert(currentValue), this.value, ageButton.node().value);
 			updateFatality(time_value.invert(currentValue), this.value, ageButton.node().value);
 		})
 		
+		// When click on button filtering age update map and fatality rate automatically
 		ageButton.on("change", function(d) {
 			updateMap(time_value.invert(currentValue), genderButton.node().value, this.value);
 			updateFatality(time_value.invert(currentValue), genderButton.node().value, this.value);
 		})
 		
+		// When click on radios button for the bar plot type update the bar plot automatically
 		radiobuttons.on("change", function(d) {
 			d3.select("#barsvg").selectAll("*").remove()
 			BarType = this.value;
@@ -101,12 +106,14 @@ class MapPlot {
 		var disease_promise;
 		var map_promise;
 		
+		// Create the maps at the beginning
 		updateEvent(time_value.domain()[0]);
 		updateMap(time_value.domain()[0], genderButton.node().value, ageButton.node().value, true);
 		updateBar(time_value.domain()[0], BarType, true);
 		updateFatality(time_value.domain()[0], genderButton.node().value, ageButton.node().value);
 		d3.select('#provinces_text').style("opacity", 0);
 		
+		// Step for advancing the time slider
 		function step() {
 			update(time_value.invert(currentValue));
 			currentValue = currentValue + (targetValue/100);
@@ -115,6 +122,7 @@ class MapPlot {
 			}
 		}
 		
+		// update the map and barplot at each time step
 		function update(h) {
 			handle.attr("cx", time_value(h));
 			label.attr("x", time_value(h))
@@ -126,13 +134,15 @@ class MapPlot {
 			updateBar(h, BarType);
 			updateFatality(h, genderButton.node().value, ageButton.node().value);
 		}
-			
+		
+		// The time slider
 		var slider = this.svg.append("g")
 			.attr("class", "slider")
 			.attr("transform", "translate(170,-600)");
 		
 		slider.transition().duration(350);	
-			
+		
+		// Style the slider and drapgging possibility
 		slider.append("line")
 			.attr("class","track")
 			.attr("x1", time_value.range()[0])
@@ -165,26 +175,31 @@ class MapPlot {
 			.attr("class", "handle")
 			.attr("r", 9);
 		
+		// Give the date
 		var label = slider.append("text")
 			.attr("class", "label")
 			.attr("text-anchor", "middle")
 			.text(formatDate(time_value.domain()[0]))
 			.attr("transform", "translate(0, -25)")
 		
+		// Play button activate running of time slider
 		playButton.on("click", function() {
 			timer = setInterval(step, 100);
 		});
 		
+		// Pause button
 		pauseButton.on("click", function() {
 			clearInterval(timer);
 		});
 		
+		// Restart button
 		restartButton.on("click", function() {
 			currentValue = 0;
 			update(time_value.invert(currentValue));
 			clearInterval(timer);
 		});
 		
+		// Mouse over on regions of South Korea
 		function handleMouseOver(d, i) {
 			d3.select(this).style('opacity', 0.9)
 				.style('stroke-width', 1)
@@ -205,12 +220,14 @@ class MapPlot {
 			}
 		}
 		
+		// Stop mouseover event when the mouse is out the regions
 		function handleMouseOut(d, i) {
 			d3.selectAll('.province').style('opacity', 0.8)
 			.style('stroke-width', 0.2)
 			d3.select('#provinces_text').style("opacity", 0);
 		}
 		
+		// Test is the object is empty to forward fill the special events
 		function isnotEmpty(obj) {
     			for(var key in obj) {
         		if(obj.hasOwnProperty(key))
@@ -219,11 +236,11 @@ class MapPlot {
     			return false;
 		}
 		
+		// Change the special event depending on the date
 		function updateEvent(date) {
 			var event_promise = d3.csv("data/Policy.csv").then((data)=>{
 				let event_policy = {};
-				var filter_data = data.filter(function (a){return a.start_date==formatDateString(date)});
-		
+				var filter_data = data.filter(function (a){return a.date==formatDateString(date)});
 				filter_data.forEach((row)=> {
 					event_policy = row.policy;
 				})
@@ -240,9 +257,10 @@ class MapPlot {
 			});
 		}
 
-		
+		// update map depending on gender, age, date and type for each time step or button click
 		function updateMap(date, gender, age, new_map=false) {
-		
+			
+			// Fetch the data
 			if (Type=='provinces') {
 				disease_promise = d3.csv("data/"+gender+"_"+age+".csv").then((data)=>{
 					let province_concentration = {};
@@ -307,7 +325,8 @@ class MapPlot {
 				} else {
 					map_container = d3.select('#concentration').select(".Map");
 				}
-
+				
+				// Call zoom for the map
 				const zoom = d3.zoom()
 					.on('zoom', zoomed);
 				
@@ -318,6 +337,7 @@ class MapPlot {
 					zoom.scaleBy(svg.transition().duration(750), 0.8)
 				});
 				
+				// Color the provinces depending on the concentration of cases
 				if (new_map==true) {
 					map_container.selectAll(".province")
 						.data(map_data)
@@ -339,6 +359,7 @@ class MapPlot {
 						.on("click", handleMouseOver);
 				}
 				
+				// Remove zooming from clicking or mouse wheel
 				svg.call(zoom).on("dblclick.zoom", null)
 						.on("wheel.zoom", null);
 				
@@ -347,13 +368,14 @@ class MapPlot {
 					.attr('transform', d3.event.transform);
 				}
 
-				
+				// Create the color axis
 				if (new_map==true) {
 					$this.makeColorbar(svg, color_scale, [250, -450], [20, $this.svg_height - 2*30]);
 				};
 			})
 		}
 		
+		// Display informations about one specific bar when hover
 		function BarOver(d, i, BarType) {
 			d3.select(this).style('opacity', 0.9)
 				.style('stroke-width', 1)
@@ -382,6 +404,7 @@ class MapPlot {
             } 
          }
 		
+		// Update the bar for each time step or button click
 		function updateBar (date, BarType, new_map = false) {
 			var bar_promise = d3.csv("data/Time"+BarType+".csv").then((data)=> {
 				
@@ -400,6 +423,7 @@ class MapPlot {
 				var bar_container;
 				var width;
 				
+				// Change the size of bar plot depending on the type
 				if (BarType=="Age") {
 					width = 450;
 				} else if (BarType=="Gender") {
@@ -442,14 +466,15 @@ class MapPlot {
     				svg2.append("g")
     					.attr("transform", "translate(400,-600)")
     					.call(d3.axisLeft(y));
-    					
+    				
+    				// Color of confirmed and deceased	
     				var color_range = [ "#0084d3", '#864b97', ]
     				
     				var color = d3.scaleOrdinal()
     					.domain(subgroups)
     					.range(color_range);
     				
-    				
+    				// Create stacked bar plot
     				var stackedData = d3.stack().keys(subgroups)(filter_data);
 				
 				if (new_map==true) {
@@ -459,6 +484,7 @@ class MapPlot {
 					bar_container = d3.select("#barsvg").select(".Bar");
 				}
 				
+				// append the bars
 				bar_container.append("g").selectAll("g")
 					.data(stackedData)
 					.enter()
@@ -491,6 +517,7 @@ class MapPlot {
 					.attr("transform", "translate(360,-620)")
 					.style("font-size", "15px");
 				
+				// Add the color legend
 				bar_container.append("g")
 					.attr("class", "legend")
 					.selectAll("rect")
@@ -519,10 +546,10 @@ class MapPlot {
 			})
 		}
 		
+		// Update the fatality rate from time step or button click
 		function updateFatality(date, gender, age) {
 			d3.csv("data/TimeGenderAge.csv").then((data)=> {
-				
-				var filter_data = data.filter(function(a){return (a.date == formatDateString(date))&(a.sex="All")&(a.age=="All")});
+				var filter_data = data.filter(function(a){return (a.date == formatDateString(date))});
 				var filter_data2;
 				
 				if ((gender=="All")&(age=="All")) {
@@ -558,8 +585,8 @@ class MapPlot {
 		
 		var targetValue = 700;
 		
-		
-		var time_promise = d3.csv("data/All_ALL.csv").then((data) => {
+		// create the time range
+		var time_promise = d3.csv("data/All_All.csv").then((data) => {
 			var time_value = d3.scaleTime()
 			.domain(d3.extent(data, function(d){return new Date(d.date);}))
 			.range([0, targetValue])
@@ -567,6 +594,7 @@ class MapPlot {
 			return time_value;
 		})
 		
+		// Map projection
 		const projection = d3.geoNaturalEarth1()
 			.rotate([0,0])
 			.center([128, 36])
@@ -576,7 +604,8 @@ class MapPlot {
 			
 		const path_generator = d3.geoPath()
 			.projection(projection);
-			
+		
+		// Color pallette for the concentration
 		const color_scale = d3.scaleLinear()
 			.domain([0, 4e-6, 8e-6, 1e-5, 2e-5, 4e-5, 8e-5, 1e-4, 2e-4, 4e-4, 8e-4, 1e-3])
 			.range(['#b6e200', '#e2c84b', '#e7b94c', '#e9aa4b', '#ea9b49', '#ea8c47', '#ea7d44', '#e86c41', '#e65b3d', '#e4483a', '#e13036', '#dd0032'])
@@ -592,6 +621,7 @@ class MapPlot {
 	}	
 }
 
+// Make notes indicating the provinces and municipalities specificities of South Korea
 class MakeNotes {
 	constructor(Type) {
 		this.Type = Type;
@@ -617,6 +647,7 @@ function whenDocumentLoaded(action) {
 }
 
 whenDocumentLoaded(() => {
+	// Clicking Provinces or Municipalities will change the map type and restart the time slider at the beginning
 	document.getElementById("provinces1").click();
 	text = new MakeNotes("provinces");
 	const radios = document.getElementsByName("MapType1");
