@@ -1,8 +1,8 @@
 
 (function() {
   
-  var sidebar = document.querySelector('.chapter-sidebar');
-  if (sidebar) {
+  var sidebox = document.querySelector('.chapter-sidebox');
+  if (sidebox) {
     Sidebox();
   }
 
@@ -12,19 +12,19 @@
 function Sidebox() {
 
   function onScrollEventHandler(ev) {
-    var sidebar = document.querySelector('.chapter-sidebar');
+    var sidebox = document.querySelector('.chapter-sidebox');
     var header = document.querySelector('.page-header');
     var headerBottom = header.getBoundingClientRect().bottom;
 
     if (headerBottom <= 42) {
-      add(sidebar, 'chapter-sidebar--sticky');
+      add(sidebox, 'chapter-sidebox--sticky');
     } else {
-      remove(sidebar, 'chapter-sidebar--sticky');
+      remove(sidebox, 'chapter-sidebox--sticky');
     }
 
-    var highlightedLinks = document.querySelectorAll('.sidebar__link--highlight');
+    var highlightedLinks = document.querySelectorAll('.sidebox__link--highlight');
     for (var i=0; i<highlightedLinks.length; i++) {
-      remove(highlightedLinks[i], 'sidebar__link--highlight');
+      remove(highlightedLinks[i], 'sidebox__link--highlight');
     }
 
     var headings = document.querySelectorAll('.subheading__heading');
@@ -35,12 +35,12 @@ function Sidebox() {
       if (rect.top < window.innerHeight - window.innerHeight/2 - 40) {
         
         var headingID = heading.getAttribute('id');
-        var sidebarLinks = document.querySelectorAll('.sidebar__link');
-        for (var j=0; j<sidebarLinks.length; j++) {
-          var sidebarLink = sidebarLinks[j];
-          var href = sidebarLink.getAttribute('href').substring(1);
+        var sideboxLinks = document.querySelectorAll('.sidebox__link');
+        for (var j=0; j<sideboxLinks.length; j++) {
+          var sideboxLink = sideboxLinks[j];
+          var href = sideboxLink.getAttribute('href').substring(1);
           if (href === headingID) {
-            add(sidebarLink, 'sidebar__link--highlight');
+            add(sideboxLink, 'sidebox__link--highlight');
           }
         }
         break;

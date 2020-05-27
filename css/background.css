@@ -355,7 +355,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ---- sidebox ---- */
 
-.sidebar {
+.sidebox {
   font-family: 'Harman Simple';
   color: #FFFFFF;
   font-size: 25px;
@@ -370,36 +370,36 @@ h1, h2, h3, h4, h5, h6 {
   border-left: 1px solid #182C61;
 }
 
-.sidebar__list {
+.sidebox__list {
   list-style-type: none;
 }
 
-.sidebar__link:link,
-.sidebar__link:visited,
-.sidebar__link:hover,
-.sidebar__link:visited:hover {
+.sidebox__link:link,
+.sidebox__link:visited,
+.sidebox__link:hover,
+.sidebox__link:visited:hover {
   color: #182C61;
 }
 
-.sidebar__link:hover,
-.sidebar__link:visited:hover {
+.sidebox__link:hover,
+.sidebox__link:visited:hover {
   border-bottom: 1px solid #182C61;
 }
 
-.sidebar__link--highlight:link,
-.sidebar__link--highlight:visited,
-.sidebar__link--highlight:hover,
-.sidebar__link--highlight:visited:hover {
+.sidebox__link--highlight:link,
+.sidebox__link--highlight:visited,
+.sidebox__link--highlight:hover,
+.sidebox__link--highlight:visited:hover {
   color: #182C61;
 }
 
-.sidebar__link--highlight:hover,
-.sidebar__link--highlight:visited:hover {
+.sidebox__link--highlight:hover,
+.sidebox__link--highlight:visited:hover {
   border-bottom: 1px solid #182C61;
 }
 
 
-.chapter-sidebar {
+.chapter-sidebox {
   display: none;
 
   position: absolute;
@@ -409,7 +409,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-.chapter-sidebar--sticky {
+.chapter-sidebox--sticky {
   position: fixed;
   right: 28px;
   top: 42px;
@@ -575,7 +575,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media only screen and (min-width: 1200px) and (min-height: 450px) {
-	.chapter-sidebar {
+	.chapter-sidebox {
 		display: block;
 	}
 }
