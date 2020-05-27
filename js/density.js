@@ -182,7 +182,6 @@ whenDocumentLoaded(() => {
     });
     feature_selector.forEach((input) => {
         input.onclick = (() => {
-            console.log("KEKW");
             densityMap.feature = input.value;
             if(densityMap.feature === "density"){
                 densityMap.scale = d3.scaleLog().range(["hsl(62,100%,90%)", "hsl(12,136%,52%)"]).interpolate(d3.interpolateHcl);
