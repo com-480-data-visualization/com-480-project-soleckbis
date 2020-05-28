@@ -1,30 +1,33 @@
 
 class MapCircle {
 	
-	makeCirclebar(svg, color_scale, top_left, colorbar_size, scaleClass=d3.scaleLinear) {
-
+	// Make the axis with the circles
+	makeCirclebar(svg, circle_scale, top_left, circlebar_size, scaleClass=d3.scaleLinear) {
+		
+		// Make cirle of 1, 10, 100 and 1000 cases respectively
 		const value_to_svg = d3.scalePoint()
 			.domain([1, 10, 100, 1000])
-			.range([colorbar_size[1], 0]);
+			.range([circlebar_size[1], 0]);
 		
 		const range01_to_radius = d3.scaleLinear()
 			.domain([0, 1000])
 			.range([0, 500]);
 
 		// Axis numbers
-		const colorbar_axis = d3.axisLeft(value_to_svg)
+		const circlebar_axis = d3.axisLeft(value_to_svg)
 			.tickFormat(d3.format(".0f"))
-
-		const colorbar_g = this.svg.append("g")
-			.attr("id", "colorbar")
+		
+		const circlebar_g = this.svg.append("g")
+			.attr("id", "circlebar")
 			.attr("transform", "translate(" + top_left[0] + ', ' + top_left[1] + ")")
-			.call(colorbar_axis)
+			.call(circlebar_axis)
 			.selectAll('.tick')
 				.append("circle")
 				.attr('r', (d)=>Math.sqrt(range01_to_radius(d)))
 				.attr("cx", 50)
 				.style("fill", "red");	
-				
+		
+		// Awis Label		
 		this.svg.append("text").text("Total daily cases").attr("transform", "translate(200,-340)");
 		}
 		
@@ -54,24 +57,29 @@ class MapCircle {
 		
 		var displayButton = d3.select("#display");
 		
+		// Update the map and causes automatically when clicking the button filtering gender
 		genderButton.on("change", function(d) {
 			updateMap(time_value.invert(currentValue), this.value, ageButton.node().value);
 			updateCauses(time_value.invert(currentValue), this.value, ageButton.node().value);
 		});
 		
+		// Update the map and causes automatically when clicking the button filtering age
 		ageButton.on("change", function(d) {
 			updateMap(time_value.invert(currentValue), genderButton.node().value, this.value);
 			updateCauses(time_value.invert(currentValue), genderButton.node().value, this.value);
 		})
 		
+		// Change the number of causes automatically when clicking
 		displayButton.on("change", function(d) {
 			updateCauses(time_value.invert(currentValue), genderButton.node().value, ageButton.node().value);
 		})
 		
+		// Initialize the map, event and causes
 		updateEvent(time_value.domain()[0]);
 		updateMap(time_value.domain()[0], genderButton.node().value, ageButton.node().value, true);
 		updateCauses(time_value.domain()[0], genderButton.node().value, ageButton.node().value, true);
 		
+		// Give information about the region when mouseover
 		function handleMouseOver(d, i) {
 			d3.select(this).style('opacity', 0.9)
 				.style('stroke-width', 1)
@@ -93,13 +101,13 @@ class MapCircle {
 			}
 		}
 
-		
+		// Stop showing the information when the mouse is out the region
 		function handleMouseOut(d, i) {
 			d3.selectAll('.province').style('stroke-width', 0.2);
 			d3.select('#provinces_text').style("opacity", 0);
 		}
 			
-		
+		// Advance the time slider of one step
 		function step() {
 			update(time_value.invert(currentValue));
 			currentValue = currentValue + (targetValue/100);
@@ -108,6 +116,7 @@ class MapCircle {
 			}
 		}
 		
+		Update the event, map and causes at each time step
 		function update(h) {
 			handle.attr("cx", time_value(h));
 			label.attr("x", time_value(h))
@@ -118,11 +127,12 @@ class MapCircle {
 			updateMap(h, genderButton.node().value, ageButton.node().value);
 			updateCauses(h, genderButton.node().value, ageButton.node().value);
 		}
-			
+		
+		// The time slider	
 		var slider = this.svg.append("g")
 			.attr("class", "slider")
 			.attr("transform", "translate(170,-450)");	
-			
+		
 		slider.append("line")
 			.attr("class","track")
 			.attr("x1", time_value.range()[0])
@@ -154,27 +164,32 @@ class MapCircle {
 		var handle = slider.insert("circle", ".track-overlay")
 			.attr("class", "handle")
 			.attr("r", 9);
-		
+			
+		// Give the actual time
 		var label = slider.append("text")
 			.attr("class", "label")
 			.attr("text-anchor", "middle")
 			.text(formatDate(time_value.domain()[0]))
 			.attr("transform", "translate(0, -25)")
 		
+		// Button that play the time slider
 		playButton.on("click", function() {
 			timer = setInterval(step, 100);
 		});
 		
+		// Pause the time slider
 		pauseButton.on("click", function() {
 			clearInterval(timer);
 		});
 		
+		// Restart the time
 		restartButton.on("click", function() {
 			currentValue = 0;
 			update(time_value.invert(currentValue));
 			clearInterval(timer);
 		});
 		
+		// Function to test if an objet is empty first used to fill forward the date events
 		function isnotEmpty(obj) {
     			for(var key in obj) {
         		if(obj.hasOwnProperty(key))
@@ -183,10 +198,11 @@ class MapCircle {
     			return false;
 		}
 		
+		// Update the special event when playing or dragging the time slider
 		function updateEvent(date) {
 			var event_promise = d3.csv("data/Policy.csv").then((data)=>{
 				let event_policy = {};
-				var filter_data = data.filter(function (a){return a.start_date==formatDateString(date)});
+				var filter_data = data.filter(function (a){return a.date==formatDateString(date)});
 				filter_data.forEach((row)=> {
 					event_policy = row.policy;
 				})
@@ -203,7 +219,7 @@ class MapCircle {
 			});
 		}
 		
-		
+		// Update the map when filtering the group, playing or dragging the time slider
 		function updateMap(date, gender, age, new_map=false) {
 			
 			if (Type=='provinces') {
@@ -273,9 +289,11 @@ class MapCircle {
 				circle_container = d3.select("#circles").select(".Circle");
 			}
 			
+			// Ability to zoom the map
 			const zoom = d3.zoom()
 				.on('zoom', zoomed);
 			
+			// the zoom is not working when clicking or with musewheel
 			svg.call(zoom).on("dblclick.zoom", null)
 				.on("wheel.zoom", null);
 				
@@ -286,6 +304,7 @@ class MapCircle {
 				zoom.scaleBy(svg.transition().duration(750), 0.8)
 			});
 			
+			// Create the map with provinces or municipalities
 			if (new_map==true) {
 				map_container.selectAll(".province")
 					.data(map_data)
@@ -303,6 +322,7 @@ class MapCircle {
 					.data(map_data);
 			}
 			
+			// Create circles with area corresponding to the number of daily cases
 			if (new_map==true) {
 				circle_container.selectAll(".province-circles")
 					.data(map_data)
@@ -328,7 +348,7 @@ class MapCircle {
 					.style("fill", "red");
 			}
 				
-				
+			// Change the map and circles when zooming	
 			function zoomed() {
 				var t = d3.event.transform;
 				map_container.selectAll('path')
@@ -337,12 +357,14 @@ class MapCircle {
 				.attr("transform", (d)=> "translate("+[t.k*path_generator.centroid(d)[0]+t.x,+t.k*path_generator.centroid(d)[1]+t.y]+")");
 			}
 			
+			// Make the axis representing the cirle area
 			if (new_map==true) {
 				$this.makeCirclebar($this.svg, radius_scale, [250, -300], [20, $this.svg_height - 2*30]);
 			}
 		});
 	}
 	
+	// Update the causes when filtering the group, playing or dragging the time slider
 	function updateCauses(date, gender, age, new_map=false) {
 		var causes_promise = d3.csv("data/infection_causes.csv").then((data)=>{
 			var filter_data = data.filter(function(a){return (a.date==formatDateString(date))&(a.sex==gender)&(a.age==age)});
@@ -354,12 +376,14 @@ class MapCircle {
 			
 			var displayButton = d3.select("#display");
 			
+			// Display either 5 causes or all the causes
 			if (displayButton.node().value=="Five") {
 				limit = 5; 
 			} else if (displayButton.node().value=="All") {
 				limit = 23;
 			}
 			
+			// Create an emoji for each of the possible causes
 			function search_emojis(d, i) {
 				if (i<limit) {
 					if (d.infection_case == 'Unknown Reason') {
@@ -394,6 +418,7 @@ class MapCircle {
 				}
 			}
 			
+			// The causes are represented as a list
 			if (new_map==true) {
 			 	causes_container = d3.select("#Causes").append('ul').attr("class", "Causes");
 			} else {
@@ -408,13 +433,13 @@ class MapCircle {
 					.enter()
 					.append("li");
 				
-				
+					// append the emoji
 					emojis.append("img").classed("emojis", true)
 					.attr("src", function(d, i){return search_emojis(d,i)})
 					.attr("width", "40px")
 					.style("margin-right", "30px")
 					
-					
+					// Append the cause text
 					emojis.append("span").classed("emojis_text1", true)
 						.text((d)=>d.infection_case) 
 						.style("display", function(d,i){
@@ -426,7 +451,7 @@ class MapCircle {
 						})
 						.style("width", "400px");
 					
-
+					// Append the total number of cases linked to that causes
 					emojis.append("span").classed("emojis_text2", true)
 						.text((d)=>"Total cases: " + Math.round(d.total_city_cases))
 						.attr("transform", function(d,i) {
@@ -494,6 +519,7 @@ class MapCircle {
 		
 		var targetValue = 700;
 		
+		// create the time range
 		var time_promise = d3.csv("data/All_All.csv").then((data) => {
 			var time_value = d3.scaleTime()
 			.domain(d3.extent(data, function(d){return new Date(d.date);}))
@@ -502,6 +528,7 @@ class MapCircle {
 			return time_value;
 		})
 		
+		// Give a South Korea natural projection
 		const projection = d3.geoNaturalEarth1()
 			.rotate([0,0])
 			.center([128, 36])
@@ -532,6 +559,7 @@ function whenDocumentLoaded(action) {
 	}
 }
 
+// Make the notes to explain the administrative division of South Korea
 class MakeNotesCircles {
 	constructor(Type) {
 		this.Type = Type;
@@ -548,6 +576,7 @@ class MakeNotesCircles {
 }
 
 whenDocumentLoaded(() => {
+	// Clicking to either province or municipalities will create the corresponding map and switch the time bck to the first day
 	document.getElementById("provinces2").click();
 	text = new MakeNotesCircles("provinces");
 	const radios = document.getElementsByName("MapType2");
@@ -561,6 +590,5 @@ whenDocumentLoaded(() => {
 			plot_object = new MapCircle('circles', Type);
 		}
 	}
-	// plot object is global, you can inspect it in the dev-console
 });
 
