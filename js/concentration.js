@@ -5,7 +5,7 @@ class MapPlot {
 	makeColorbar(svg, color_scale, top_left, colorbar_size, scaleClass=d3.scaleLinear) {
 		
 		// The axis numbers
-		const yScale = [0, 4, 8, 10, 20, 40, 80, 100, 200, 400, 800, 1000];
+		const yScale = [0, 4, 8, 10, 20, 40, 80, 100, 800, 1000, 4000, 8000];
 
 		const value_to_svg = scaleClass()
 			.domain(yScale)
@@ -413,6 +413,15 @@ class MapPlot {
          function BarOut() {
          	d3.select("#provinces_text").style("opacity", 0);
          }
+         
+         // Create an array with a single value repeated multiple times
+         function fillArray(value, len) {
+  			if (len == 0) return [];
+  			var a = [value];
+  			while (a.length * 2 <= len) a = a.concat(a);
+  			if (a.length < len) a = a.concat(a.slice(0, len - a.length));
+  			return a;
+		}
 		
 		// Update the bar for each time step or button click
 		function updateBar (date, BarType, new_map = false) {
@@ -429,6 +438,10 @@ class MapPlot {
 				} else if (BarType=="Province") {
 					groups = d3.map(data, function(d){return d.province}).keys();
 				}
+				
+				// Create stacked bar plot
+    				var stackedData = d3.stack().keys(subgroups)(filter_data);
+    				
 				
 				var bar_container;
 				var width;
@@ -452,7 +465,7 @@ class MapPlot {
 					maxdomain = 7000;
 				}
 				
-				var svg2 = d3.select("#barsvg")
+				var svg2 = d3.select("#barsvg");
 				
 				var x = d3.scaleBand()
 					.domain(groups)
@@ -464,11 +477,21 @@ class MapPlot {
     						.attr("transform", "translate(400,"+heighty+")")
     						.call(d3.axisBottom(x).tickSizeOuter(0));
     				} else if (BarType == "Province") {
+    					var ticksclick = fillArray("click", 17);
     					svg2.append("g")
     						.attr("transform", "translate(400,"+heighty+")")
-    						.call(d3.axisBottom(x).tickValues([]));
+    						.call(d3.axisBottom(x).tickFormat(function(d, i) {
+    							return ticksclick[i];
+  						}))
+  						d3.selectAll(".tick")
+    							.on("click", function(d,i){
+    								console.log(i);
+    								console.log(stackedData[0][i-12])
+								BarOver(stackedData[0][i-12],i,BarType);
+							});
     				}
-    					
+    				
+    				
     				var y = d3.scaleLinear()
     					.domain([0,maxdomain])
     					.range([height, 0]);
@@ -483,9 +506,7 @@ class MapPlot {
     				var color = d3.scaleOrdinal()
     					.domain(subgroups)
     					.range(color_range);
-    				
-    				// Create stacked bar plot
-    				var stackedData = d3.stack().keys(subgroups)(filter_data);
+
 				
 				if (new_map==true) {
 					bar_container = svg2.append("g").attr("class", "Bar");
@@ -516,7 +537,7 @@ class MapPlot {
 							.attr("transform", "translate(400,-600)")
 							.attr("height", function (d) {return y(d[0])-y(d[1])})
 							.attr("width", x.bandwidth())
-							.on("mouseover", function(d,i){
+							.on("click", function(d,i){
 								BarOver(d,i,BarType);
 							})
 							.on("mouseout", function(d,i){
@@ -540,7 +561,7 @@ class MapPlot {
 							.attr("transform", function(d, i){
 								var offset = -630 + 19*i;
 								return "translate(300,"+offset+")"})
-							.style("fill", function(d, i){return color_range.slice().reverse()[i]})
+							.style("fill", function(d, i){return color_range.slice()[i]})
 							
 				bar_container.select(".legend").selectAll("text")
 					.data(["Confirmed", "Deceased"])
@@ -617,7 +638,7 @@ class MapPlot {
 		
 		// Color pallette for the concentration
 		const color_scale = d3.scaleLinear()
-			.domain([0, 4e-6, 8e-6, 1e-5, 2e-5, 4e-5, 8e-5, 1e-4, 2e-4, 4e-4, 8e-4, 1e-3])
+			.domain([0, 4e-6, 8e-6, 1e-5, 4e-5, 8e-5, 1e-4, 4e-4, 8e-4, 1e-3, 4e-3, 8e-3])
 			.range(['#b6e200', '#e2c84b', '#e7b94c', '#e9aa4b', '#ea9b49', '#ea8c47', '#ea7d44', '#e86c41', '#e65b3d', '#e4483a', '#e13036', '#dd0032'])
 			.interpolate(d3.interpolateHcl);
 		
