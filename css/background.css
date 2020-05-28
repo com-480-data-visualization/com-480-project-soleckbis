@@ -270,9 +270,7 @@ h1, h2, h3, h4, h5, h6 {
   font-style: italic;
   font-size: 20px;
   line-height: 35px;
-   margin: 50px 600px 600px;
-  margin-left: 500;
-  margin-right: 300;
+   margin: 50px 600px 50px;
    background-color: #D3E4E0;
 }
 
