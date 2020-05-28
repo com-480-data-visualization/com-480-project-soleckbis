@@ -116,7 +116,7 @@ class MapCircle {
 			}
 		}
 		
-		Update the event, map and causes at each time step
+		// Update the event, map and causes at each time step
 		function update(h) {
 			handle.attr("cx", time_value(h));
 			label.attr("x", time_value(h))

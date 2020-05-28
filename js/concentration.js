@@ -403,6 +403,10 @@ class MapPlot {
                 		.html(d.data.province+"\n"+"Confirmed: "+d.data.confirmed+"\n"+"Deceased: "+d.data.deceased+"\n"+"Fatality rate: "+(100*(d.data.deceased/d.data.confirmed)).toFixed(2)+"%");
             } 
          }
+         
+         function BarOut() {
+         	d3.select("#provinces_text").style("opacity", 0);
+         }
 		
 		// Update the bar for each time step or button click
 		function updateBar (date, BarType, new_map = false) {
