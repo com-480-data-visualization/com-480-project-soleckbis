@@ -31,7 +31,7 @@
          url('/fonts/CenturySchoolbook-Regular-webfont.woff2') format('woff2'),
          url('/fonts/CenturySchoolbook-Regular-webfont.woff') format('woff'),
          url('/fonts/CenturySchoolbook-Regular-webfont.ttf') format('truetype'),
-         url('/fonts/CenturySchoolbook-Regular-webfont.svg#century_schoolbook_fsregular') format('svg');
+         url('/fonts/CenturySchoolbook-Regular-webfont.svg#century_school_fsregular') format('svg');
     font-weight: normal;
     font-style: normal;
 
@@ -271,9 +271,7 @@ h1, h2, h3, h4, h5, h6 {
   font-style: italic;
   font-size: 20px;
   line-height: 35px;
-   margin: 50px 600px 50px;
-  margin-left: 500;
-  margin-right: 300;
+    margin: 50px 600px 50px;
    background-color: #D3E4E0;
 }
 
