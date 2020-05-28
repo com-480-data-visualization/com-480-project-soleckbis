@@ -79,7 +79,7 @@ What new do we want to offer? We are going to analyze population localisation an
 ## Milestone 3 (Thursday 28th May, 5pm)
 
 To run our webiste clone the repository and do following command from a terminal:
-`python-m http.server`
+`python -m http.server` and then open in your browser `localhost:8000`
 
 Description of the files:
 
