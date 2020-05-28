@@ -79,31 +79,31 @@ What new do we want to offer? We are going to analyze population localisation an
 ## Milestone 3 (Thursday 28th May, 5pm)
 
 To run our webiste clone the repository and do following command from a terminal:
-python-m http.server
+`python-m http.server`
 
 Description of the files:
 
--Video.mp4: the 2 min movie explaining the project
+-*Video.mp4*: the 2 min movie explaining the project
 
--Process_book.pdf: the document explaining in details our realization
+-*Process_book.pdf*: the document explaining in details our realization
 
--index.html is the main html page
+-*index.html* is the main html page
 
--“.css” folder: contains a .css style for the background (background.css), another .css for the style of the plots (background.css), and an uploaded file for the style of the buttons (bootsrap.css)
+-*css* folder: contains a .css style for the background (*background.css*), another .css for the style of the plots (*plot.css*), and an uploaded file for the style of the buttons (*bootsrap.css*)
 
--“fonts” folder: contains the files for the different fonts
+-*fonts* folder: contains the files for the different fonts
 
--“data“ folder: the different .csv files
+-*data* folder: the different .csv files
 
--“json” folder: the topojson for the maps
+-*json* folder: the topojson for the maps
 
--“lib” folder: commonly used lib like d3j but also one called spearson.js for calculating the correlations
+-*lib* folder: commonly used lib like d3j but also one called spearson.js for calculating the correlations
 
--“PNG” folder: few icons
+-*PNG* folder: few icons
 
--“js” folder: all javascript files for the different plots, concentration.js and circle.js for part 1, density.js for part 2 and weather_1.js and weather_2.js for part3
+-*js* folder: all javascript files for the different plots, *concentration.js* and *circle.js* for part 1, *density.js* for part 2 and *weather_1.js* and *weather_2.js* for part 3
 
--“graph” folder: few images for milestone 1
+-*graph* folder: few images for milestone 1
 
 
 **80% of the final grade**
