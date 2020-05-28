@@ -71,6 +71,7 @@ class MapPlot {
 		var playButton = d3.select("#PlayButton1");
 		var pauseButton = d3.select("#PauseButton1");
 		var restartButton = d3.select("#RestartButton1");
+		var speedButton = d3.select("#SpeedButton1");
 		var genderButton = d3.select("#Gender1");
 		var ageButton = d3.select("#Age1");
 		var radiobuttons = d3.select(".bar_radio").selectAll("input")
@@ -184,7 +185,7 @@ class MapPlot {
 		
 		// Play button activate running of time slider
 		playButton.on("click", function() {
-			timer = setInterval(step, 100);
+			timer = setInterval(step, 300);
 		});
 		
 		// Pause button
@@ -198,6 +199,11 @@ class MapPlot {
 			update(time_value.invert(currentValue));
 			clearInterval(timer);
 		});
+		
+		// Speed 3 times the time slider
+		speedButton.on("click", function(d) {
+			timer = setInterval(step, 100);
+		})
 		
 		// Mouse over on regions of South Korea
 		function handleMouseOver(d, i) {

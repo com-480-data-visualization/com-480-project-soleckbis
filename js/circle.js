@@ -43,6 +43,7 @@ class MapCircle {
 		var playButton = d3.select("#PlayButton2");
 		var pauseButton = d3.select("#PauseButton2");
 		var restartButton = d3.select("#RestartButton2");
+		var speedButton = d3.select("SpeedButton2");
 		var genderButton = d3.select("#Gender2");
 		var ageButton = d3.select("#Age2");
 		
@@ -174,7 +175,7 @@ class MapCircle {
 		
 		// Button that play the time slider
 		playButton.on("click", function() {
-			timer = setInterval(step, 100);
+			timer = setInterval(step, 300);
 		});
 		
 		// Pause the time slider
@@ -188,6 +189,11 @@ class MapCircle {
 			update(time_value.invert(currentValue));
 			clearInterval(timer);
 		});
+		
+		// Speed 3 times the time slider
+		speedButton.on("click", function(d) {
+			timer = setInterval(step, 100);
+		})
 		
 		// Function to test if an objet is empty first used to fill forward the date events
 		function isnotEmpty(obj) {
