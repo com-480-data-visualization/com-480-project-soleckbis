@@ -84,7 +84,7 @@ We also hosted our website [here](http://antonsold.github.io).
 
 Description of the files:
 
--*Video.mp4*: 2 min movie explaining the project
+-*Video.mp4*: 2 min movie explaining the project also on https://www.youtube.com/watch?v=4lu_XrFsB2M
 
 -*Process_book.pdf*: document explaining in details our realization
 
