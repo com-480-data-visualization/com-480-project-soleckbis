@@ -565,6 +565,7 @@ whenDocumentLoaded(() => {
 	for (var i = 0, max=radios.length; i<max; i++) {
 		radios[i].onclick = function () {
 			d3.select('#circles').selectAll('*').remove();
+			d3.select('#Causes').selectAll('*').remove();
 			Type = this.value;
 			text = new MakeNotesCircles(Type);
 			plot_object = new MapCircle('circles', Type);
